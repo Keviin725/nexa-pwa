@@ -2,6 +2,8 @@
 
 Um sistema de gestão completo e moderno desenvolvido com Vue.js 3, Tailwind CSS e PWA.
 
+> ⚠️ **IMPORTANTE**: Este repositório é **público para demonstração**, mas **NÃO é open source**. O código é propriedade privada e não deve ser usado, copiado ou distribuído sem autorização.
+
 ## ✨ Funcionalidades
 
 ### 🏠 **Dashboard Inteligente**
@@ -81,14 +83,16 @@ Um sistema de gestão completo e moderno desenvolvido com Vue.js 3, Tailwind CSS
 
 ## 🚀 **Instalação e Uso**
 
+> ⚠️ **ATENÇÃO**: As instruções abaixo são apenas para **demonstração local**. O uso comercial é proibido.
+
 ### **Pré-requisitos**
 - Node.js 16+
 - Yarn ou npm
 
-### **Instalação**
+### **Instalação (Apenas Demonstração)**
 ```bash
-# Clone o repositório
-git clone <repository-url>
+# Clone o repositório (apenas para demonstração)
+git clone https://github.com/Keviin725/nexa-pwa.git
 cd nexa-pwa
 
 # Instale as dependências
@@ -97,6 +101,8 @@ yarn install
 # Inicie o servidor de desenvolvimento
 yarn dev
 ```
+
+> **⚠️ Lembre-se**: Este é um projeto privado. Use apenas para demonstração e aprendizado.
 
 ### **Build para Produção**
 ```bash
@@ -168,17 +174,31 @@ O sistema inclui um serviço de dados mock para demonstração:
 - [ ] Monitorização
 - [ ] Integrações externas
 
+## ⚠️ **AVISO LEGAL**
+
+### **🔒 Propriedade Intelectual**
+- Este repositório é **público apenas para demonstração**
+- O código é **propriedade privada**
+- **NÃO é open source** ou software livre
+- **Uso comercial proibido** sem autorização
+
+### **🚫 Restrições de Uso**
+- ❌ **Não copie** o código
+- ❌ **Não distribua** sem permissão
+- ❌ **Não use** comercialmente
+- ❌ **Não faça fork** para uso próprio
+- ✅ **Apenas visualize** para demonstração
+
+### **📞 Contato**
+Para uso comercial ou licenciamento, entre em contato com o proprietário.
+
 ## 🤝 **Contribuição**
 
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
+**Contribuições não são aceitas** neste repositório. Este é um projeto privado para demonstração apenas.
 
 ## 📄 **Licença**
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+**Todos os direitos reservados**. Este projeto não possui licença open source. O código é propriedade privada e protegido por direitos autorais.
 
 ## 👨‍💻 **Desenvolvido por**
 
