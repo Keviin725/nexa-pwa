@@ -193,8 +193,8 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-800 mb-1">Nova Venda</h3>
-                                <p class="text-sm text-green-600 font-medium">Registrar venda</p>
+                                <h3 class="font-bold text-slate-800 mb-1">Vendas</h3>
+                                <p class="text-sm text-green-600 font-medium">Gerir vendas</p>
                             </div>
                         </button>
 
