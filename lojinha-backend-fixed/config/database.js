@@ -2,9 +2,11 @@ require("dotenv").config();
 const { Sequelize } = require("sequelize");
 const path = require("path");
 
-// Configurar variáveis de ambiente se não existirem
+// Verificar se JWT_SECRET está definido
 if (!process.env.JWT_SECRET) {
-  process.env.JWT_SECRET = 'lojinha-pwa-secret-key-2024';
+  throw new Error(
+    "JWT_SECRET não está definido nas variáveis de ambiente. Crie um arquivo .env com JWT_SECRET=seu-secret-seguro"
+  );
 }
 
 const sequelize = new Sequelize({

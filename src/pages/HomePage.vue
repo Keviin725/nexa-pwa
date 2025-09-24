@@ -22,10 +22,10 @@
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
                         <!-- Nova Venda -->
-                        <router-link to="/app/sales"
+                        <button @click="openSaleSheet"
                             class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
                             Nova Venda
-                        </router-link>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <!-- 1. NOVA VENDA - Mais importante -->
-                        <router-link to="/app/sales" class="group">
+                        <button @click="openSaleSheet" class="group w-full">
                             <div
                                 class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition-all duration-200 text-center border-2 border-green-200 hover:border-green-300 hover:shadow-lg">
                                 <div
@@ -193,10 +193,10 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-800 mb-1">Vendas</h3>
-                                <p class="text-sm text-green-600 font-medium">Gerir vendas</p>
+                                <h3 class="font-bold text-slate-800 mb-1">Nova Venda</h3>
+                                <p class="text-sm text-green-600 font-medium">Registrar venda</p>
                             </div>
-                        </router-link>
+                        </button>
 
                         <!-- 2. PRODUTOS - Segundo mais importante -->
                         <router-link to="/app/products" class="group">
@@ -517,12 +517,155 @@
         </div>
     </div>
 
+    <!-- Bottom Sheet de Nova Venda -->
+    <CustomBottomSheet :visible="showSaleSheet" @close="closeSaleSheet">
+        <template #header>
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h3
+                        class="text-xl font-bold bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                        Nova Venda
+                    </h3>
+                    <p class="text-sm text-slate-600">Registre uma nova venda rapidamente</p>
+                </div>
+            </div>
+        </template>
+
+        <form @submit.prevent="saveSale" class="space-y-6">
+            <!-- Informações da Venda -->
+            <div class="bg-gradient-to-r from-slate-50 to-green-50 rounded-xl p-4">
+                <h4 class="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Informações da Venda
+                </h4>
+
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- Cliente -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Cliente</label>
+                        <input v-model="saleForm.client" type="text" placeholder="Nome do cliente (opcional)"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors" />
+                    </div>
+
+                    <!-- Método de Pagamento -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Método de Pagamento</label>
+                        <select v-model="saleForm.paymentMethod"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
+                            <option value="cash">Dinheiro</option>
+                            <option value="card">Cartão</option>
+                            <option value="transfer">Transferência</option>
+                            <option value="credit">Fiado</option>
+                        </select>
+                    </div>
+
+                    <!-- Observações -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Observações</label>
+                        <textarea v-model="saleForm.notes" placeholder="Observações adicionais (opcional)"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produtos -->
+            <div class="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4">
+                <h4 class="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
+                        </path>
+                    </svg>
+                    Produtos
+                </h4>
+
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2">Adicionar Produtos</h3>
+                    <p class="text-sm text-slate-600 mb-4">Selecione os produtos para esta venda</p>
+                    <button type="button"
+                        class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        Escolher Produtos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumo da Venda -->
+            <div class="bg-gradient-to-r from-slate-50 to-purple-50 rounded-xl p-4">
+                <h4 class="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    Resumo da Venda
+                </h4>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-slate-600">Subtotal</span>
+                        <span class="font-semibold text-slate-800">MT 0,00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-slate-600">Desconto</span>
+                        <span class="font-semibold text-slate-800">MT 0,00</span>
+                    </div>
+                    <div class="border-t border-slate-200 pt-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-slate-800">Total</span>
+                            <span class="text-xl font-bold text-green-600">MT 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <template #footer>
+            <div class="flex gap-3">
+                <button type="button" @click="closeSaleSheet"
+                    class="flex-1 px-4 py-3 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" @click="saveSale"
+                    class="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg"
+                    :disabled="saleForm.products.length === 0">
+                    <div class="flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Finalizar Venda
+                    </div>
+                </button>
+            </div>
+        </template>
+    </CustomBottomSheet>
+
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { mockDataService } from '../services/mockDataService.js'
+import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 
 const router = useRouter()
 
@@ -544,6 +687,16 @@ const dashboard = reactive({
     salesByPeriod: [],
     topProducts: [],
     recentSales: []
+})
+
+// Estado para bottom sheet de venda
+const showSaleSheet = ref(false)
+const saleForm = reactive({
+    client: '',
+    products: [],
+    total: 0,
+    paymentMethod: 'cash',
+    notes: ''
 })
 
 // Estado para notificações
@@ -580,6 +733,39 @@ const API_BASE = 'http://localhost:3000'
 // Métodos
 const formatPrice = (price) => {
     return parseFloat(price).toFixed(2).replace('.', ',')
+}
+
+// Funções para bottom sheet de venda
+const openSaleSheet = () => {
+    showSaleSheet.value = true
+}
+
+const closeSaleSheet = () => {
+    showSaleSheet.value = false
+    // Reset form
+    Object.assign(saleForm, {
+        client: '',
+        products: [],
+        total: 0,
+        paymentMethod: 'cash',
+        notes: ''
+    })
+}
+
+const saveSale = async () => {
+    try {
+        // Simular salvamento da venda
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        // Atualizar dashboard
+        await loadDashboard()
+
+        closeSaleSheet()
+        alert('Venda registrada com sucesso!')
+    } catch (error) {
+        console.error('Erro ao salvar venda:', error)
+        alert('Erro ao salvar venda')
+    }
 }
 
 const formatTimeAgo = (timestamp) => {
