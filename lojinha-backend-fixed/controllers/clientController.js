@@ -5,12 +5,12 @@ const getClients = async (req, res) => {
   try {
     const { search, hasDebt } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (search) {
       whereClause[Op.or] = [
         { name: { [Op.like]: `%${search}%` } },
-        { contact: { [Op.like]: `%${search}%` } },
+        { phone: { [Op.like]: `%${search}%` } },
       ];
     }
 
@@ -86,7 +86,7 @@ const deleteClient = async (req, res) => {
       });
     }
 
-    await client.update({ isActive: false });
+    await client.update({ is_active: false });
     res.json({ message: "Cliente desativado com sucesso" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -100,12 +100,12 @@ const getClientDebts = async (req, res) => {
 
     let whereClause = {
       ClientId: clientId,
-      paymentMethod: "credit",
-      isActive: true,
+      payment_method: "credit",
+      is_active: true,
     };
 
     if (status) {
-      whereClause.paymentStatus = status;
+      whereClause.payment_status = status;
     }
 
     const sales = await Sale.findAll({
@@ -113,10 +113,10 @@ const getClientDebts = async (req, res) => {
       include: [
         {
           model: CreditPayment,
-          order: [["createdAt", "DESC"]],
+          order: [["created_at", "DESC"]],
         },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     // Calcular saldo pendente para cada venda
@@ -148,11 +148,11 @@ const getClientHistory = async (req, res) => {
 
     let whereClause = {
       ClientId: clientId,
-      isActive: true,
+      is_active: true,
     };
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -162,10 +162,10 @@ const getClientHistory = async (req, res) => {
       include: [
         {
           model: CreditPayment,
-          order: [["createdAt", "DESC"]],
+          order: [["created_at", "DESC"]],
         },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(sales);
@@ -178,7 +178,7 @@ const getClientsWithDebts = async (req, res) => {
   try {
     const clients = await Client.findAll({
       where: {
-        isActive: true,
+        is_active: true,
         creditBalance: {
           [Op.gt]: 0,
         },

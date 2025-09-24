@@ -77,9 +77,16 @@ sequelize
       console.log(`✅ Database ready (${userCount} users)`);
     }
 
-    // Executar seed se solicitado
-    if (process.env.RUN_SEED === "true") {
+    // Executar seed apenas se não há dados
+    const productCount = await Product.count();
+    if (productCount === 0) {
+      console.log("🌱 Banco vazio, executando seeder...");
       await seedDatabase();
+      console.log("✅ Seeder executado com sucesso!");
+    } else {
+      console.log(
+        `✅ Banco já tem dados (${productCount} produtos encontrados)`
+      );
     }
 
     // Registrar rotas após sincronização

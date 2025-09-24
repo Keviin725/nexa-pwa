@@ -6,10 +6,10 @@ const getDashboardData = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -19,7 +19,7 @@ const getDashboardData = async (req, res) => {
       (await Sale.sum("totalAmount", {
         where: {
           ...whereClause,
-          paymentStatus: "paid",
+          payment_status: "paid",
         },
       })) || 0;
 
@@ -32,34 +32,34 @@ const getDashboardData = async (req, res) => {
     const pendingSales = await Sale.count({
       where: {
         ...whereClause,
-        paymentStatus: "pending",
+        payment_status: "pending",
       },
     });
 
     // Total de produtos
     const totalProducts = await Product.count({
-      where: { isActive: true },
+      where: { is_active: true },
     });
 
-    // Produtos com estoque baixo
+    // Produtos com estoque baixo (estoque <= 5)
     const lowStockProducts = await Product.count({
       where: {
-        isActive: true,
+        is_active: true,
         stock: {
-          [Op.lte]: Product.sequelize.col("minStock"),
+          [Op.lte]: 5,
         },
       },
     });
 
     // Total de clientes
     const totalClients = await Client.count({
-      where: { isActive: true },
+      where: { is_active: true },
     });
 
     // Clientes com dívidas
     const clientsWithDebts = await Client.count({
       where: {
-        isActive: true,
+        is_active: true,
         creditBalance: {
           [Op.gt]: 0,
         },
@@ -69,19 +69,19 @@ const getDashboardData = async (req, res) => {
     // Vendas por dia (últimos 7 dias)
     const salesByDay = await Sale.findAll({
       attributes: [
-        [Sale.sequelize.fn("DATE", Sale.sequelize.col("createdAt")), "date"],
+        [Sale.sequelize.fn("DATE", Sale.sequelize.col("created_at")), "date"],
         [Sale.sequelize.fn("COUNT", Sale.sequelize.col("id")), "count"],
         [Sale.sequelize.fn("SUM", Sale.sequelize.col("totalAmount")), "total"],
       ],
       where: {
         ...whereClause,
-        createdAt: {
+        created_at: {
           [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         },
       },
-      group: [Sale.sequelize.fn("DATE", Sale.sequelize.col("createdAt"))],
+      group: [Sale.sequelize.fn("DATE", Sale.sequelize.col("created_at"))],
       order: [
-        [Sale.sequelize.fn("DATE", Sale.sequelize.col("createdAt")), "ASC"],
+        [Sale.sequelize.fn("DATE", Sale.sequelize.col("created_at")), "ASC"],
       ],
     });
 
@@ -176,8 +176,8 @@ const getSalesSummary = async (req, res) => {
 
     const sales = await Sale.findAll({
       where: {
-        isActive: true,
-        createdAt: dateFilter,
+        is_active: true,
+        created_at: dateFilter,
       },
       include: [
         {
@@ -186,7 +186,7 @@ const getSalesSummary = async (req, res) => {
         },
         { model: Client, attributes: ["name"] },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(sales);
@@ -200,10 +200,10 @@ const getAnalytics = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -217,7 +217,7 @@ const getAnalytics = async (req, res) => {
       ],
       where: {
         ...whereClause,
-        paymentStatus: "paid",
+        payment_status: "paid",
       },
       group: ["paymentMethod"],
     });
@@ -267,7 +267,7 @@ const getAnalytics = async (req, res) => {
       (await Sale.sum("totalAmount", {
         where: {
           ...whereClause,
-          paymentStatus: "paid",
+          payment_status: "paid",
         },
       })) || 0;
 
@@ -285,9 +285,9 @@ const getAnalytics = async (req, res) => {
     const previousPeriod =
       (await Sale.sum("totalAmount", {
         where: {
-          isActive: true,
-          paymentStatus: "paid",
-          createdAt: {
+          is_active: true,
+          payment_status: "paid",
+          created_at: {
             [Op.between]: [previousStartDate, previousEndDate],
           },
         },

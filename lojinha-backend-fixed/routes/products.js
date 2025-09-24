@@ -11,6 +11,10 @@ const {
   getLowStockProducts,
 } = require("../controllers/productController");
 
+// Rotas específicas (devem vir antes das rotas com parâmetros)
+router.get("/categories", getCategories);
+router.get("/low-stock", getLowStockProducts);
+
 // Rotas principais
 router.get("/", getProducts);
 router.get("/:id", getProductById);
@@ -18,9 +22,7 @@ router.post("/", createProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 
-// Rotas específicas
+// Rotas com parâmetros
 router.put("/:id/stock", updateStock);
-router.get("/categories/list", getCategories);
-router.get("/low-stock/list", getLowStockProducts);
 
 module.exports = router;

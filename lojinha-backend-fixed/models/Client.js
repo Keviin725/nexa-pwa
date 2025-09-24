@@ -41,6 +41,10 @@ const Client = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
   },
   {
     tableName: "clients",

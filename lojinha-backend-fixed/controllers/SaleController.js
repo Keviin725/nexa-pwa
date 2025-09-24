@@ -15,15 +15,15 @@ const createSale = async (req, res) => {
     const {
       products,
       clientId,
-      paymentMethod,
+      payment_method,
       discount = 0,
       tax = 0,
-      dueDate,
+      due_date,
       notes,
     } = req.body;
 
     // Gerar número da venda
-    const saleNumber = `V${Date.now()}`;
+    const sale_number = `V${Date.now()}`;
 
     // Calcular subtotal
     let subtotal = 0;
@@ -39,19 +39,19 @@ const createSale = async (req, res) => {
     }
 
     // Calcular total com desconto e imposto
-    const totalAmount = subtotal - discount + tax;
+    const total_amount = subtotal - discount + tax;
 
     // Criar venda
     const sale = await Sale.create(
       {
-        saleNumber,
+        sale_number,
         subtotal,
         discount,
         tax,
-        totalAmount,
-        paymentMethod,
-        paymentStatus: paymentMethod === "credit" ? "pending" : "paid",
-        dueDate: paymentMethod === "credit" ? dueDate : null,
+        total_amount,
+        payment_method,
+        payment_status: payment_method === "credit" ? "pending" : "paid",
+        due_date: payment_method === "credit" ? due_date : null,
         notes,
         ClientId: clientId,
       },
@@ -65,7 +65,7 @@ const createSale = async (req, res) => {
       await SaleItem.create(
         {
           quantity: item.quantity,
-          unitPrice: product.price,
+          unit_price: product.price,
           SaleId: sale.id,
           ProductId: item.productId,
         },
@@ -81,9 +81,9 @@ const createSale = async (req, res) => {
     }
 
     // Se for fiado, atualizar saldo do cliente
-    if (paymentMethod === "credit" && clientId) {
-      await Client.increment("creditBalance", {
-        by: totalAmount,
+    if (payment_method === "credit" && clientId) {
+      await Client.increment("credit_balance", {
+        by: total_amount,
         where: { id: clientId },
         transaction,
       });
@@ -98,7 +98,7 @@ const createSale = async (req, res) => {
           model: SaleItem,
           include: [{ model: Product, attributes: ["name", "code", "price"] }],
         },
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
       ],
     });
 
@@ -115,15 +115,15 @@ const getSales = async (req, res) => {
       startDate,
       endDate,
       clientId,
-      paymentStatus,
-      paymentMethod,
+      payment_status,
+      payment_method,
       search,
     } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -132,17 +132,17 @@ const getSales = async (req, res) => {
       whereClause.ClientId = clientId;
     }
 
-    if (paymentStatus) {
-      whereClause.paymentStatus = paymentStatus;
+    if (payment_status) {
+      whereClause.payment_status = payment_status;
     }
 
-    if (paymentMethod) {
-      whereClause.paymentMethod = paymentMethod;
+    if (payment_method) {
+      whereClause.payment_method = payment_method;
     }
 
     if (search) {
       whereClause[Op.or] = [
-        { saleNumber: { [Op.like]: `%${search}%` } },
+        { sale_number: { [Op.like]: `%${search}%` } },
         { notes: { [Op.like]: `%${search}%` } },
       ];
     }
@@ -154,9 +154,9 @@ const getSales = async (req, res) => {
           model: SaleItem,
           include: [{ model: Product, attributes: ["name", "code"] }],
         },
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(sales);
@@ -224,16 +224,16 @@ const deleteSale = async (req, res) => {
     }
 
     // Reverter saldo do cliente se for fiado
-    if (sale.paymentMethod === "credit" && sale.ClientId) {
-      await Client.decrement("creditBalance", {
-        by: sale.totalAmount,
+    if (sale.payment_method === "credit" && sale.ClientId) {
+      await Client.decrement("credit_balance", {
+        by: sale.total_amount,
         where: { id: sale.ClientId },
         transaction,
       });
     }
 
     // Desativar venda (soft delete)
-    await sale.update({ isActive: false }, { transaction });
+    await sale.update({ is_active: false }, { transaction });
 
     await transaction.commit();
     res.json({ message: "Venda cancelada com sucesso" });
@@ -262,21 +262,21 @@ const generateReceipt = async (req, res) => {
     // Aqui você pode implementar a geração de PDF
     // Por enquanto, retornamos os dados formatados
     const receipt = {
-      saleNumber: sale.saleNumber,
-      date: sale.createdAt,
+      sale_number: sale.sale_number,
+      date: sale.created_at,
       client: sale.Client ? sale.Client.name : "Cliente Avulso",
       items: sale.SaleItems.map((item) => ({
         product: item.Product.name,
         quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        total: item.quantity * item.unitPrice,
+        unit_price: item.unit_price,
+        total: item.quantity * item.unit_price,
       })),
       subtotal: sale.subtotal,
       discount: sale.discount,
       tax: sale.tax,
-      total: sale.totalAmount,
-      paymentMethod: sale.paymentMethod,
-      paymentStatus: sale.paymentStatus,
+      total: sale.total_amount,
+      payment_method: sale.payment_method,
+      payment_status: sale.payment_status,
     };
 
     res.json(receipt);
@@ -292,11 +292,11 @@ const getSalesByClient = async (req, res) => {
 
     let whereClause = {
       ClientId: clientId,
-      isActive: true,
+      is_active: true,
     };
 
     if (status) {
-      whereClause.paymentStatus = status;
+      whereClause.payment_status = status;
     }
 
     const sales = await Sale.findAll({
@@ -308,7 +308,7 @@ const getSalesByClient = async (req, res) => {
         },
         { model: CreditPayment },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(sales);

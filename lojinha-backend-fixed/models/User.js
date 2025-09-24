@@ -34,7 +34,7 @@ const User = sequelize.define(
       type: DataTypes.ENUM("active", "inactive"),
       defaultValue: "active",
     },
-    isActive: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },

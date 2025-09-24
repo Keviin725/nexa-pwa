@@ -38,16 +38,12 @@ const Product = sequelize.define(
       defaultValue: 0,
       comment: "Estoque mínimo para alertas",
     },
-    isActive: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
     description: {
       type: DataTypes.TEXT,
-    },
-    supplier: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     location: {
       type: DataTypes.STRING,

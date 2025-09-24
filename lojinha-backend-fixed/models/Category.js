@@ -23,7 +23,7 @@ const Category = sequelize.define(
       allowNull: true,
       comment: "Cor da categoria para interface",
     },
-    isActive: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },

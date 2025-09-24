@@ -14,9 +14,9 @@ router.get("/sales", async (req, res) => {
   try {
     const { startDate, endDate, period = "day" } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -30,13 +30,13 @@ router.get("/sales", async (req, res) => {
           include: [{ model: Product, attributes: ["name", "price"] }],
         },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     // Agrupar por período
     const groupedSales = {};
     sales.forEach((sale) => {
-      const date = new Date(sale.createdAt);
+      const date = new Date(sale.created_at);
       let key;
 
       switch (period) {
@@ -83,9 +83,9 @@ router.get("/products", async (req, res) => {
   try {
     const { startDate, endDate, limit = 10 } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -93,8 +93,8 @@ router.get("/products", async (req, res) => {
     const products = await SaleItem.findAll({
       where: whereClause,
       include: [
-        { model: Product, attributes: ["name", "price", "costPrice"] },
-        { model: Sale, where: { isActive: true } },
+        { model: Product, attributes: ["name", "price", "cost_price"] },
+        { model: Sale, where: { is_active: true } },
       ],
       attributes: [
         "ProductId",
@@ -115,7 +115,7 @@ router.get("/products", async (req, res) => {
         "Product.id",
         "Product.name",
         "Product.price",
-        "Product.costPrice",
+        "Product.cost_price",
       ],
       order: [[SaleItem.sequelize.literal("totalQuantity"), "DESC"]],
       limit: parseInt(limit),
@@ -132,9 +132,9 @@ router.get("/profit", async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -145,7 +145,7 @@ router.get("/profit", async (req, res) => {
         {
           model: SaleItem,
           include: [
-            { model: Product, attributes: ["name", "price", "costPrice"] },
+            { model: Product, attributes: ["name", "price", "cost_price"] },
           ],
         },
       ],
@@ -158,8 +158,8 @@ router.get("/profit", async (req, res) => {
     sales.forEach((sale) => {
       sale.SaleItems.forEach((item) => {
         const revenue = item.quantity * item.unitPrice;
-        const cost = item.Product.costPrice
-          ? item.quantity * item.Product.costPrice
+        const cost = item.Product.cost_price
+          ? item.quantity * item.Product.cost_price
           : 0;
 
         totalRevenue += revenue;
@@ -203,12 +203,12 @@ router.get("/credit", async (req, res) => {
     const { status = "pending" } = req.query;
 
     let whereClause = {
-      isActive: true,
+      is_active: true,
       paymentMethod: "credit",
     };
 
     if (status === "pending") {
-      whereClause.paymentStatus = { [Op.in]: ["pending", "partial"] };
+      whereClause.payment_status = { [Op.in]: ["pending", "partial"] };
     }
 
     const creditSales = await Sale.findAll({
@@ -217,10 +217,10 @@ router.get("/credit", async (req, res) => {
         { model: Client, attributes: ["name", "contact"] },
         {
           model: CreditPayment,
-          attributes: ["amountPaid", "createdAt"],
+          attributes: ["amountPaid", "created_at"],
         },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     // Calcular saldo pendente para cada venda
@@ -255,8 +255,8 @@ router.get("/dashboard", async (req, res) => {
     // Vendas do dia
     const todaySales = await Sale.findAll({
       where: {
-        isActive: true,
-        createdAt: {
+        is_active: true,
+        created_at: {
           [Op.between]: [startOfDay, endOfDay],
         },
       },
@@ -265,17 +265,17 @@ router.get("/dashboard", async (req, res) => {
     // Vendas pendentes
     const pendingSales = await Sale.findAll({
       where: {
-        isActive: true,
-        paymentStatus: { [Op.in]: ["pending", "partial"] },
+        is_active: true,
+        payment_status: { [Op.in]: ["pending", "partial"] },
       },
     });
 
     // Produtos com estoque baixo
     const lowStockProducts = await Product.findAll({
       where: {
-        isActive: true,
+        is_active: true,
         stock: {
-          [Op.lte]: SaleItem.sequelize.col("minStock"),
+          [Op.lte]: 5,
         },
       },
     });
@@ -303,7 +303,7 @@ router.get("/dashboard", async (req, res) => {
         items: lowStockProducts.map((p) => ({
           name: p.name,
           stock: p.stock,
-          minStock: p.minStock,
+          min_stock: 5,
         })),
       },
     });

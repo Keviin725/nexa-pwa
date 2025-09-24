@@ -49,18 +49,19 @@
                         <!-- Receita Total - MAIS IMPORTANTE -->
                         <div
                             class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                            <div class="text-3xl font-bold text-green-600 mb-1">MT {{
-                                formatPrice(dashboard.today.revenue) }}</div>
+                            <div class="text-2xl font-bold text-green-600 mb-1">{{
+                                dashboardStore.formattedMetrics.totalRevenue }}</div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
-                            <div class="text-xs text-green-600 mt-1">{{ dashboard.today.sales }} vendas</div>
+                            <div class="text-xs text-green-600 mt-1">{{ dashboardStore.data.totalSales }} vendas</div>
                         </div>
                         <!-- Vendas Pendentes - CRÍTICO -->
                         <div
                             class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
-                            <div class="text-3xl font-bold text-yellow-600 mb-1">MT {{
-                                formatPrice(dashboard.pending.amount) }}</div>
+                            <div class="text-2xl font-bold text-yellow-600 mb-1">MT {{
+                                formatPrice(salesStore.stats.pendingRevenue) }}</div>
                             <div class="text-sm font-medium text-slate-700">Pendente</div>
-                            <div class="text-xs text-yellow-600 mt-1">{{ dashboard.pending.sales }} vendas</div>
+                            <div class="text-xs text-yellow-600 mt-1">{{ dashboardStore.data.pendingSales }} vendas
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,14 +84,16 @@
                         <!-- Stock Baixo - CRÍTICO -->
                         <div
                             class="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl border border-red-200">
-                            <div class="text-3xl font-bold text-red-600 mb-1">{{ dashboard.lowStock.products }}</div>
+                            <div class="text-3xl font-bold text-red-600 mb-1">{{ dashboardStore.data.lowStockProducts }}
+                            </div>
                             <div class="text-sm font-medium text-slate-700">Stock Baixo</div>
                             <div class="text-xs text-red-600 mt-1">Produtos críticos</div>
                         </div>
                         <!-- Total Produtos - INFORMATIVO -->
                         <div
                             class="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">{{ dashboard.totalProducts }}</div>
+                            <div class="text-3xl font-bold text-blue-600 mb-1">{{ dashboardStore.data.totalProducts }}
+                            </div>
                             <div class="text-sm font-medium text-slate-700">Total Produtos</div>
                             <div class="text-xs text-blue-600 mt-1">Em estoque</div>
                         </div>
@@ -193,8 +196,8 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-800 mb-1">Nova Venda</h3>
-                                <p class="text-sm text-green-600 font-medium">Registrar venda</p>
+                                <h3 class="font-bold text-slate-800 mb-1">Vendas</h3>
+                                <p class="text-sm text-green-600 font-m edium">Gerir vendas</p>
                             </div>
                         </button>
 
@@ -255,7 +258,7 @@
             </div>
 
             <!-- Alertas Importantes -->
-            <div v-if="dashboard.lowStock.products > 0"
+            <div v-if="dashboard && dashboard.lowStockProducts > 0"
                 class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl shadow-xl border border-red-200/50 p-6 relative overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-red-50/30 to-orange-50/20 pointer-events-none">
                 </div>
@@ -270,13 +273,13 @@
                         </div>
                         <div>
                             <h3 class="font-semibold text-red-800">Atenção: Stock Baixo</h3>
-                            <p class="text-sm text-red-600">{{ dashboard.lowStock.products }} produtos precisam de
+                            <p class="text-sm text-red-600">{{ dashboard.lowStockProducts }} produtos precisam de
                                 reposição
                             </p>
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <div v-for="product in dashboard.lowStock.items" :key="product.id"
+                        <div v-for="product in productsStore.lowStockProducts" :key="product.id"
                             class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
                             <div>
                                 <span class="font-medium text-slate-800">{{ product.name }}</span>
@@ -311,15 +314,18 @@
                             todas</router-link>
                     </div>
                     <div class="space-y-3">
-                        <div v-for="sale in dashboard.recentSales" :key="sale.id"
+                        <div v-for="sale in salesStore.recentSales" :key="sale.id"
                             class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                             <div>
-                                <span class="font-medium text-slate-800">Venda #{{ sale.number }}</span>
-                                <span class="text-sm text-slate-600 ml-2">{{ sale.client }}</span>
+                                <span class="font-medium text-slate-800">Venda #{{ sale.saleNumber }}</span>
+                                <span class="text-sm text-slate-600 ml-2">
+                                    {{ sale.Client?.name || 'Cliente não informado' }}
+
+                                </span>
                             </div>
                             <div class="text-right">
-                                <div class="font-semibold text-green-600">MT {{ formatPrice(sale.total) }}</div>
-                                <div class="text-xs text-slate-500">{{ sale.time }}</div>
+                                <div class="font-semibold text-green-600">MT {{ formatPrice(sale.totalAmount) }}</div>
+                                <div class="text-xs text-slate-500">{{ formatDate(sale.createdAt) }}</div>
                             </div>
                         </div>
                     </div>
@@ -341,17 +347,18 @@
 
                         <!-- Gráfico Simples de Barras -->
                         <div class="space-y-4">
-                            <div v-for="period in dashboard.salesByPeriod" :key="period.period" class="space-y-2">
+                            <div v-for="period in (dashboardStore.chartData.salesByDay || [])" :key="period.date"
+                                class="space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm text-slate-600">{{ period.period }}</span>
+                                    <span class="text-sm text-slate-600">{{ period.date }}</span>
                                     <div class="text-right">
-                                        <div class="font-semibold text-slate-800">{{ period.sales }} vendas</div>
-                                        <div class="text-sm text-green-600">MT {{ formatPrice(period.amount) }}</div>
+                                        <div class="font-semibold text-slate-800">{{ period.count }} vendas</div>
+                                        <div class="text-sm text-green-600">MT {{ formatPrice(period.total) }}</div>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
-                                        :style="{ width: `${(period.amount / Math.max(...dashboard.salesByPeriod.map(p => p.amount))) * 100}%` }">
+                                        :style="{ width: `${(period.total / Math.max(...(dashboardStore.chartData.salesByDay || []).map(p => p.total))) * 100}%` }">
                                     </div>
                                 </div>
                             </div>
@@ -372,7 +379,8 @@
                         </div>
 
                         <div class="space-y-4">
-                            <div v-for="(product, index) in dashboard.topProducts" :key="product.id" class="space-y-2">
+                            <div v-for="(product, index) in (dashboardStore.chartData.topProducts || [])"
+                                :key="product.name" class="space-y-2">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
                                         <div
@@ -388,7 +396,7 @@
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                                        :style="{ width: `${(product.quantity / Math.max(...dashboard.topProducts.map(p => p.quantity))) * 100}%` }">
+                                        :style="{ width: `${(product.quantity / Math.max(...(dashboardStore.chartData.topProducts || []).map(p => p.quantity))) * 100}%` }">
                                     </div>
                                 </div>
                             </div>
@@ -662,32 +670,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, onUnmounted } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { mockDataService } from '../services/mockDataService.js'
+import { useDashboardStore } from '@/stores/dashboard'
+import { useSalesStore } from '@/stores/sales'
+import { useProductsStore } from '@/stores/products'
+import { useClientsStore } from '@/stores/clients'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 
 const router = useRouter()
 
-// Estado reativo
-const dashboard = reactive({
-    today: {
-        sales: 0,
-        revenue: 0
-    },
-    pending: {
-        sales: 0,
-        amount: 0
-    },
-    lowStock: {
-        products: 0,
-        items: []
-    },
-    totalProducts: 0,
-    salesByPeriod: [],
-    topProducts: [],
-    recentSales: []
-})
+// Stores
+const dashboardStore = useDashboardStore()
+const salesStore = useSalesStore()
+const productsStore = useProductsStore()
+const clientsStore = useClientsStore()
+
+// Computed properties
+const dashboard = computed(() => dashboardStore.data)
+const loading = computed(() => dashboardStore.loading)
 
 // Estado para bottom sheet de venda
 const showSaleSheet = ref(false)
@@ -727,12 +728,17 @@ const notifications = reactive({
     ]
 })
 
-// API Base URL
-const API_BASE = 'http://localhost:3000'
-
 // Métodos
 const formatPrice = (price) => {
     return parseFloat(price).toFixed(2).replace('.', ',')
+}
+
+const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('pt-PT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    })
 }
 
 // Funções para bottom sheet de venda
@@ -754,30 +760,35 @@ const closeSaleSheet = () => {
 
 const saveSale = async () => {
     try {
-        // Simular salvamento da venda
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Criar venda usando a store
+        const saleData = {
+            ClientId: saleForm.client || null,
+            saleItems: saleForm.products.map(product => ({
+                ProductId: product.id,
+                quantity: product.quantity,
+                unitPrice: product.price
+            })),
+            paymentMethod: saleForm.paymentMethod,
+            totalAmount: saleForm.total,
+            notes: saleForm.notes
+        }
 
-        // Atualizar dashboard
-        await loadDashboard()
+        const result = await salesStore.createSale(saleData)
 
-        closeSaleSheet()
-        alert('Venda registrada com sucesso!')
+        if (result.success) {
+            // Atualizar dashboard
+            await loadDashboard()
+
+            closeSaleSheet()
+            alert('Venda registrada com sucesso!')
+        } else {
+            console.error('Erro ao salvar venda:', result.error)
+            alert('Erro ao salvar venda: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao salvar venda:', error)
         alert('Erro ao salvar venda')
     }
-}
-
-const formatTimeAgo = (timestamp) => {
-    const now = new Date()
-    const diff = now - timestamp
-    const minutes = Math.floor(diff / 60000)
-    const hours = Math.floor(diff / 3600000)
-    const days = Math.floor(diff / 86400000)
-
-    if (minutes < 60) return `há ${minutes} min`
-    if (hours < 24) return `há ${hours}h`
-    return `há ${days}d`
 }
 
 // Funcionalidades Mobile
@@ -795,41 +806,17 @@ const hapticFeedback = () => {
 
 const loadDashboard = async () => {
     try {
-        // Carregar dados do dashboard usando mockDataService
-        const data = await mockDataService.getDashboardData()
+        // Carregar dados do dashboard
+        await dashboardStore.loadDashboardData()
 
-        // Atualizar dados reativos
-        dashboard.today = {
-            sales: data.totalSales,
-            revenue: data.totalRevenue
-        }
-        dashboard.pending = {
-            sales: data.pendingSales,
-            amount: 450.00 // Mock amount for pending sales
-        }
-        dashboard.lowStock = {
-            products: data.lowStockProducts,
-            items: [
-                { id: 1, name: 'Produto A', stock: 5 },
-                { id: 2, name: 'Produto B', stock: 2 }
-            ]
-        }
-        dashboard.totalProducts = 45
-        dashboard.salesByPeriod = [
-            { period: 'Hoje', sales: 12, amount: 1250.50 },
-            { period: 'Esta Semana', sales: 45, amount: 4200.00 },
-            { period: 'Este Mês', sales: 180, amount: 15600.00 }
-        ]
-        dashboard.topProducts = [
-            { id: 1, name: 'Produto A', quantity: 25, revenue: 1250.00 },
-            { id: 2, name: 'Produto B', quantity: 18, revenue: 900.00 },
-            { id: 3, name: 'Produto C', quantity: 15, revenue: 750.00 }
-        ]
-        dashboard.recentSales = [
-            { id: 1, number: '001', client: 'João Silva', total: 150.00, time: '10:30' },
-            { id: 2, number: '002', client: 'Maria Santos', total: 75.50, time: '09:45' },
-            { id: 3, number: '003', client: 'Pedro Costa', total: 200.00, time: '09:15' }
-        ]
+        // Carregar produtos com estoque baixo
+        await productsStore.loadLowStockProducts()
+
+        // Carregar vendas pendentes
+        await salesStore.loadPendingSales()
+
+        // Carregar vendas recentes
+        await salesStore.loadSales({ limit: 5 })
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error)
     }

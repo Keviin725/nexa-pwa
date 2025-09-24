@@ -394,25 +394,23 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
-import { mockDataService } from '../services/mockDataService.js'
+import { useProductsStore } from '@/stores/products'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
-// Estado reativo
-const products = ref([])
-const categories = ref([])
-const loading = ref(false)
+// Store
+const productsStore = useProductsStore()
+
+// Estado local
 const showModal = ref(false)
 const showStockModal = ref(false)
 const modalMode = ref('create')
 const selectedProduct = ref(null)
 
 // Computed properties
-const lowStockProducts = computed(() => {
-    if (!Array.isArray(products.value)) {
-        return []
-    }
-    return products.value.filter(product => product.stock <= product.minStock && product.stock > 0)
-})
+const products = computed(() => productsStore.products)
+const categories = computed(() => productsStore.categories)
+const loading = computed(() => productsStore.loading)
+const lowStockProducts = computed(() => productsStore.lowStockProducts)
 
 // Filtros
 const filters = reactive({
@@ -432,7 +430,6 @@ const form = reactive({
     stock: '',
     minStock: '',
     description: '',
-    supplier: '',
     location: '',
     weight: '',
     volume: '',
@@ -455,42 +452,13 @@ const formatPrice = (price) => {
 
 const loadProducts = async () => {
     try {
-        loading.value = true
+        // Aplicar filtros na store
+        productsStore.setFilters(filters)
 
-        // Carregar produtos usando mockDataService
-        const allProducts = await mockDataService.getProducts()
-
-        // Aplicar filtros localmente
-        let filteredProducts = allProducts
-
-        if (filters.search) {
-            filteredProducts = filteredProducts.filter(product =>
-                product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                product.description.toLowerCase().includes(filters.search.toLowerCase())
-            )
-        }
-
-        if (filters.category) {
-            filteredProducts = filteredProducts.filter(product =>
-                product.category === filters.category
-            )
-        }
-
-        if (filters.lowStock) {
-            filteredProducts = filteredProducts.filter(product =>
-                product.stock <= product.minStock
-            )
-        }
-
-        products.value = filteredProducts
-
-        // Verificar produtos com estoque baixo
-        checkLowStockProducts()
+        // Carregar produtos usando a store
+        await productsStore.loadProducts()
     } catch (error) {
         console.error('Erro ao carregar produtos:', error)
-        // Notificação de erro removida
-    } finally {
-        loading.value = false
     }
 }
 
@@ -504,13 +472,14 @@ const checkLowStockProducts = () => {
 
 const loadCategories = async () => {
     try {
-        categories.value = await mockDataService.getCategories()
+        await productsStore.loadCategories()
     } catch (error) {
         console.error('Erro ao carregar categorias:', error)
     }
 }
 
 const searchProducts = () => {
+    productsStore.setFilters(filters)
     loadProducts()
 }
 
@@ -520,6 +489,7 @@ const clearFilters = () => {
         category: '',
         lowStock: false
     })
+    productsStore.clearFilters()
     loadProducts()
 }
 
@@ -536,7 +506,6 @@ const openModal = (mode, product = null) => {
             stock: product.stock,
             minStock: product.minStock || '',
             description: product.description || '',
-            supplier: product.supplier || '',
             location: product.location || '',
             weight: product.weight || '',
             volume: product.volume || '',
@@ -553,7 +522,6 @@ const openModal = (mode, product = null) => {
             stock: '',
             minStock: '',
             description: '',
-            supplier: '',
             location: '',
             weight: '',
             volume: '',
@@ -575,7 +543,6 @@ const closeModal = () => {
         stock: '',
         minStock: '',
         description: '',
-        supplier: '',
         location: '',
         weight: '',
         volume: '',
@@ -585,21 +552,23 @@ const closeModal = () => {
 
 const saveProduct = async () => {
     try {
-        loading.value = true
+        let result
 
         if (modalMode.value === 'create') {
-            await mockDataService.createProduct(form)
+            result = await productsStore.createProduct(form)
         } else {
-            await mockDataService.updateProduct(form.id, form)
+            result = await productsStore.updateProduct(form.id, form)
         }
 
-        closeModal()
-        loadProducts()
+        if (result.success) {
+            closeModal()
+            loadProducts()
+        } else {
+            alert('Erro ao salvar produto: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao salvar produto:', error)
         alert('Erro ao salvar produto')
-    } finally {
-        loading.value = false
     }
 }
 
@@ -607,14 +576,16 @@ const deleteProduct = async (id) => {
     if (!confirm('Tem a certeza que deseja excluir este produto?')) return
 
     try {
-        loading.value = true
-        await mockDataService.deleteProduct(id)
-        loadProducts()
+        const result = await productsStore.deleteProduct(id)
+
+        if (result.success) {
+            loadProducts()
+        } else {
+            alert('Erro ao excluir produto: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao excluir produto:', error)
         alert('Erro ao excluir produto')
-    } finally {
-        loading.value = false
     }
 }
 
@@ -634,28 +605,23 @@ const closeStockModal = () => {
 
 const updateStock = async () => {
     try {
-        loading.value = true
+        const stockData = {
+            operation: stockForm.operation,
+            quantity: parseInt(stockForm.quantity),
+            reason: stockForm.reason
+        }
 
-        const response = await fetch(`${API_BASE}/products/${selectedProduct.value.id}/stock`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(stockForm)
-        })
+        const result = await productsStore.updateStock(selectedProduct.value.id, stockData)
 
-        if (response.ok) {
+        if (result.success) {
             closeStockModal()
             loadProducts()
         } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+            alert('Erro ao atualizar estoque: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao atualizar estoque:', error)
         alert('Erro ao atualizar estoque')
-    } finally {
-        loading.value = false
     }
 }
 

@@ -325,7 +325,7 @@
                                     <p class="text-sm font-medium text-slate-800 mt-1">Total: R$ {{
                                         formatPrice(debt.totalAmount) }}</p>
                                     <p class="text-xs text-green-600 mt-1">Pago: MT {{ formatPrice(debt.totalPaid)
-                                        }}</p>
+                                    }}</p>
                                     <p class="text-sm font-bold text-red-600 mt-1">Restante: MT {{
                                         formatPrice(debt.balance) }}</p>
                                 </div>
@@ -361,14 +361,15 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
-import { mockDataService } from '../services/mockDataService.js'
+import { useClientsStore } from '@/stores/clients'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
+// Store
+const clientsStore = useClientsStore()
+
 // Estado reativo
-const clients = ref([])
 const clientHistory = ref([])
 const clientDebts = ref([])
-const loading = ref(false)
 const showModal = ref(false)
 const showHistoryModal = ref(false)
 const showDebtsModal = ref(false)
@@ -376,12 +377,9 @@ const modalMode = ref('create')
 const selectedClient = ref(null)
 
 // Computed properties
-const clientsWithDebts = computed(() => {
-    if (!Array.isArray(clients.value)) {
-        return []
-    }
-    return clients.value.filter(client => client.creditBalance > 0)
-})
+const clients = computed(() => clientsStore.clients)
+const loading = computed(() => clientsStore.loading)
+const clientsWithDebts = computed(() => clientsStore.clientsWithDebts)
 
 // Filtros
 const filters = reactive({
@@ -419,44 +417,31 @@ const getStatusText = (status) => {
 
 const loadClients = async () => {
     try {
-        loading.value = true
+        clientsStore.setFilters(filters)
+        const result = await clientsStore.loadClients()
 
-        // Carregar clientes usando mockDataService
-        const allClients = await mockDataService.getClients()
-
-        // Aplicar filtros localmente
-        let filteredClients = allClients
-
-        if (filters.search) {
-            filteredClients = filteredClients.filter(client =>
-                client.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                client.phone.includes(filters.search) ||
-                client.email.toLowerCase().includes(filters.search.toLowerCase())
-            )
+        if (!result.success) {
+            console.error('Erro ao carregar clientes:', result.error)
         }
-
-        if (filters.hasDebt) {
-            filteredClients = filteredClients.filter(client => client.creditBalance > 0)
-        }
-
-        clients.value = filteredClients
     } catch (error) {
         console.error('Erro ao carregar clientes:', error)
-    } finally {
-        loading.value = false
     }
 }
 
 const loadClientsWithDebts = async () => {
     try {
-        const response = await fetch(`${API_BASE}/clients/debts/list`)
-        clients.value = await response.json()
+        const result = await clientsStore.loadClientsWithDebts()
+
+        if (!result.success) {
+            console.error('Erro ao carregar clientes com dívidas:', result.error)
+        }
     } catch (error) {
         console.error('Erro ao carregar clientes com dívidas:', error)
     }
 }
 
 const searchClients = () => {
+    clientsStore.setFilters(filters)
     loadClients()
 }
 
@@ -465,6 +450,7 @@ const clearFilters = () => {
         search: '',
         hasDebt: false
     })
+    clientsStore.clearFilters()
     loadClients()
 }
 

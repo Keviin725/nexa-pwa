@@ -60,12 +60,12 @@ const createCreditPayment = async (req, res) => {
     const newTotalPaid = totalPaid + amountPaid;
     if (newTotalPaid >= sale.totalAmount) {
       await Sale.update(
-        { paymentStatus: "paid" },
+        { payment_status: "paid" },
         { where: { id: saleId }, transaction }
       );
     } else {
       await Sale.update(
-        { paymentStatus: "partial" },
+        { payment_status: "partial" },
         { where: { id: saleId }, transaction }
       );
     }
@@ -76,7 +76,7 @@ const createCreditPayment = async (req, res) => {
     const paymentWithDetails = await CreditPayment.findByPk(payment.id, {
       include: [
         { model: Sale, attributes: ["saleNumber", "totalAmount"] },
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
       ],
     });
 
@@ -91,7 +91,7 @@ const getCreditPayments = async (req, res) => {
   try {
     const { clientId, saleId, startDate, endDate, paymentMethod } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (clientId) {
       whereClause.ClientId = clientId;
@@ -102,7 +102,7 @@ const getCreditPayments = async (req, res) => {
     }
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -116,12 +116,12 @@ const getCreditPayments = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["saleNumber", "totalAmount", "createdAt"],
+          attributes: ["saleNumber", "totalAmount", "created_at"],
           include: [{ model: Client, attributes: ["name"] }],
         },
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(payments);
@@ -138,7 +138,7 @@ const getCreditPaymentById = async (req, res) => {
           model: Sale,
           include: [{ model: Client, attributes: ["name", "contact"] }],
         },
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
       ],
     });
 
@@ -202,12 +202,12 @@ const deleteCreditPayment = async (req, res) => {
     }
 
     await Sale.update(
-      { paymentStatus: newStatus },
+      { payment_status: newStatus },
       { where: { id: sale.id }, transaction }
     );
 
     // Desativar pagamento (soft delete)
-    await payment.update({ isActive: false }, { transaction });
+    await payment.update({ is_active: false }, { transaction });
 
     await transaction.commit();
     res.json({ message: "Pagamento cancelado com sucesso" });
@@ -224,10 +224,10 @@ const getPaymentsBySale = async (req, res) => {
     const payments = await CreditPayment.findAll({
       where: {
         SaleId: saleId,
-        isActive: true,
+        is_active: true,
       },
       include: [{ model: Client, attributes: ["name", "contact"] }],
-      order: [["createdAt", "ASC"]],
+      order: [["created_at", "ASC"]],
     });
 
     res.json(payments);
@@ -243,11 +243,11 @@ const getPaymentsByClient = async (req, res) => {
 
     let whereClause = {
       ClientId: clientId,
-      isActive: true,
+      is_active: true,
     };
 
     if (startDate && endDate) {
-      whereClause.createdAt = {
+      whereClause.created_at = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -257,10 +257,10 @@ const getPaymentsByClient = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["saleNumber", "totalAmount", "createdAt"],
+          attributes: ["saleNumber", "totalAmount", "created_at"],
         },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(payments);

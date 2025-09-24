@@ -167,7 +167,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->
@@ -454,26 +454,28 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
-import { mockDataService } from '../services/mockDataService.js'
+import { useSalesStore } from '@/stores/sales'
+import { useClientsStore } from '@/stores/clients'
+import { useProductsStore } from '@/stores/products'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
+// Stores
+const salesStore = useSalesStore()
+const clientsStore = useClientsStore()
+const productsStore = useProductsStore()
+
 // Estado reativo
-const sales = ref([])
-const clients = ref([])
-const availableProducts = ref([])
-const loading = ref(false)
 const showSaleModal = ref(false)
 const showPaymentModal = ref(false)
 const selectedSale = ref(null)
 const selectedProduct = ref('')
 
 // Computed properties
-const pendingSales = computed(() => {
-    if (!Array.isArray(sales.value)) {
-        return []
-    }
-    return sales.value.filter(sale => sale.paymentStatus === 'pending' || sale.paymentStatus === 'partial')
-})
+const sales = computed(() => salesStore.sales)
+const clients = computed(() => clientsStore.clients)
+const availableProducts = computed(() => productsStore.products)
+const loading = computed(() => salesStore.loading)
+const pendingSales = computed(() => salesStore.pendingSales)
 
 // Filtros
 const filters = reactive({
@@ -526,45 +528,24 @@ const getStatusText = (status) => {
 
 const loadSales = async () => {
     try {
-        loading.value = true
+        salesStore.setFilters(filters)
+        const result = await salesStore.loadSales()
 
-        // Carregar vendas usando mockDataService
-        const allSales = await mockDataService.getSales()
-
-        // Aplicar filtros localmente
-        let filteredSales = allSales
-
-        if (filters.search) {
-            filteredSales = filteredSales.filter(sale =>
-                sale.clientName.toLowerCase().includes(filters.search.toLowerCase()) ||
-                sale.id.toString().includes(filters.search)
-            )
+        if (!result.success) {
+            console.error('Erro ao carregar vendas:', result.error)
         }
-
-        if (filters.clientId) {
-            filteredSales = filteredSales.filter(sale => sale.clientId == filters.clientId)
-        }
-
-        if (filters.paymentStatus) {
-            filteredSales = filteredSales.filter(sale => sale.paymentStatus === filters.paymentStatus)
-        }
-
-        if (filters.startDate) {
-            const startDate = new Date(filters.startDate)
-            filteredSales = filteredSales.filter(sale => new Date(sale.createdAt) >= startDate)
-        }
-
-        sales.value = filteredSales
     } catch (error) {
         console.error('Erro ao carregar vendas:', error)
-    } finally {
-        loading.value = false
     }
 }
 
 const loadClients = async () => {
     try {
-        clients.value = await mockDataService.getClients()
+        const result = await clientsStore.loadClients()
+
+        if (!result.success) {
+            console.error('Erro ao carregar clientes:', result.error)
+        }
     } catch (error) {
         console.error('Erro ao carregar clientes:', error)
     }
@@ -572,13 +553,18 @@ const loadClients = async () => {
 
 const loadProducts = async () => {
     try {
-        availableProducts.value = await mockDataService.getProducts()
+        const result = await productsStore.loadProducts()
+
+        if (!result.success) {
+            console.error('Erro ao carregar produtos:', result.error)
+        }
     } catch (error) {
         console.error('Erro ao carregar produtos:', error)
     }
 }
 
 const searchSales = () => {
+    salesStore.setFilters(filters)
     loadSales()
 }
 
@@ -589,6 +575,7 @@ const clearFilters = () => {
         paymentStatus: '',
         startDate: ''
     })
+    salesStore.clearFilters()
     loadSales()
 }
 
@@ -657,43 +644,32 @@ const calculateTotal = () => {
 
 const createSale = async () => {
     try {
-        loading.value = true
+        const saleData = {
+            clientId: saleForm.clientId || null,
+            paymentMethod: saleForm.paymentMethod,
+            dueDate: saleForm.paymentMethod === 'credit' ? saleForm.dueDate : null,
+            products: saleForm.products.map(p => ({
+                productId: p.id,
+                quantity: p.quantity
+            })),
+            subtotal: saleForm.subtotal,
+            discount: saleForm.discount,
+            tax: saleForm.tax,
+            totalAmount: saleForm.totalAmount,
+            notes: saleForm.notes
+        }
 
-        const response = await fetch(`${API_BASE}/sales`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                clientId: saleForm.clientId || null,
-                paymentMethod: saleForm.paymentMethod,
-                dueDate: saleForm.paymentMethod === 'credit' ? saleForm.dueDate : null,
-                products: saleForm.products.map(p => ({
-                    productId: p.id,
-                    quantity: p.quantity
-                })),
-                subtotal: saleForm.subtotal,
-                discount: saleForm.discount,
-                tax: saleForm.tax,
-                totalAmount: saleForm.totalAmount,
-                notes: saleForm.notes
-            })
-        })
+        const result = await salesStore.createSale(saleData)
 
-        if (response.ok) {
-            const saleData = await response.json()
-            // Notificação de nova venda removida
+        if (result.success) {
             closeSaleModal()
             loadSales()
         } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+            alert('Erro ao criar venda: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao criar venda:', error)
         alert('Erro ao criar venda')
-    } finally {
-        loading.value = false
     }
 }
 
@@ -720,22 +696,16 @@ const deleteSale = async (saleId) => {
     if (!confirm('Tem certeza que deseja cancelar esta venda?')) return
 
     try {
-        loading.value = true
-        const response = await fetch(`${API_BASE}/sales/${saleId}`, {
-            method: 'DELETE'
-        })
+        const result = await salesStore.deleteSale(saleId)
 
-        if (response.ok) {
+        if (result.success) {
             loadSales()
         } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+            alert('Erro ao cancelar venda: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao cancelar venda:', error)
         alert('Erro ao cancelar venda')
-    } finally {
-        loading.value = false
     }
 }
 

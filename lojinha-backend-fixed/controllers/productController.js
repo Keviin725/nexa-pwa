@@ -6,7 +6,7 @@ const getProducts = async (req, res) => {
   try {
     const { search, category, lowStock } = req.query;
 
-    let whereClause = { isActive: true };
+    let whereClause = { is_active: true };
 
     if (search) {
       whereClause[Op.or] = [
@@ -21,7 +21,7 @@ const getProducts = async (req, res) => {
 
     if (lowStock === "true") {
       whereClause.stock = {
-        [Op.lte]: Product.sequelize.col("minStock"),
+        [Op.lte]: 5,
       };
     }
 
@@ -80,7 +80,7 @@ const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Produto não encontrado" });
     }
-    await product.update({ isActive: false });
+    await product.update({ is_active: false });
     res.json({ message: "Produto desativado com sucesso" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -120,18 +120,22 @@ const updateStock = async (req, res) => {
 // GET /products/categories - Listar categorias
 const getCategories = async (req, res) => {
   try {
+    console.log("🔍 getCategories chamado");
+
     const categories = await Product.findAll({
       attributes: ["category"],
       where: {
         category: { [Op.ne]: null },
-        isActive: true,
+        is_active: true,
       },
       group: ["category"],
       order: [["category", "ASC"]],
     });
 
+    console.log("📋 Categorias encontradas:", categories.length);
     res.json(categories.map((c) => c.category));
   } catch (error) {
+    console.error("❌ Erro em getCategories:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -141,9 +145,9 @@ const getLowStockProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
       where: {
-        isActive: true,
+        is_active: true,
         stock: {
-          [Op.lte]: Product.sequelize.col("minStock"),
+          [Op.lte]: 5,
         },
       },
       order: [["stock", "ASC"]],

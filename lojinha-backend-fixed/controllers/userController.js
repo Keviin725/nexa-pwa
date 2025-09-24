@@ -66,8 +66,8 @@ const getUserById = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["id", "saleNumber", "totalAmount", "createdAt"],
-          order: [["createdAt", "DESC"]],
+          attributes: ["id", "saleNumber", "totalAmount", "created_at"],
+          order: [["created_at", "DESC"]],
           limit: 10,
         },
       ],
@@ -175,7 +175,7 @@ const deleteUser = async (req, res) => {
     // Verificar se é o último admin
     if (user.role === "admin") {
       const adminCount = await User.count({
-        where: { role: "admin", isActive: true },
+        where: { role: "admin", is_active: true },
       });
 
       if (adminCount <= 1) {
@@ -185,7 +185,7 @@ const deleteUser = async (req, res) => {
       }
     }
 
-    await user.update({ isActive: false });
+    await user.update({ is_active: false });
     res.json({ message: "Usuário desativado com sucesso" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -202,9 +202,9 @@ const toggleUserStatus = async (req, res) => {
     }
 
     // Verificar se é o último admin ativo
-    if (user.role === "admin" && user.isActive) {
+    if (user.role === "admin" && user.is_active) {
       const activeAdminCount = await User.count({
-        where: { role: "admin", isActive: true },
+        where: { role: "admin", is_active: true },
       });
 
       if (activeAdminCount <= 1) {
@@ -215,15 +215,15 @@ const toggleUserStatus = async (req, res) => {
     }
 
     await user.update({
-      isActive: !user.isActive,
-      status: user.isActive ? "inactive" : "active",
+      is_active: !user.is_active,
+      status: user.is_active ? "inactive" : "active",
     });
 
     res.json({
       message: `Usuário ${
-        user.isActive ? "ativado" : "desativado"
+        user.is_active ? "ativado" : "desativado"
       } com sucesso`,
-      isActive: !user.isActive,
+      is_active: !user.is_active,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -256,15 +256,15 @@ const updateUserPermissions = async (req, res) => {
 const getUserStats = async (req, res) => {
   try {
     const totalUsers = await User.count();
-    const activeUsers = await User.count({ where: { isActive: true } });
+    const activeUsers = await User.count({ where: { is_active: true } });
     const adminUsers = await User.count({
-      where: { role: "admin", isActive: true },
+      where: { role: "admin", is_active: true },
     });
     const managerUsers = await User.count({
-      where: { role: "manager", isActive: true },
+      where: { role: "manager", is_active: true },
     });
     const sellerUsers = await User.count({
-      where: { role: "seller", isActive: true },
+      where: { role: "seller", is_active: true },
     });
 
     res.json({
@@ -293,7 +293,7 @@ const bulkUserAction = async (req, res) => {
     switch (action) {
       case "activate":
         result = await User.update(
-          { isActive: true, status: "active" },
+          { is_active: true, status: "active" },
           { where: { id: { [Op.in]: userIds } } }
         );
         break;
@@ -301,12 +301,12 @@ const bulkUserAction = async (req, res) => {
       case "deactivate":
         // Verificar se algum dos usuários é admin
         const adminUsers = await User.findAll({
-          where: { id: { [Op.in]: userIds }, role: "admin", isActive: true },
+          where: { id: { [Op.in]: userIds }, role: "admin", is_active: true },
         });
 
         if (adminUsers.length > 0) {
           const activeAdminCount = await User.count({
-            where: { role: "admin", isActive: true },
+            where: { role: "admin", is_active: true },
           });
 
           if (activeAdminCount - adminUsers.length <= 0) {
@@ -317,7 +317,7 @@ const bulkUserAction = async (req, res) => {
         }
 
         result = await User.update(
-          { isActive: false, status: "inactive" },
+          { is_active: false, status: "inactive" },
           { where: { id: { [Op.in]: userIds } } }
         );
         break;
@@ -325,12 +325,12 @@ const bulkUserAction = async (req, res) => {
       case "delete":
         // Verificar se algum dos usuários é admin
         const adminUsersToDelete = await User.findAll({
-          where: { id: { [Op.in]: userIds }, role: "admin", isActive: true },
+          where: { id: { [Op.in]: userIds }, role: "admin", is_active: true },
         });
 
         if (adminUsersToDelete.length > 0) {
           const activeAdminCount = await User.count({
-            where: { role: "admin", isActive: true },
+            where: { role: "admin", is_active: true },
           });
 
           if (activeAdminCount - adminUsersToDelete.length <= 0) {
@@ -341,7 +341,7 @@ const bulkUserAction = async (req, res) => {
         }
 
         result = await User.update(
-          { isActive: false },
+          { is_active: false },
           { where: { id: { [Op.in]: userIds } } }
         );
         break;

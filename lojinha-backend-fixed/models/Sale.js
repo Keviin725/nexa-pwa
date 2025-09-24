@@ -46,7 +46,7 @@ const Sale = sequelize.define(
     notes: {
       type: DataTypes.TEXT,
     },
-    isActive: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },

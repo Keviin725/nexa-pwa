@@ -262,43 +262,24 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useReportsStore } from '@/stores/reports'
 import ModernLineChart from '../components/Charts/ModernLineChart.vue'
 import ModernBarChart from '../components/Charts/ModernBarChart.vue'
 import ModernPieChart from '../components/Charts/ModernPieChart.vue'
 import ModernKPICard from '../components/Metrics/ModernKPICard.vue'
 
-// Estado reativo
-const loading = ref(false)
-const filters = reactive({
-    startDate: '',
-    endDate: '',
-    reportType: 'sales'
-})
+// Store
+const reportsStore = useReportsStore()
 
-const metrics = reactive({
-    totalSales: 0,
-    totalRevenue: 0,
-    productsSold: 0,
-    newClients: 0,
-    averageTicket: 0,
-    profitMargin: 0,
-    salesPerDay: 0,
-    growth: 0,
-    salesTrend: 'up',
-    salesTrendPercentage: 0,
-    revenueTrend: 'up',
-    revenueTrendPercentage: 0,
-    productsTrend: 'up',
-    productsTrendPercentage: 0,
-    clientsTrend: 'up',
-    clientsTrendPercentage: 0
-})
-
-const salesData = ref([])
-const topProductsData = ref([])
-const salesDistributionData = ref([])
-const detailedSales = ref([])
+// Computed properties
+const loading = computed(() => reportsStore.loading)
+const filters = computed(() => reportsStore.filters)
+const metrics = computed(() => reportsStore.metrics)
+const salesData = computed(() => reportsStore.salesData)
+const topProductsData = computed(() => reportsStore.topProductsData)
+const salesDistributionData = computed(() => reportsStore.salesDistributionData)
+const detailedSales = computed(() => reportsStore.detailedSales)
 
 // Métodos
 const formatPrice = (price) => {
@@ -318,108 +299,25 @@ const getStatusClass = (status) => {
     return classes[status] || 'bg-slate-100 text-slate-800'
 }
 
-const loadReportData = async () => {
-    try {
-        loading.value = true
-
-        // Simular carregamento de dados
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // Dados mock para demonstração
-        metrics.totalSales = 156
-        metrics.totalRevenue = 125.500
-        metrics.productsSold = 892
-        metrics.newClients = 23
-        metrics.averageTicket = 804.04
-        metrics.profitMargin = 35.2
-        metrics.salesPerDay = 5.2
-        metrics.growth = 12.5
-
-        metrics.salesTrend = 'up'
-        metrics.salesTrendPercentage = 8.3
-        metrics.revenueTrend = 'up'
-        metrics.revenueTrendPercentage = 15.7
-        metrics.productsTrend = 'up'
-        metrics.productsTrendPercentage = 22.1
-        metrics.clientsTrend = 'up'
-        metrics.clientsTrendPercentage = 18.5
-
-        // Dados dos gráficos
-        salesData.value = [
-            { period: '1 Jan', value: 1200 },
-            { period: '2 Jan', value: 1500 },
-            { period: '3 Jan', value: 1800 },
-            { period: '4 Jan', value: 2200 },
-            { period: '5 Jan', value: 1900 },
-            { period: '6 Jan', value: 2500 },
-            { period: '7 Jan', value: 2800 }
-        ]
-
-        topProductsData.value = [
-            { name: 'Produto A', value: 45 },
-            { name: 'Produto B', value: 38 },
-            { name: 'Produto C', value: 32 },
-            { name: 'Produto D', value: 28 },
-            { name: 'Produto E', value: 25 }
-        ]
-
-        salesDistributionData.value = [
-            { label: 'Eletrônicos', value: 45000 },
-            { label: 'Roupas', value: 32000 },
-            { label: 'Casa', value: 28000 },
-            { label: 'Esportes', value: 15000 },
-            { label: 'Outros', value: 5430 }
-        ]
-
-        detailedSales.value = [
-            { id: 1, date: '2024-01-15', number: '001', client: 'João Silva', products: 3, total: 150.00, status: 'Pago' },
-            { id: 2, date: '2024-01-15', number: '002', client: 'Maria Santos', products: 2, total: 75.50, status: 'Pendente' },
-            { id: 3, date: '2024-01-14', number: '003', client: 'Pedro Costa', products: 1, total: 200.00, status: 'Pago' },
-            { id: 4, date: '2024-01-14', number: '004', client: 'Ana Oliveira', products: 4, total: 320.00, status: 'Pago' },
-            { id: 5, date: '2024-01-13', number: '005', client: 'Carlos Lima', products: 2, total: 95.00, status: 'Cancelado' }
-        ]
-
-    } catch (error) {
-        console.error('Erro ao carregar dados do relatório:', error)
-    } finally {
-        loading.value = false
-    }
+const applyFilters = async () => {
+    await reportsStore.applyFilters(filters.value)
 }
 
-const applyFilters = () => {
-    loadReportData()
+const clearFilters = async () => {
+    await reportsStore.clearFilters()
 }
 
-const clearFilters = () => {
-    const today = new Date()
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate())
-
-    Object.assign(filters, {
-        startDate: lastMonth.toISOString().split('T')[0],
-        endDate: today.toISOString().split('T')[0],
-        reportType: 'sales'
-    })
-    loadReportData()
+const refreshData = async () => {
+    await reportsStore.loadReportData()
 }
 
-const refreshData = () => {
-    loadReportData()
-}
-
-const exportReport = () => {
-    // Implementar exportação de relatório
-    console.log('Exportando relatório...')
+const exportReport = async () => {
+    await reportsStore.exportReport()
 }
 
 // Lifecycle
-onMounted(() => {
-    // Definir datas padrão
-    const today = new Date()
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate())
-
-    filters.startDate = lastMonth.toISOString().split('T')[0]
-    filters.endDate = today.toISOString().split('T')[0]
-
-    loadReportData()
+onMounted(async () => {
+    // Carregar dados iniciais
+    await reportsStore.loadReportData()
 })
 </script>

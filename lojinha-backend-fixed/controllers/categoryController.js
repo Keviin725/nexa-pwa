@@ -15,7 +15,7 @@ const getCategories = async (req, res) => {
     }
 
     if (active !== undefined) {
-      whereClause.isActive = active === "true";
+      whereClause.is_active = active === "true";
     }
 
     const categories = await Category.findAll({
@@ -24,7 +24,7 @@ const getCategories = async (req, res) => {
         {
           model: Product,
           attributes: ["id"],
-          where: { isActive: true },
+          where: { is_active: true },
           required: false,
         },
       ],
@@ -50,7 +50,7 @@ const getCategoryById = async (req, res) => {
       include: [
         {
           model: Product,
-          where: { isActive: true },
+          where: { is_active: true },
           required: false,
         },
       ],
@@ -139,7 +139,7 @@ const deleteCategory = async (req, res) => {
     const productCount = await Product.count({
       where: {
         category: category.name,
-        isActive: true,
+        is_active: true,
       },
     });
 
@@ -149,7 +149,7 @@ const deleteCategory = async (req, res) => {
       });
     }
 
-    await category.update({ isActive: false });
+    await category.update({ is_active: false });
     res.json({ message: "Categoria desativada com sucesso" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -169,7 +169,7 @@ const getCategoryProducts = async (req, res) => {
 
     let whereClause = {
       category: category.name,
-      isActive: true,
+      is_active: true,
     };
 
     if (search) {
@@ -181,7 +181,7 @@ const getCategoryProducts = async (req, res) => {
 
     if (lowStock === "true") {
       whereClause.stock = {
-        [Op.lte]: Product.sequelize.col("minStock"),
+        [Op.lte]: 5,
       };
     }
 
@@ -226,7 +226,7 @@ const getCategoryStats = async (req, res) => {
         {
           model: Product,
           attributes: [],
-          where: { isActive: true },
+          where: { is_active: true },
           required: false,
         },
       ],

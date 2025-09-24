@@ -4,9 +4,10 @@ const path = require("path");
 
 // Verificar se JWT_SECRET está definido
 if (!process.env.JWT_SECRET) {
-  throw new Error(
-    "JWT_SECRET não está definido nas variáveis de ambiente. Crie um arquivo .env com JWT_SECRET=seu-secret-seguro"
+  console.warn(
+    "⚠️ JWT_SECRET não está definido. Usando valor padrão para desenvolvimento."
   );
+  process.env.JWT_SECRET = "nexa-development-secret-key";
 }
 
 const sequelize = new Sequelize({

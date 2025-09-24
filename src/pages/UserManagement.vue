@@ -531,14 +531,15 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { PERMISSIONS, ROLE_PERMISSIONS, permissionManager } from '@/utils/permissions'
-import { mockDataService } from '@/services/mockDataService'
+import { useUsersStore } from '@/stores/users'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 
+// Store
+const usersStore = useUsersStore()
+
 // Estado reativo
-const loading = ref(false)
 const showModal = ref(false)
 const modalMode = ref('create')
-const users = ref([])
 const selectedUsers = ref([])
 const showBulkActions = ref(false)
 
@@ -564,46 +565,15 @@ const availablePermissions = computed(() => {
 })
 
 // Computed
-const filteredUsers = computed(() => {
-    let result = users.value
-
-    // Filtros avançados
-    if (filters.search) {
-        result = result.filter(user =>
-            user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            user.email.toLowerCase().includes(filters.search.toLowerCase())
-        )
-    }
-
-    if (filters.role) {
-        result = result.filter(user => user.role === filters.role)
-    }
-
-    if (filters.status) {
-        result = result.filter(user =>
-            filters.status === 'active' ? user.isActive : !user.isActive
-        )
-    }
-
-    return result
-})
+const users = computed(() => usersStore.users)
+const loading = computed(() => usersStore.loading)
+const filteredUsers = computed(() => usersStore.filteredUsers)
 
 // Estatísticas dos colaboradores
-const activeUsers = computed(() => {
-    return users.value.filter(user => user.isActive).length
-})
-
-const adminUsers = computed(() => {
-    return users.value.filter(user => user.role === 'admin').length
-})
-
-const sellerUsers = computed(() => {
-    return users.value.filter(user => user.role === 'vendedor').length
-})
-
-const managerUsers = computed(() => {
-    return users.value.filter(user => user.role === 'gerente').length
-})
+const activeUsers = computed(() => usersStore.stats.activeUsers)
+const adminUsers = computed(() => usersStore.stats.adminUsers)
+const sellerUsers = computed(() => usersStore.stats.sellerUsers)
+const managerUsers = computed(() => usersStore.stats.managerUsers)
 
 // Métodos
 const formatDate = (date) => {
@@ -674,8 +644,6 @@ const closeModal = () => {
 
 const saveUser = async () => {
     try {
-        loading.value = true
-
         // Validar permissões baseadas no role
         const rolePermissions = ROLE_PERMISSIONS[form.role] || []
         const validPermissions = form.permissions.filter(permission =>
@@ -684,32 +652,25 @@ const saveUser = async () => {
 
         const userData = {
             ...form,
-            permissions: validPermissions,
-            lastLogin: modalMode.value === 'create' ? null : form.lastLogin,
-            createdAt: modalMode.value === 'create' ? new Date().toISOString() : form.createdAt
+            permissions: validPermissions
         }
 
+        let result
         if (modalMode.value === 'create') {
-            const newUser = {
-                id: Date.now(),
-                ...userData,
-                lastLogin: null
-            }
-            users.value.push(newUser)
+            result = await usersStore.createUser(userData)
         } else {
-            const index = users.value.findIndex(u => u.id === form.id)
-            if (index !== -1) {
-                users.value[index] = { ...users.value[index], ...userData }
-            }
+            result = await usersStore.updateUser(form.id, userData)
         }
 
-        closeModal()
-        alert('Colaborador salvo com sucesso!')
+        if (result.success) {
+            closeModal()
+            loadUsers()
+        } else {
+            alert('Erro ao salvar colaborador: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao salvar colaborador:', error)
         alert('Erro ao salvar colaborador')
-    } finally {
-        loading.value = false
     }
 }
 
@@ -736,23 +697,22 @@ const deleteUser = async (userId) => {
     }
 
     try {
-        loading.value = true
+        const result = await usersStore.deleteUser(userId)
 
-        // Simular API call
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        users.value = users.value.filter(u => u.id !== userId)
-        alert('Usuário excluído com sucesso!')
+        if (result.success) {
+            loadUsers()
+        } else {
+            alert('Erro ao excluir utilizador: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao excluir utilizador:', error)
         alert('Erro ao excluir utilizador')
-    } finally {
-        loading.value = false
     }
 }
 
 const applyFilters = () => {
-    // Filtros são aplicados automaticamente via computed
+    usersStore.setFilters(filters)
+    loadUsers()
 }
 
 const clearFilters = () => {
@@ -761,6 +721,8 @@ const clearFilters = () => {
         role: '',
         status: ''
     })
+    usersStore.clearFilters()
+    loadUsers()
 }
 
 // Funções para seleção múltipla
@@ -847,59 +809,14 @@ const bulkDeleteUsers = async () => {
 
 const loadUsers = async () => {
     try {
-        loading.value = true
+        usersStore.setFilters(filters)
+        const result = await usersStore.loadUsers()
 
-        // Simular API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // Dados mock com permissões baseadas no sistema
-        users.value = [
-            {
-                id: 1,
-                name: 'João Silva',
-                email: 'joao@nexa.com',
-                role: 'admin',
-                isActive: true,
-                permissions: ROLE_PERMISSIONS.admin,
-                lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-                createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                id: 2,
-                name: 'Maria Santos',
-                email: 'maria@nexa.com',
-                role: 'gerente',
-                isActive: true,
-                permissions: ROLE_PERMISSIONS.gerente,
-                lastLogin: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-                createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                id: 3,
-                name: 'Pedro Costa',
-                email: 'pedro@nexa.com',
-                role: 'vendedor',
-                isActive: true,
-                permissions: ROLE_PERMISSIONS.vendedor,
-                lastLogin: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-                createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                id: 4,
-                name: 'Ana Oliveira',
-                email: 'ana@nexa.com',
-                role: 'vendedor',
-                isActive: false,
-                permissions: ROLE_PERMISSIONS.vendedor,
-                lastLogin: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-            }
-        ]
+        if (!result.success) {
+            console.error('Erro ao carregar colaboradores:', result.error)
+        }
     } catch (error) {
         console.error('Erro ao carregar colaboradores:', error)
-        alert('Erro ao carregar colaboradores')
-    } finally {
-        loading.value = false
     }
 }
 
