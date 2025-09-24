@@ -172,10 +172,4 @@ O sistema inclui um serviço de dados mock para demonstração:
 
 Este projeto é propriedade privada. Todos os direitos reservados.
 
-## 👨‍💻 **Desenvolvido por**
-
-Sistema desenvolvido com ❤️ para gestão moderna e eficiente.
-
----
-
 **NEXA** - Transformando a gestão empresarial com tecnologia moderna! 🚀
