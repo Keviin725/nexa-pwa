@@ -13,15 +13,33 @@ const Client = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    contact: {
+    phone: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
-    observations: {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    address: {
       type: DataTypes.TEXT,
+      allowNull: true,
     },
     creditBalance: {
       type: DataTypes.FLOAT,
       defaultValue: 0,
+    },
+    totalPurchases: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+    },
+    lastPurchase: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
   },
   {

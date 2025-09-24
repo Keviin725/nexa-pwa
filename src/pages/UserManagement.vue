@@ -23,7 +23,12 @@
                     <div class="flex items-center gap-3">
                         <!-- Novo Colaborador -->
                         <button @click="openModal('create')"
-                            class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
+                            class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                                </path>
+                            </svg>
                             Novo Colaborador
                         </button>
                     </div>
@@ -32,6 +37,96 @@
         </div>
 
         <div class="p-4 space-y-4">
+            <!-- Estatísticas dos Colaboradores -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                <div class="p-4">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                        Resumo dos Colaboradores
+                    </h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Total de Colaboradores -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ users.length }}</div>
+                                    <div class="text-sm text-blue-700 font-medium">Total</div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Colaboradores Ativos -->
+                        <div
+                            class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-green-600">{{ activeUsers }}</div>
+                                    <div class="text-sm text-green-700 font-medium">Ativos</div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Administradores -->
+                        <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border border-red-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-red-600">{{ adminUsers }}</div>
+                                    <div class="text-sm text-red-700 font-medium">Admins</div>
+                                </div>
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vendedores -->
+                        <div
+                            class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-4 border border-orange-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-orange-600">{{ sellerUsers }}</div>
+                                    <div class="text-sm text-orange-700 font-medium">Vendedores</div>
+                                </div>
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Filtros Mobile -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
                 <div class="p-4">
@@ -44,9 +139,15 @@
                             </svg>
                             <h2 class="text-sm font-semibold text-slate-700">Filtros</h2>
                         </div>
-                        <button @click="clearFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
-                            Limpar
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button @click="selectAllUsers"
+                                class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                                Selecionar Todos
+                            </button>
+                            <button @click="clearFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                                Limpar
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -160,6 +261,19 @@
 
                         <!-- Ações Mobile -->
                         <div class="flex gap-2">
+                            <!-- Seleção -->
+                            <button @click="toggleUserSelection(user.id)" class="px-3 py-2 rounded-lg transition-colors"
+                                :class="selectedUsers.includes(user.id) ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path v-if="selectedUsers.includes(user.id)" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                                    </path>
+                                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                                    </path>
+                                </svg>
+                            </button>
+
                             <button @click="openModal('edit', user)"
                                 class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,6 +328,47 @@
             </div>
         </div>
 
+        <!-- Barra de Ações em Lote -->
+        <div v-if="showBulkActions" class="fixed bottom-4 left-4 right-4 z-50">
+            <div class="bg-white rounded-xl shadow-2xl border border-slate-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-sm font-semibold text-slate-800">{{ selectedUsers.length }} colaboradores
+                                selecionados</div>
+                            <div class="text-xs text-slate-600">Escolha uma ação para aplicar</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button @click="bulkActivateUsers"
+                            class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium">
+                            Ativar
+                        </button>
+                        <button @click="bulkDeactivateUsers"
+                            class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                            Desativar
+                        </button>
+                        <button @click="bulkDeleteUsers"
+                            class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                            Excluir
+                        </button>
+                        <button @click="clearSelection"
+                            class="px-3 py-2 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Bottom Sheet de Usuário -->
         <CustomBottomSheet :visible="showModal" @close="closeModal">
             <template #header>
@@ -228,11 +383,13 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        <h3
+                            class="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
                             {{ modalMode === 'create' ? 'Novo Colaborador' : 'Editar Colaborador' }}
                         </h3>
                         <p class="text-sm text-slate-600">
-                            {{ modalMode === 'create' ? 'Adicione um novo colaborador ao sistema' : 'Actualize as informações do colaborador' }}
+                            {{ modalMode === 'create' ? 'Adicione novo colaborador' : 'Actualize infos do colaborador'
+                            }}
                         </p>
                     </div>
                 </div>
@@ -249,7 +406,7 @@
                         </svg>
                         Informações Básicas
                     </h4>
-                    
+
                     <div class="grid grid-cols-1 gap-4">
                         <!-- Nome -->
                         <div>
@@ -287,7 +444,7 @@
                         </svg>
                         Função e Status
                     </h4>
-                    
+
                     <div class="grid grid-cols-1 gap-4">
                         <!-- Função -->
                         <div>
@@ -331,7 +488,7 @@
                         </svg>
                         Permissões do Sistema
                     </h4>
-                    
+
                     <div class="grid grid-cols-1 gap-3">
                         <label v-for="permission in availablePermissions" :key="permission.value"
                             class="flex items-center p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
@@ -356,7 +513,9 @@
                         class="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
                         :disabled="loading">
                         <div v-if="loading" class="flex items-center justify-center">
-                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                            <div
+                                class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2">
+                            </div>
                             Salvando...
                         </div>
                         <div v-else>
@@ -380,6 +539,8 @@ const loading = ref(false)
 const showModal = ref(false)
 const modalMode = ref('create')
 const users = ref([])
+const selectedUsers = ref([])
+const showBulkActions = ref(false)
 
 const filters = reactive({
     search: '',
@@ -406,6 +567,7 @@ const availablePermissions = computed(() => {
 const filteredUsers = computed(() => {
     let result = users.value
 
+    // Filtros avançados
     if (filters.search) {
         result = result.filter(user =>
             user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -424,6 +586,23 @@ const filteredUsers = computed(() => {
     }
 
     return result
+})
+
+// Estatísticas dos colaboradores
+const activeUsers = computed(() => {
+    return users.value.filter(user => user.isActive).length
+})
+
+const adminUsers = computed(() => {
+    return users.value.filter(user => user.role === 'admin').length
+})
+
+const sellerUsers = computed(() => {
+    return users.value.filter(user => user.role === 'vendedor').length
+})
+
+const managerUsers = computed(() => {
+    return users.value.filter(user => user.role === 'gerente').length
 })
 
 // Métodos
@@ -499,10 +678,10 @@ const saveUser = async () => {
 
         // Validar permissões baseadas no role
         const rolePermissions = ROLE_PERMISSIONS[form.role] || []
-        const validPermissions = form.permissions.filter(permission => 
+        const validPermissions = form.permissions.filter(permission =>
             rolePermissions.includes(permission)
         )
-        
+
         const userData = {
             ...form,
             permissions: validPermissions,
@@ -582,6 +761,88 @@ const clearFilters = () => {
         role: '',
         status: ''
     })
+}
+
+// Funções para seleção múltipla
+const toggleUserSelection = (userId) => {
+    const index = selectedUsers.value.indexOf(userId)
+    if (index > -1) {
+        selectedUsers.value.splice(index, 1)
+    } else {
+        selectedUsers.value.push(userId)
+    }
+    showBulkActions.value = selectedUsers.value.length > 0
+}
+
+const selectAllUsers = () => {
+    selectedUsers.value = filteredUsers.value.map(user => user.id)
+    showBulkActions.value = true
+}
+
+const clearSelection = () => {
+    selectedUsers.value = []
+    showBulkActions.value = false
+}
+
+// Ações em lote
+const bulkActivateUsers = async () => {
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        selectedUsers.value.forEach(userId => {
+            const user = users.value.find(u => u.id === userId)
+            if (user) user.isActive = true
+        })
+
+        clearSelection()
+        alert(`${selectedUsers.value.length} colaboradores ativados com sucesso!`)
+    } catch (error) {
+        console.error('Erro ao ativar colaboradores:', error)
+        alert('Erro ao ativar colaboradores')
+    } finally {
+        loading.value = false
+    }
+}
+
+const bulkDeactivateUsers = async () => {
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        selectedUsers.value.forEach(userId => {
+            const user = users.value.find(u => u.id === userId)
+            if (user) user.isActive = false
+        })
+
+        clearSelection()
+        alert(`${selectedUsers.value.length} colaboradores desativados com sucesso!`)
+    } catch (error) {
+        console.error('Erro ao desativar colaboradores:', error)
+        alert('Erro ao desativar colaboradores')
+    } finally {
+        loading.value = false
+    }
+}
+
+const bulkDeleteUsers = async () => {
+    if (!confirm(`Tem certeza que deseja excluir ${selectedUsers.value.length} colaboradores?`)) {
+        return
+    }
+
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        users.value = users.value.filter(user => !selectedUsers.value.includes(user.id))
+        clearSelection()
+        alert(`${selectedUsers.value.length} colaboradores excluídos com sucesso!`)
+    } catch (error) {
+        console.error('Erro ao excluir colaboradores:', error)
+        alert('Erro ao excluir colaboradores')
+    } finally {
+        loading.value = false
+    }
 }
 
 const loadUsers = async () => {

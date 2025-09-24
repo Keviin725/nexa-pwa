@@ -38,6 +38,11 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    permissions: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      comment: "Permissões específicas do usuário",
+    },
   },
   {
     tableName: "users",

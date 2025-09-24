@@ -45,6 +45,26 @@ const Product = sequelize.define(
     description: {
       type: DataTypes.TEXT,
     },
+    supplier: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    weight: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    volume: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     tableName: "products",

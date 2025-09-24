@@ -1,73 +1,45 @@
 const express = require("express");
 const router = express.Router();
-const { User } = require("../models/associations");
+const {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  toggleUserStatus,
+  updateUserPermissions,
+  getUserStats,
+  bulkUserAction,
+} = require("../controllers/userController");
+
+// Middleware de autenticação (assumindo que existe)
+// const auth = require("../middleware/auth");
+
+// GET /users/stats - Estatísticas dos usuários
+router.get("/stats", getUserStats);
 
 // GET /users - Listar todos os usuários
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.findAll({
-      where: { isActive: true },
-      attributes: { exclude: ["password"] },
-    });
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.get("/", getUsers);
 
 // GET /users/:id - Buscar usuário por ID
-router.get("/:id", async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id, {
-      attributes: { exclude: ["password"] },
-    });
-    if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.get("/:id", getUserById);
 
 // POST /users - Criar novo usuário
-router.post("/", async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    const { password, ...userWithoutPassword } = user.toJSON();
-    res.status(201).json(userWithoutPassword);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+router.post("/", createUser);
 
 // PUT /users/:id - Atualizar usuário
-router.put("/:id", async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
-    }
-    await user.update(req.body);
-    const { password, ...userWithoutPassword } = user.toJSON();
-    res.json(userWithoutPassword);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+router.put("/:id", updateUser);
 
-// DELETE /users/:id - Desativar usuário (soft delete)
-router.delete("/:id", async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
-    }
-    await user.update({ isActive: false });
-    res.json({ message: "Usuário desativado com sucesso" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// PUT /users/:id/status - Alterar status do usuário
+router.put("/:id/status", toggleUserStatus);
+
+// PUT /users/:id/permissions - Atualizar permissões do usuário
+router.put("/:id/permissions", updateUserPermissions);
+
+// POST /users/bulk-action - Ações em lote
+router.post("/bulk-action", bulkUserAction);
+
+// DELETE /users/:id - Desativar usuário
+router.delete("/:id", deleteUser);
 
 module.exports = router;

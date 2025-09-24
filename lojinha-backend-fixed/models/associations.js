@@ -5,6 +5,7 @@ const SaleItem = require("./SaleItem");
 const CreditPayment = require("./CreditPayment");
 const User = require("./User");
 const SystemConfig = require("./SystemConfig");
+const Category = require("./Category");
 
 // Associações
 Client.hasMany(Sale);
@@ -26,6 +27,10 @@ CreditPayment.belongsTo(Sale);
 User.hasMany(Sale);
 Sale.belongsTo(User);
 
+// Associações com Category
+Category.hasMany(Product);
+Product.belongsTo(Category);
+
 module.exports = {
   Product,
   Client,
@@ -34,4 +39,5 @@ module.exports = {
   CreditPayment,
   User,
   SystemConfig,
+  Category,
 };

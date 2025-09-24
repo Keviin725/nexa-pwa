@@ -11,6 +11,8 @@ const creditPaymentsRoutes = require("./routes/creditPayments");
 const usersRoutes = require("./routes/users");
 const systemConfigRoutes = require("./routes/systemConfig");
 const reportsRoutes = require("./routes/reports");
+const dashboardRoutes = require("./routes/dashboard");
+const categoriesRoutes = require("./routes/categories");
 
 // Importar modelos
 const sequelize = require("./config/database");
@@ -22,7 +24,11 @@ const {
   CreditPayment,
   User,
   SystemConfig,
+  Category,
 } = require("./models/associations");
+
+// Importar seed
+const { seedDatabase } = require("./seed");
 
 const app = express();
 app.use(cors());
@@ -71,6 +77,11 @@ sequelize
       console.log(`✅ Database ready (${userCount} users)`);
     }
 
+    // Executar seed se solicitado
+    if (process.env.RUN_SEED === "true") {
+      await seedDatabase();
+    }
+
     // Registrar rotas após sincronização
     app.use("/auth", authRoutes);
     app.use("/products", productsRoutes);
@@ -80,6 +91,8 @@ sequelize
     app.use("/users", usersRoutes);
     app.use("/system-config", systemConfigRoutes);
     app.use("/reports", reportsRoutes);
+    app.use("/dashboard", dashboardRoutes);
+    app.use("/categories", categoriesRoutes);
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {

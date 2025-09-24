@@ -31,7 +31,7 @@ const Sale = sequelize.define(
       allowNull: false,
     },
     paymentMethod: {
-      type: DataTypes.ENUM("immediate", "credit"),
+      type: DataTypes.ENUM("cash", "card", "transfer", "credit"),
       allowNull: false,
     },
     paymentStatus: {
