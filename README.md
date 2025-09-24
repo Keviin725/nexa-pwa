@@ -1,4 +1,4 @@
-# 🚀 NEXA - Sistema de Gestão Moderno
+# 🚀 NEXA - Sistema de Gestão de Mini Markets Moderno
 
 Um sistema de gestão completo e moderno desenvolvido com Vue.js 3, Tailwind CSS e PWA.
 
