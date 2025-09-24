@@ -75,8 +75,7 @@
                     <div v-if="notifications.length === 0" class="p-8 text-center">
                         <div
                             class="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 17h5l-5 5v-5zM4.5 19.5a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5h15A1.5 1.5 0 0119.5 6v12a1.5 1.5 0 01-1.5 1.5h-15z">
                                 </path>
@@ -122,12 +121,12 @@
                                                 <span v-if="!notification.read"
                                                     class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                                             </div>
-                                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-2 leading-relaxed">
+                                            <p class="text-sm text-slate-600 mb-2 leading-relaxed">
                                                 {{
                                                     notification.message }}</p>
                                             <div class="flex items-center gap-2">
                                                 <span
-                                                    class="text-xs text-slate-500 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">{{
+                                                    class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">{{
                                                         formatTime(notification.timestamp) }}</span>
                                                 <span class="text-xs px-2 py-1 rounded-full font-medium"
                                                     :class="getTypeBadgeClass(notification.type)">
@@ -139,7 +138,7 @@
                                         <!-- Ações ultra-modernas -->
                                         <div class="flex items-center gap-1 ml-3">
                                             <button v-if="!notification.read" @click="markAsRead(notification.id)"
-                                                class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all duration-200 group"
+                                                class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 group"
                                                 title="Marcar como lida">
                                                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +147,7 @@
                                                 </svg>
                                             </button>
                                             <button @click="removeNotification(notification.id)"
-                                                class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 group"
+                                                class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group"
                                                 title="Remover">
                                                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +177,7 @@
 
                 <!-- Footer Ultra-Moderno -->
                 <div v-if="notifications.length > 0"
-                    class="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/80 dark:from-slate-700/80 dark:to-slate-600/80 backdrop-blur-sm border-t border-white/30 dark:border-slate-600/30">
+                    class="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/80 backdrop-blur-sm border-t border-white/30">
                     <button @click="viewAllNotifications"
                         class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 font-medium shadow-lg hover:shadow-xl group">
                         <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
@@ -350,13 +349,13 @@ const getActionText = (type) => {
 const getIconClass = (type) => {
     switch (type) {
         case 'success':
-            return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-600 dark:from-green-900/50 dark:to-emerald-900/50 dark:text-green-400'
+            return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-600'
         case 'warning':
-            return 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-600 dark:from-yellow-900/50 dark:to-amber-900/50 dark:text-yellow-400'
+            return 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-600'
         case 'error':
-            return 'bg-gradient-to-r from-red-100 to-pink-100 text-red-600 dark:from-red-900/50 dark:to-pink-900/50 dark:text-red-400'
+            return 'bg-gradient-to-r from-red-100 to-pink-100 text-red-600'
         default:
-            return 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-600 dark:from-blue-900/50 dark:to-indigo-900/50 dark:text-blue-400'
+            return 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-600'
     }
 }
 
