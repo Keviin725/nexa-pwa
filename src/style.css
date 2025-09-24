@@ -1,0 +1,33 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Melhorar legibilidade dos inputs */
+input,
+textarea,
+select {
+    color: #0f172a !important;
+    /* slate-900 */
+    background-color: #ffffff !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #64748b !important;
+    /* slate-500 */
+}
+
+/* Garantir contraste adequado */
+input:focus,
+textarea:focus,
+select:focus {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+}
+
+/* Melhorar legibilidade em modais e formulários */
+.modal input,
+.modal textarea,
+.modal select {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+}

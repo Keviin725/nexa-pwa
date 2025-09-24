@@ -1,0 +1,21 @@
+{
+  "name": "NEXA",
+  "short_name": "NEXA",
+  "description": "Sistema de gestão para lojinha com funcionalidades completas de vendas, produtos e clientes",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/src/assets/logo-branco.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "pt-PT",
+  "dir": "ltr"
+}
