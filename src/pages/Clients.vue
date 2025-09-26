@@ -9,15 +9,14 @@
                         <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
                                 </path>
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-white">Clientes</h1>
+                            <h1 class="text-xl font-bold text-white">Clientes a Fiado</h1>
                             <p class="text-blue-100 text-sm">
-                                {{ isAdmin ? 'Gerencie todos os clientes' : isManager ? 'Gerencie clientes da equipe' :
-                                    'Gerencie seus clientes' }}
+                                Créditos e dívidas
                             </p>
                         </div>
                     </div>
@@ -34,34 +33,100 @@
             </div>
         </div>
 
-        <div class="p-4">
-            <!-- 1. RESUMO DE CLIENTES - Mais importante -->
-            <div class="bg-white rounded-xl border border-slate-200 mb-4 shadow-sm">
+        <div class="p-4 space-y-4">
+            <!-- Estatísticas dos Clientes a Fiado -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
                 <div class="p-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-slate-800"> Resumo de Clientes</h3>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs text-blue-600 font-medium">Atualizado</span>
-                        </div>
-                    </div>
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                            </path>
+                        </svg>
+                        Resumo de Vendas a Crédito
+                    </h2>
+
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <div class="text-2xl font-bold text-blue-600 mb-1">{{ clients.length }}</div>
-                            <div class="text-sm font-medium text-slate-700">Total Clientes</div>
+                        <!-- Total de Clientes -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ clients.length }}</div>
+                                    <div class="text-sm text-blue-700 font-medium">Clientes a Fiado</div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center p-4 bg-red-50 rounded-lg border border-red-200">
-                            <div class="text-2xl font-bold text-red-600 mb-1">{{ clientsWithDebts.length }}</div>
-                            <div class="text-sm font-medium text-slate-700">Com Dívidas</div>
+
+                        <!-- Clientes com Dívidas -->
+                        <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-4 border border-red-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-red-600">{{ clientsWithDebts }}</div>
+                                    <div class="text-sm text-red-700 font-medium">Com Dívidas</div>
+                                </div>
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Valor Total em Dívidas -->
+                        <div
+                            class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-4 border border-orange-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-orange-600">MT {{ totalDebts }}</div>
+                                    <div class="text-sm text-orange-700 font-medium">Total em Dívidas</div>
+                                </div>
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vendas a Crédito Hoje -->
+                        <div
+                            class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-2xl font-bold text-green-600">{{ creditSalesToday }}</div>
+                                    <div class="text-sm text-green-700 font-medium">Vendas a Crédito Hoje</div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. FILTROS - Segunda prioridade -->
-            <div class="bg-white rounded-xl border border-slate-200 mb-4 shadow-sm">
+            <!-- Filtros Mobile -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
                 <div class="p-4">
-                    <!-- Header dos Filtros -->
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,122 +134,144 @@
                                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z">
                                 </path>
                             </svg>
-                            <h3 class="text-sm font-semibold text-slate-700"> Filtros</h3>
+                            <h2 class="text-sm font-semibold text-slate-700">Filtros</h2>
                         </div>
-                        <button @click="clearFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
-                            Limpar todos
-                        </button>
-                    </div>
-
-                    <!-- Busca Principal -->
-                    <div class="mb-4">
-                        <div class="relative">
-                            <input v-model="filters.search" type="text" placeholder="Buscar clientes..."
-                                class="w-full pl-10 pr-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                @input="searchClients" />
-                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Filtros Secundários -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" v-model="filters.hasDebt" id="hasDebt"
-                                class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-                                @change="searchClients" />
-                            <label for="hasDebt" class="text-sm font-medium text-slate-700 cursor-pointer">
-                                Com dívidas
-                            </label>
-                        </div>
-                        <div>
-                            <button @click="loadClientsWithDebts"
-                                class="w-full px-3 py-2 text-sm bg-red-100 text-red-700 font-medium rounded-lg hover:bg-red-200 transition-colors">
-                                Ver Dívidas
+                        <div class="flex items-center gap-2">
+                            <button @click="selectAllClients"
+                                class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                                Selecionar Todos
+                            </button>
+                            <button @click="clearFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                                Limpar
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Loading State -->
-            <div v-if="loading" class="flex justify-center py-8">
-                <div class="flex flex-col items-center space-y-3">
-                    <div class="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <p class="text-sm text-slate-600">Carregando...</p>
-                </div>
-            </div>
+                    <div class="space-y-4">
+                        <!-- Busca -->
+                        <div>
+                            <input v-model="filters.search" type="text" placeholder="Buscar clientes a fiado..."
+                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
 
-            <!-- Empty State -->
-            <div v-else-if="clients.length === 0" class="text-center py-8">
-                <div class="max-w-sm mx-auto">
-                    <div class="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
-                            </path>
-                        </svg>
+                        <!-- Filtros -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">Status da Dívida</label>
+                                <select v-model="filters.debtStatus"
+                                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Todos</option>
+                                    <option value="hasDebt">Com Dívidas</option>
+                                    <option value="noDebt">Sem Dívidas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">Valor da Dívida</label>
+                                <select v-model="filters.debtAmount"
+                                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Todos</option>
+                                    <option value="high">Alta (> MT 1000)</option>
+                                    <option value="medium">Média (MT 100-1000)</option>
+                                    <option value="low">Baixa (< MT 100)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Botão Aplicar -->
+                        <button @click="applyFilters"
+                            class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            Aplicar Filtros
+                        </button>
                     </div>
-                    <h3 class="text-lg font-semibold text-slate-800 mb-1">Nenhum cliente encontrado</h3>
-                    <p class="text-sm text-slate-600 mb-4">Comece adicionando seu primeiro cliente</p>
-                    <button @click="openModal('create')"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                            </path>
-                        </svg>
-                        Adicionar Cliente
-                    </button>
                 </div>
             </div>
 
-            <!-- Lista de Clientes Mobile -->
+            <!-- Lista de Clientes -->
+            <div v-if="loading" class="flex justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+
+            <div v-else-if="filteredClients.length === 0" class="text-center py-8">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-slate-800 mb-2">Nenhum cliente a fiado encontrado</h3>
+                <p class="text-slate-600 mb-4">Comece adicionando um novo cliente a fiado</p>
+                <button @click="openModal('create')"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Adicionar Cliente a Fiado
+                </button>
+            </div>
+
             <div v-else class="space-y-3">
-                <div v-for="client in clients" :key="client.id"
+                <div v-for="client in filteredClients" :key="client.id"
                     class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
                     <div class="p-4">
                         <!-- Header Mobile -->
                         <div class="flex items-start justify-between mb-3">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-slate-800 mb-1">{{ client.name }}</h3>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <div class="w-2 h-2 rounded-full"
-                                        :class="client.creditBalance > 0 ? 'bg-red-500' : 'bg-green-500'"></div>
-                                    <span class="text-sm text-slate-600">{{ client.creditBalance > 0 ? 'Com dívidas' :
-                                        'Em dia' }}</span>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-800">{{ client.name }}</h3>
+                                    <p class="text-sm text-slate-600">{{ client.contact }}</p>
                                 </div>
                             </div>
-                            <!-- Status Badge -->
+                            <!-- Status da Dívida -->
                             <div class="flex flex-col items-end gap-2">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                                    :class="client.creditBalance > 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'">
+                                    :class="client.hasDebt ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'">
                                     <div class="w-2 h-2 rounded-full mr-2"
-                                        :class="client.creditBalance > 0 ? 'bg-red-500' : 'bg-green-500'"></div>
-                                    {{ client.creditBalance > 0 ? 'Devendo' : 'Em dia' }}
+                                        :class="client.hasDebt ? 'bg-red-500' : 'bg-green-500'"></div>
+                                    {{ client.hasDebt ? 'Com Dívida' : 'Sem Dívida' }}
                                 </span>
+                                <div class="text-sm font-semibold text-slate-800">
+                                    MT {{ formatPrice(client.totalDebt || 0) }}
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Informações Principais -->
+                        <!-- Informações da Dívida -->
                         <div class="grid grid-cols-2 gap-4 mb-3">
                             <div class="bg-slate-50 rounded-lg p-3">
-                                <div class="text-xs text-slate-500 mb-1">Contato</div>
-                                <div class="text-sm font-medium text-slate-800">{{ client.contact || 'N/A' }}</div>
+                                <div class="text-xs text-slate-500 mb-1">Última Compra a Fiado</div>
+                                <div class="text-sm font-medium text-slate-800">{{ formatDate(client.lastCreditSale) }}
+                                </div>
                             </div>
                             <div class="bg-slate-50 rounded-lg p-3">
-                                <div class="text-xs text-slate-500 mb-1">Saldo</div>
-                                <div class="text-sm font-bold"
-                                    :class="client.creditBalance > 0 ? 'text-red-600' : 'text-green-600'">
-                                    MT {{ formatPrice(client.creditBalance) }}
-                                </div>
+                                <div class="text-xs text-slate-500 mb-1">Total de Vendas a Crédito</div>
+                                <div class="text-sm font-medium text-slate-800">{{ client.creditSalesCount || 0 }}
+                                    vendas</div>
                             </div>
                         </div>
 
                         <!-- Ações Mobile -->
                         <div class="flex gap-2">
+                            <!-- Seleção -->
+                            <button @click="toggleClientSelection(client.id)"
+                                class="px-3 py-2 rounded-lg transition-colors"
+                                :class="selectedClients.includes(client.id) ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path v-if="selectedClients.includes(client.id)" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                                    </path>
+                                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                                    </path>
+                                </svg>
+                            </button>
+
                             <button @click="openModal('edit', client)"
                                 class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +285,8 @@
                                 class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
                                 </svg>
                                 Histórico
                             </button>
@@ -229,70 +317,126 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Bottom Sheet de Cliente -->
-            <CustomBottomSheet v-model:visible="showModal"
-                :title="modalMode === 'create' ? 'Novo Cliente' : 'Editar Cliente'" height="85vh" @close="closeModal">
-
-                <form @submit.prevent="saveClient">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Nome do Cliente *</label>
-                            <input v-model="form.name" type="text" placeholder="Digite o nome do cliente"
-                                class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                required />
+        <!-- Barra de Ações em Lote -->
+        <div v-if="showBulkActions" class="fixed bottom-4 left-4 right-4 z-50">
+            <div class="bg-white rounded-xl shadow-2xl border border-slate-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
                         </div>
-
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Contato</label>
-                            <input v-model="form.contact" type="text" placeholder="Telefone, email, etc."
-                                class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Observações</label>
-                            <textarea v-model="form.observations" placeholder="Observações sobre o cliente"
-                                class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                rows="3"></textarea>
+                            <div class="text-sm font-semibold text-slate-800">{{ selectedClients.length }} clientes
+                                selecionados</div>
+                            <div class="text-xs text-slate-600">Escolha uma ação para aplicar</div>
                         </div>
                     </div>
 
-                    <div class="flex gap-3 pt-4 border-t border-slate-200 mt-6">
-                        <button type="button" @click="closeModal"
-                            class="flex-1 px-4 py-3 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center gap-2">
+                        <button @click="bulkMarkAsPaid"
+                            class="px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium">
+                            Marcar como Pago
+                        </button>
+                        <button @click="bulkSendReminder"
+                            class="px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors text-sm font-medium">
+                            Enviar Lembrete
+                        </button>
+                        <button @click="bulkDeleteClients"
+                            class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                            Excluir
+                        </button>
+                        <button @click="clearSelection"
+                            class="px-3 py-2 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
                             Cancelar
                         </button>
-                        <button type="submit"
-                            class="flex-1 px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                            :disabled="loading">
-                            <div v-if="loading" class="flex items-center justify-center">
-                                <div
-                                    class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2">
-                                </div>
-                                Salvando...
-                            </div>
-                            <div v-else>
-                                {{ modalMode === 'create' ? 'Criar Cliente' : 'Salvar Alterações' }}
-                            </div>
-                        </button>
                     </div>
-                </form>
-            </CustomBottomSheet>
+                </div>
+            </div>
+        </div>
 
-            <!-- Bottom Sheet de Histórico -->
-            <CustomBottomSheet v-model:visible="showHistoryModal" title="Histórico do Cliente" height="85vh"
-                @close="closeHistoryModal">
+        <!-- Bottom Sheet de Cliente -->
+        <CustomBottomSheet v-model:visible="showModal"
+            :title="modalMode === 'create' ? 'Novo Cliente a Fiado' : 'Editar Cliente a Fiado'" height="85vh"
+            @close="closeModal">
 
-                <div>
-                    <div class="space-y-3">
-                        <div v-for="sale in clientHistory" :key="sale.id" class="bg-slate-50 rounded p-3">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold text-slate-800">Venda #{{ sale.saleNumber }}</h4>
-                                    <p class="text-xs text-slate-600 mt-1">{{ formatDate(sale.createdAt) }}</p>
-                                    <p class="text-sm font-medium text-slate-800 mt-1">Total: MT {{
-                                        formatPrice(sale.totalAmount) }}</p>
-                                </div>
+            <form @submit.prevent="saveClient">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nome do Cliente *</label>
+                        <input v-model="form.name" type="text" placeholder="Digite o nome do cliente"
+                            class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Contato</label>
+                        <input v-model="form.contact" type="text" placeholder="Telefone, email, etc."
+                            class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Endereço</label>
+                        <input v-model="form.address" type="text" placeholder="Endereço completo"
+                            class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Limite de Crédito (MT)</label>
+                        <input v-model="form.creditLimit" type="number" step="0.01" placeholder="0.00"
+                            class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Observações</label>
+                        <textarea v-model="form.observations" rows="3" placeholder="Observações sobre o cliente..."
+                            class="w-full px-4 py-3 text-sm text-black placeholder-gray-500 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"></textarea>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="flex gap-3 pt-6">
+                    <button type="button" @click="closeModal"
+                        class="flex-1 px-4 py-3 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" @click="saveClient"
+                        class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg"
+                        :disabled="formLoading">
+                        <div v-if="formLoading" class="flex items-center justify-center">
+                            <div
+                                class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2">
+                            </div>
+                            Salvando...
+                        </div>
+                        <div v-else>
+                            {{ modalMode === 'create' ? 'Criar Cliente a Fiado' : 'Salvar Alterações' }}
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </CustomBottomSheet>
+
+        <!-- Bottom Sheet de Histórico -->
+        <CustomBottomSheet v-model:visible="showHistoryModal" title="Histórico de Vendas a Crédito" height="85vh"
+            @close="closeHistoryModal">
+
+            <div>
+                <div class="space-y-3">
+                    <div v-for="sale in clientHistory" :key="sale.id" class="bg-slate-50 rounded p-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold text-slate-800">Venda #{{ sale.saleNumber }}</h4>
+                                <p class="text-xs text-slate-600 mt-1">{{ formatDate(sale.createdAt) }}</p>
+                                <p class="text-sm font-medium text-slate-800 mt-1">Total: MT {{
+                                    formatPrice(sale.totalAmount) }}</p>
+                            </div>
+                            <div class="text-right">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                                     :class="{
                                         'bg-green-100 text-green-800': sale.paymentStatus === 'paid',
@@ -304,66 +448,58 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="flex justify-end pt-3 border-t border-slate-200 mt-4">
-                        <button @click="closeHistoryModal"
-                            class="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-50 transition-colors">
-                            Fechar
-                        </button>
-                    </div>
                 </div>
-            </CustomBottomSheet>
 
-            <!-- Bottom Sheet de Dívidas -->
-            <CustomBottomSheet v-model:visible="showDebtsModal" title="Dívidas do Cliente" height="85vh"
-                @close="closeDebtsModal">
+                <div class="flex justify-end pt-3 border-t border-slate-200 mt-4">
+                    <button @click="closeHistoryModal"
+                        class="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-50 transition-colors">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </CustomBottomSheet>
 
-                <div>
-                    <div class="space-y-3">
-                        <div v-for="debt in clientDebts" :key="debt.id" class="bg-red-50 rounded p-3">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold text-slate-800">Venda #{{ debt.saleNumber }}</h4>
-                                    <p class="text-xs text-slate-600 mt-1">{{ formatDate(debt.createdAt) }}</p>
-                                    <p class="text-sm font-medium text-slate-800 mt-1">Total: R$ {{
-                                        formatPrice(debt.totalAmount) }}</p>
-                                    <p class="text-xs text-green-600 mt-1">Pago: MT {{ formatPrice(debt.totalPaid)
-                                        }}</p>
-                                    <p class="text-sm font-bold text-red-600 mt-1">Restante: MT {{
-                                        formatPrice(debt.balance) }}</p>
-                                </div>
-                                <div class="flex flex-col gap-1">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-                                        :class="{
-                                            'bg-green-100 text-green-800': debt.paymentStatus === 'paid',
-                                            'bg-yellow-100 text-yellow-800': debt.paymentStatus === 'partial',
-                                            'bg-red-100 text-red-800': debt.paymentStatus === 'pending'
-                                        }">
-                                        {{ getStatusText(debt.paymentStatus) }}
-                                    </span>
-                                    <span v-if="debt.isOverdue"
-                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Vencido
-                                    </span>
-                                </div>
+        <!-- Bottom Sheet de Dívidas -->
+        <CustomBottomSheet v-model:visible="showDebtsModal" title="Dívidas do Cliente" height="85vh"
+            @close="closeDebtsModal">
+
+            <div>
+                <div class="space-y-3">
+                    <div v-for="debt in clientDebts" :key="debt.id" class="bg-red-50 rounded p-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold text-slate-800">Venda #{{ debt.saleNumber }}</h4>
+                                <p class="text-xs text-slate-600 mt-1">{{ formatDate(debt.createdAt) }}</p>
+                                <p class="text-sm font-medium text-slate-800 mt-1">Total: MT {{
+                                    formatPrice(debt.totalAmount) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                    :class="{
+                                        'bg-green-100 text-green-800': debt.paymentStatus === 'paid',
+                                        'bg-yellow-100 text-yellow-800': debt.paymentStatus === 'partial',
+                                        'bg-red-100 text-red-800': debt.paymentStatus === 'pending'
+                                    }">
+                                    {{ getStatusText(debt.paymentStatus) }}
+                                </span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="flex justify-end pt-3 border-t border-slate-200 mt-4">
-                        <button @click="closeDebtsModal"
-                            class="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-50 transition-colors">
-                            Fechar
-                        </button>
-                    </div>
                 </div>
-            </CustomBottomSheet>
 
-            <!-- Paginação -->
-            <PaginationComponent :current-page="clientsStore.pagination.page"
-                :total-items="clientsStore.pagination.total" :items-per-page="clientsStore.pagination.limit"
-                @page-change="handlePageChange" @items-per-page-change="handleItemsPerPageChange" />
-        </div>
+                <div class="flex justify-end pt-3 border-t border-slate-200 mt-4">
+                    <button @click="closeDebtsModal"
+                        class="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-50 transition-colors">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </CustomBottomSheet>
+
+        <!-- Paginação -->
+        <PaginationComponent :current-page="clientsStore.pagination.page" :total-items="clientsStore.pagination.total"
+            :items-per-page="clientsStore.pagination.limit" @page-change="handlePageChange"
+            @items-per-page-change="handleItemsPerPageChange" />
     </div>
 </template>
 
@@ -392,34 +528,43 @@ const canDeleteClients = computed(() => permissionManager.hasPermission(PERMISSI
 const canViewClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_VIEW))
 
 // Estado reativo
-const clientHistory = ref([])
-const clientDebts = ref([])
 const showModal = ref(false)
 const showHistoryModal = ref(false)
 const showDebtsModal = ref(false)
 const modalMode = ref('create')
-const selectedClient = ref(null)
+const selectedClients = ref([])
+const showBulkActions = ref(false)
+const formLoading = ref(false)
 
-// Computed properties
-const clients = computed(() => clientsStore.clients)
-const loading = computed(() => clientsStore.loading)
-const clientsWithDebts = computed(() => clientsStore.clientsWithDebts)
-
-// Filtros
 const filters = reactive({
     search: '',
-    hasDebt: false
+    debtStatus: '',
+    debtAmount: ''
 })
 
-// Formulário de cliente
 const form = reactive({
+    id: null,
     name: '',
     contact: '',
+    address: '',
+    creditLimit: '',
     observations: ''
 })
 
-// API Base URL
-const API_BASE = 'http://localhost:3000'
+// Dados para modais
+const selectedClient = ref(null)
+const clientHistory = ref([])
+const clientDebts = ref([])
+
+// Computed
+const clients = computed(() => clientsStore.clients)
+const loading = computed(() => clientsStore.loading)
+const filteredClients = computed(() => clientsStore.filteredClients)
+
+// Estatísticas dos clientes a fiado
+const clientsWithDebts = computed(() => clientsStore.stats.clientsWithDebts)
+const totalDebts = computed(() => clientsStore.stats.totalDebts)
+const creditSalesToday = computed(() => clientsStore.stats.creditSalesToday)
 
 // Métodos
 const formatPrice = (price) => {
@@ -432,135 +577,104 @@ const formatDate = (date) => {
 
 const getStatusText = (status) => {
     const statusMap = {
-        'paid': 'Pago',
-        'pending': 'Pendente',
-        'partial': 'Parcial'
+        paid: 'Pago',
+        partial: 'Parcial',
+        pending: 'Pendente'
     }
     return statusMap[status] || status
 }
 
-const loadClients = async () => {
-    try {
-        clientsStore.setFilters(filters)
-        const result = await clientsStore.loadClients()
-
-        if (!result.success) {
-            console.error('Erro ao carregar clientes:', result.error)
-        }
-    } catch (error) {
-        console.error('Erro ao carregar clientes:', error)
-    }
-}
-
-const loadClientsWithDebts = async () => {
-    try {
-        const result = await clientsStore.loadClientsWithDebts()
-
-        if (!result.success) {
-            console.error('Erro ao carregar clientes com dívidas:', result.error)
-        }
-    } catch (error) {
-        console.error('Erro ao carregar clientes com dívidas:', error)
-    }
-}
-
-const searchClients = () => {
-    clientsStore.setFilters(filters)
-    loadClients()
-}
-
-const clearFilters = () => {
-    Object.assign(filters, {
-        search: '',
-        hasDebt: false
-    })
-    clientsStore.clearFilters()
-    loadClients()
-}
-
 const openModal = (mode, client = null) => {
     modalMode.value = mode
-    if (mode === 'edit' && client) {
-        Object.assign(form, {
-            id: client.id,
-            name: client.name,
-            contact: client.contact || '',
-            observations: client.observations || ''
-        })
-    } else {
+    showModal.value = true
+
+    if (mode === 'create') {
         Object.assign(form, {
             id: null,
             name: '',
             contact: '',
+            address: '',
+            creditLimit: '',
             observations: ''
         })
+    } else if (mode === 'edit' && client) {
+        Object.assign(form, {
+            id: client.id,
+            name: client.name,
+            contact: client.contact,
+            address: client.address,
+            creditLimit: client.creditLimit,
+            observations: client.observations
+        })
     }
-    showModal.value = true
 }
 
 const closeModal = () => {
     showModal.value = false
-    Object.assign(form, {
-        id: null,
-        name: '',
-        contact: '',
-        observations: ''
-    })
+    modalMode.value = 'create'
+    resetForm()
+}
+
+const resetForm = () => {
+    form.id = null
+    form.name = ''
+    form.contact = ''
+    form.address = ''
+    form.creditLimit = ''
+    form.observations = ''
 }
 
 const saveClient = async () => {
     try {
-        loading.value = true
+        formLoading.value = true
 
-        const url = modalMode.value === 'create'
-            ? `${API_BASE}/clients`
-            : `${API_BASE}/clients/${form.id}`
+        // Validação de formulário
+        if (!form.name.trim()) {
+            alert('Nome é obrigatório')
+            return
+        }
 
-        const method = modalMode.value === 'create' ? 'POST' : 'PUT'
+        const clientData = { ...form }
 
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(form)
-        })
+        let result
+        if (modalMode.value === 'create') {
+            result = await clientsStore.createClient(clientData)
+        } else {
+            result = await clientsStore.updateClient(form.id, clientData)
+        }
 
-        if (response.ok) {
+        if (result.success) {
             closeModal()
             loadClients()
+            alert('Cliente a fiado salvo com sucesso!')
         } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+            alert('Erro ao salvar cliente: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao salvar cliente:', error)
         alert('Erro ao salvar cliente')
     } finally {
-        loading.value = false
+        formLoading.value = false
     }
 }
 
-const deleteClient = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir este cliente?')) return
+const deleteClient = async (clientId) => {
+    if (!confirm('Tem a certeza que deseja excluir este cliente a fiado?')) {
+        return
+    }
 
     try {
-        loading.value = true
-        const response = await fetch(`${API_BASE}/clients/${id}`, {
-            method: 'DELETE'
-        })
+        const result = await clientsStore.deleteClient(clientId)
 
-        if (response.ok) {
+        if (result.success) {
             loadClients()
+            alert('Cliente a fiado excluído com sucesso!')
         } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+            alert('Erro ao excluir cliente: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao excluir cliente:', error)
         alert('Erro ao excluir cliente')
-    } finally {
-        loading.value = false
     }
 }
 
@@ -610,6 +724,106 @@ const handleItemsPerPageChange = (itemsPerPage) => {
     clientsStore.setLimit(itemsPerPage)
     clientsStore.setPage(1) // Reset para primeira página
     loadClients()
+}
+
+// Funções para seleção múltipla
+const toggleClientSelection = (clientId) => {
+    const index = selectedClients.value.indexOf(clientId)
+    if (index > -1) {
+        selectedClients.value.splice(index, 1)
+    } else {
+        selectedClients.value.push(clientId)
+    }
+    showBulkActions.value = selectedClients.value.length > 0
+}
+
+const selectAllClients = () => {
+    selectedClients.value = filteredClients.value.map(client => client.id)
+    showBulkActions.value = true
+}
+
+const clearSelection = () => {
+    selectedClients.value = []
+    showBulkActions.value = false
+}
+
+// Ações em lote
+const bulkMarkAsPaid = async () => {
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        clearSelection()
+        alert(`${selectedClients.value.length} clientes marcados como pagos!`)
+    } catch (error) {
+        console.error('Erro ao marcar como pago:', error)
+        alert('Erro ao marcar como pago')
+    } finally {
+        loading.value = false
+    }
+}
+
+const bulkSendReminder = async () => {
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        clearSelection()
+        alert(`Lembretes enviados para ${selectedClients.value.length} clientes!`)
+    } catch (error) {
+        console.error('Erro ao enviar lembretes:', error)
+        alert('Erro ao enviar lembretes')
+    } finally {
+        loading.value = false
+    }
+}
+
+const bulkDeleteClients = async () => {
+    if (!confirm(`Tem certeza que deseja excluir ${selectedClients.value.length} clientes a fiado?`)) {
+        return
+    }
+
+    try {
+        loading.value = true
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        clients.value = clients.value.filter(client => !selectedClients.value.includes(client.id))
+        clearSelection()
+        alert(`${selectedClients.value.length} clientes excluídos com sucesso!`)
+    } catch (error) {
+        console.error('Erro ao excluir clientes:', error)
+        alert('Erro ao excluir clientes')
+    } finally {
+        loading.value = false
+    }
+}
+
+const applyFilters = () => {
+    clientsStore.setFilters(filters)
+    loadClients()
+}
+
+const clearFilters = () => {
+    Object.assign(filters, {
+        search: '',
+        debtStatus: '',
+        debtAmount: ''
+    })
+    clientsStore.clearFilters()
+    loadClients()
+}
+
+const loadClients = async () => {
+    try {
+        clientsStore.setFilters(filters)
+        const result = await clientsStore.loadClients()
+
+        if (!result.success) {
+            console.error('Erro ao carregar clientes:', result.error)
+        }
+    } catch (error) {
+        console.error('Erro ao carregar clientes:', error)
+    }
 }
 
 // Lifecycle

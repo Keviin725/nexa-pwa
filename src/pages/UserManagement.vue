@@ -472,8 +472,8 @@
                                 required>
                                 <option value="">Selecione uma função</option>
                                 <option value="admin">Administrador</option>
-                                <option value="gerente">Gerente</option>
-                                <option value="vendedor">Vendedor</option>
+                                <option value="manager">Gerente</option>
+                                <option value="seller">Vendedor</option>
                             </select>
                         </div>
 
