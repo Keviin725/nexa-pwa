@@ -270,7 +270,7 @@ router.get("/dashboard", async (req, res) => {
       },
     });
 
-    // Produtos com estoque baixo
+    // Produtos com Stock baixo
     const lowStockProducts = await Product.findAll({
       where: {
         is_active: true,

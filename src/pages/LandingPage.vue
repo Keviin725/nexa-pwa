@@ -51,7 +51,7 @@
                     </h1>
                     <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
                         Sistema completo de gestão para pequenas e médias empresas.
-                        Controle estoque, vendas, clientes e muito mais em uma única plataforma.
+                        Controle Stock, vendas, clientes e muito mais em uma única plataforma.
                     </p>
                     <div class="flex justify-center">
                         <router-link to="/auth/register"
@@ -85,8 +85,8 @@
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Gestão de Estoque</h3>
-                        <p class="text-gray-600">Controle completo do estoque com alertas de produtos em falta e
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Gestão de Stock</h3>
+                        <p class="text-gray-600">Controle completo do Stock com alertas de produtos em falta e
                             relatórios detalhados.</p>
                     </div>
 

@@ -1,8 +1,7 @@
 import axios from "axios";
-import { config } from "@/config/env";
 
 // Configuração base da API
-const API_BASE_URL = config.API_URL;
+const API_BASE_URL = "http://localhost:3000";
 
 // Criar instância do Axios
 const api = axios.create({
@@ -37,7 +36,7 @@ api.interceptors.response.use(
       // Token expirado ou inválido
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
-      window.location.href = "/login";
+      window.location.href = "/auth/login";
     }
     return Promise.reject(error);
   }

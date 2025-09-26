@@ -75,7 +75,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-semibold text-slate-800">Pagamentos</h3>
-                                    <p class="text-sm text-slate-600">Gerenciar assinaturas e pagamentos</p>
+                                    <p class="text-sm text-slate-600">Gerir assinaturas e pagamentos</p>
                                 </div>
                             </div>
                             <router-link to="/app/billing"
@@ -178,7 +178,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-slate-800">Gerenciar Usuários</h3>
+                                    <h3 class="font-medium text-slate-800">Gerir Usuários</h3>
                                     <p class="text-sm text-slate-600">Criar, editar e gerir utilizadores</p>
                                 </div>
                             </div>

@@ -34,9 +34,9 @@ const permissionLabels = {
     'clients.view': 'Ver Clientes',
     'reports.view': 'Ver Relatórios',
     'reports.export': 'Exportar Relatórios',
-    'users.manage': 'Gerenciar Usuários',
+    'users.manage': 'Gerir Usuários',
     'users.view': 'Ver Usuários',
-    'settings.manage': 'Gerenciar Configurações',
+    'settings.manage': 'Gerir Configurações',
     'settings.view': 'Ver Configurações',
     'system.backup': 'Fazer Backup',
     'system.restore': 'Restaurar Backup'

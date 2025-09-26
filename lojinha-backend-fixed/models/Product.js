@@ -36,7 +36,7 @@ const Product = sequelize.define(
     minStock: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      comment: "Estoque mínimo para alertas",
+      comment: "Stock mínimo para alertas",
     },
     is_active: {
       type: DataTypes.BOOLEAN,

@@ -33,7 +33,7 @@ const createSale = async (req, res) => {
         throw new Error(`Produto com ID ${item.productId} não encontrado`);
       }
       if (product.stock < item.quantity) {
-        throw new Error(`Estoque insuficiente para o produto ${product.name}`);
+        throw new Error(`Stock insuficiente para o produto ${product.name}`);
       }
       subtotal += product.price * item.quantity;
     }
@@ -58,7 +58,7 @@ const createSale = async (req, res) => {
       { transaction }
     );
 
-    // Criar itens da venda e atualizar estoque
+    // Criar itens da venda e atualizar Stock
     for (const item of products) {
       const product = await Product.findByPk(item.productId, { transaction });
 
@@ -72,7 +72,7 @@ const createSale = async (req, res) => {
         { transaction }
       );
 
-      // Atualizar estoque
+      // Atualizar Stock
       await Product.decrement("stock", {
         by: item.quantity,
         where: { id: item.productId },
@@ -214,7 +214,7 @@ const deleteSale = async (req, res) => {
       return res.status(404).json({ error: "Venda não encontrada" });
     }
 
-    // Reverter estoque
+    // Reverter Stock
     for (const item of sale.SaleItems) {
       await Product.increment("stock", {
         by: item.quantity,

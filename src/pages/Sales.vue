@@ -15,14 +15,17 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Vendas</h1>
-                            <p class="text-green-100 text-sm">Gerencie suas vendas</p>
+                            <p class="text-green-100 text-sm">
+                                {{ isAdmin ? 'Gerencie todas as vendas' : isManager ? 'Gerencie vendas da equipe' :
+                                    'Gerencie suas vendas' }}
+                            </p>
                         </div>
                     </div>
 
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
-                        <!-- Nova Venda -->
-                        <button @click="openSaleModal"
+                        <!-- Nova Venda (apenas se tiver permissão) -->
+                        <button v-if="canCreateSales" @click="openSaleModal"
                             class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
                             Nova Venda
                         </button>
@@ -284,7 +287,9 @@
                             <label class="block text-sm font-medium text-slate-700 mb-2">Forma de Pagamento</label>
                             <select v-model="saleForm.paymentMethod"
                                 class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
-                                <option value="immediate">Pagamento Imediato</option>
+                                <option value="cash">Dinheiro</option>
+                                <option value="card">Cartão</option>
+                                <option value="transfer">Transferência</option>
                                 <option value="credit">Fiado</option>
                             </select>
                         </div>
@@ -305,7 +310,7 @@
                             @change="addProductToSale">
                             <option value="">Selecione um produto</option>
                             <option v-for="product in availableProducts" :key="product.id" :value="product.id">
-                                {{ product.name }} - MT {{ formatPrice(product.price) }} (Estoque: {{ product.stock
+                                {{ product.name }} - MT {{ formatPrice(product.price) }} (Stock: {{ product.stock
                                 }})
                             </option>
                         </select>
@@ -416,7 +421,6 @@
                                 class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                                 <option value="cash">Dinheiro</option>
                                 <option value="card">Cartão</option>
-                                <option value="pix">PIX</option>
                                 <option value="transfer">Transferência</option>
                             </select>
                         </div>
@@ -454,15 +458,34 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSalesStore } from '@/stores/sales'
 import { useClientsStore } from '@/stores/clients'
 import { useProductsStore } from '@/stores/products'
+import { useAuthStore } from '@/stores/auth'
+import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
+// Router
+const router = useRouter()
+
 // Stores
+const authStore = useAuthStore()
 const salesStore = useSalesStore()
 const clientsStore = useClientsStore()
 const productsStore = useProductsStore()
+
+// Controle de acesso baseado em roles
+const userRole = computed(() => authStore.user?.role || 'seller')
+const isAdmin = computed(() => userRole.value === 'admin')
+const isManager = computed(() => userRole.value === 'manager')
+const isSeller = computed(() => userRole.value === 'seller')
+
+// Permissões específicas
+const canCreateSales = computed(() => permissionManager.hasPermission(PERMISSIONS.SALES_CREATE))
+const canEditSales = computed(() => permissionManager.hasPermission(PERMISSIONS.SALES_EDIT))
+const canDeleteSales = computed(() => permissionManager.hasPermission(PERMISSIONS.SALES_DELETE))
+const canViewAllSales = computed(() => isAdmin.value || isManager.value)
 
 // Estado reativo
 const showSaleModal = ref(false)
@@ -664,6 +687,10 @@ const createSale = async () => {
         if (result.success) {
             closeSaleModal()
             loadSales()
+            loadProducts() // Recarregar produtos para atualizar stock
+            // Notificar que o dashboard deve ser atualizado
+            console.log('🔥 Disparando evento sale-created')
+            window.dispatchEvent(new CustomEvent('sale-created'))
         } else {
             alert('Erro ao criar venda: ' + result.error)
         }
@@ -674,8 +701,7 @@ const createSale = async () => {
 }
 
 const viewSale = (sale) => {
-    // Implementar visualização detalhada da venda
-    console.log('Ver venda:', sale)
+    router.push(`/app/sales/${sale.id}`)
 }
 
 const generateReceipt = async (saleId) => {
@@ -700,6 +726,10 @@ const deleteSale = async (saleId) => {
 
         if (result.success) {
             loadSales()
+            loadProducts() // Recarregar produtos para atualizar stock
+            // Notificar que o dashboard deve ser atualizado
+            console.log('🔥 Disparando evento sale-deleted')
+            window.dispatchEvent(new CustomEvent('sale-deleted'))
         } else {
             alert('Erro ao cancelar venda: ' + result.error)
         }
@@ -759,6 +789,11 @@ const createPayment = async () => {
 
 // Lifecycle
 onMounted(() => {
+    // Configurar permissionManager com o usuário atual
+    if (authStore.user) {
+        permissionManager.setCurrentUser(authStore.user)
+    }
+
     loadSales()
     loadClients()
     loadProducts()

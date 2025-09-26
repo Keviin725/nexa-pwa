@@ -89,13 +89,14 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { authService } from '../services/authService.js'
+import { useAuthStore } from '@/stores/auth'
 
 // Estado reativo
 const showProfile = ref(false)
+const authStore = useAuthStore()
 
 // Computed
-const currentUser = computed(() => authService.getCurrentUser())
+const currentUser = computed(() => authStore.user)
 
 const userInitials = computed(() => {
     if (!currentUser.value?.name) return 'U'
@@ -145,6 +146,6 @@ const viewNotifications = () => {
 
 const logout = () => {
     closeProfile()
-    authService.logout()
+    authStore.logout()
 }
 </script>

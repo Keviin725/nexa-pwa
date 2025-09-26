@@ -15,14 +15,17 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Gestão de Colaboradores</h1>
-                            <p class="text-indigo-100 text-sm">Adicione e gerencie colaboradores do sistema</p>
+                            <p class="text-indigo-100 text-sm">
+                                {{ isAdmin ? 'Gerencie todos os colaboradores' : isManager ? 'Colaboradores' : ''
+                                }}
+                            </p>
                         </div>
                     </div>
 
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
-                        <!-- Novo Colaborador -->
-                        <button @click="openModal('create')"
+                        <!-- Novo Colaborador (apenas se tiver permissão) -->
+                        <button v-if="canManageUsers" @click="openModal('create')"
                             class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -297,6 +300,14 @@
                                 </svg>
                                 {{ user.isActive ? 'Desativar' : 'Ativar' }}
                             </button>
+                            <button @click="resetUserPassword(user)"
+                                class="px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z">
+                                    </path>
+                                </svg>
+                            </button>
                             <button @click="deleteUser(user.id)"
                                 class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,6 +435,13 @@
                                 required />
                         </div>
 
+                        <!-- Telefone -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Telefone</label>
+                            <input v-model="form.phone" type="tel" placeholder="Digite o telefone"
+                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+                        </div>
+
                         <!-- Senha (apenas para criação) -->
                         <div v-if="modalMode === 'create'">
                             <label class="block text-sm font-medium text-slate-700 mb-2">Senha *</label>
@@ -511,8 +529,8 @@
                     </button>
                     <button type="submit" @click="saveUser"
                         class="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
-                        :disabled="loading">
-                        <div v-if="loading" class="flex items-center justify-center">
+                        :disabled="formLoading">
+                        <div v-if="formLoading" class="flex items-center justify-center">
                             <div
                                 class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2">
                             </div>
@@ -532,16 +550,29 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { PERMISSIONS, ROLE_PERMISSIONS, permissionManager } from '@/utils/permissions'
 import { useUsersStore } from '@/stores/users'
+import { useAuthStore } from '@/stores/auth'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 
 // Store
+const authStore = useAuthStore()
 const usersStore = useUsersStore()
+
+// Controle de acesso baseado em roles
+const userRole = computed(() => authStore.user?.role || 'seller')
+const isAdmin = computed(() => userRole.value === 'admin')
+const isManager = computed(() => userRole.value === 'manager')
+const isSeller = computed(() => userRole.value === 'seller')
+
+// Permissões específicas
+const canManageUsers = computed(() => permissionManager.hasPermission(PERMISSIONS.USERS_MANAGE))
+const canViewUsers = computed(() => permissionManager.hasPermission(PERMISSIONS.USERS_VIEW))
 
 // Estado reativo
 const showModal = ref(false)
 const modalMode = ref('create')
 const selectedUsers = ref([])
 const showBulkActions = ref(false)
+const formLoading = ref(false)
 
 const filters = reactive({
     search: '',
@@ -553,6 +584,7 @@ const form = reactive({
     id: null,
     name: '',
     email: '',
+    phone: '',
     password: '',
     role: '',
     isActive: true,
@@ -640,10 +672,67 @@ const openModal = (mode, user = null) => {
 const closeModal = () => {
     showModal.value = false
     modalMode.value = 'create'
+    resetForm()
+}
+
+const resetForm = () => {
+    form.id = null
+    form.name = ''
+    form.email = ''
+    form.phone = ''
+    form.password = ''
+    form.role = ''
+    form.isActive = true
+    form.permissions = []
 }
 
 const saveUser = async () => {
     try {
+        formLoading.value = true
+
+        // Validação de formulário
+        if (!form.name.trim()) {
+            alert('Nome é obrigatório')
+            return
+        }
+
+        if (!form.email.trim()) {
+            alert('Email é obrigatório')
+            return
+        }
+
+        if (!form.role) {
+            alert('Função é obrigatória')
+            return
+        }
+
+        if (modalMode.value === 'create' && !form.password.trim()) {
+            alert('Senha é obrigatória')
+            return
+        }
+
+        // Validação de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(form.email)) {
+            alert('Email inválido')
+            return
+        }
+
+        // Validação de senha (mínimo 6 caracteres)
+        if (modalMode.value === 'create' && form.password.length < 6) {
+            alert('Senha deve ter pelo menos 6 caracteres')
+            return
+        }
+
+        // Validação de telefone (se fornecido)
+        if (form.phone && form.phone.trim()) {
+            const phoneRegex = /^[\d\s\-\+\(\)]+$/
+            if (!phoneRegex.test(form.phone)) {
+                alert('Telefone inválido')
+                return
+            }
+        }
+
         // Validar permissões baseadas no role
         const rolePermissions = ROLE_PERMISSIONS[form.role] || []
         const validPermissions = form.permissions.filter(permission =>
@@ -665,34 +754,66 @@ const saveUser = async () => {
         if (result.success) {
             closeModal()
             loadUsers()
+            alert('Colaborador salvo com sucesso!')
         } else {
             alert('Erro ao salvar colaborador: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao salvar colaborador:', error)
         alert('Erro ao salvar colaborador')
+    } finally {
+        formLoading.value = false
     }
 }
 
 const toggleUserStatus = async (user) => {
+    const action = user.isActive ? 'desativar' : 'ativar'
+    if (!confirm(`Tem certeza que deseja ${action} o colaborador "${user.name}"?`)) {
+        return
+    }
+
     try {
         loading.value = true
+        const result = await usersStore.toggleUserStatus(user.id)
 
-        // Simular API call
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        user.isActive = !user.isActive
-        alert(`Usuário ${user.isActive ? 'ativado' : 'desativado'} com sucesso!`)
+        if (result.success) {
+            loadUsers()
+            alert(`Colaborador ${user.isActive ? 'desativado' : 'ativado'} com sucesso!`)
+        } else {
+            alert('Erro ao alterar status: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao alterar status:', error)
-        alert('Erro ao alterar status do utilizador')
+        alert('Erro ao alterar status do colaborador')
+    } finally {
+        loading.value = false
+    }
+}
+
+const resetUserPassword = async (user) => {
+    if (!confirm(`Tem certeza que deseja resetar a senha do colaborador "${user.name}"?`)) {
+        return
+    }
+
+    try {
+        loading.value = true
+        const result = await usersStore.resetUserPassword(user.id)
+
+        if (result.success) {
+            alert('Senha resetada com sucesso! Nova senha: ' + result.newPassword)
+        } else {
+            alert('Erro ao resetar senha: ' + result.error)
+        }
+    } catch (error) {
+        console.error('Erro ao resetar senha:', error)
+        alert('Erro ao resetar senha')
     } finally {
         loading.value = false
     }
 }
 
 const deleteUser = async (userId) => {
-    if (!confirm('Tem a certeza que deseja excluir este utilizador?')) {
+    if (!confirm('Tem a certeza que deseja excluir este colaborador?')) {
         return
     }
 
@@ -701,12 +822,13 @@ const deleteUser = async (userId) => {
 
         if (result.success) {
             loadUsers()
+            alert('Colaborador excluído com sucesso!')
         } else {
-            alert('Erro ao excluir utilizador: ' + result.error)
+            alert('Erro ao excluir colaborador: ' + result.error)
         }
     } catch (error) {
-        console.error('Erro ao excluir utilizador:', error)
-        alert('Erro ao excluir utilizador')
+        console.error('Erro ao excluir colaborador:', error)
+        alert('Erro ao excluir colaborador')
     }
 }
 
@@ -822,6 +944,11 @@ const loadUsers = async () => {
 
 // Lifecycle
 onMounted(() => {
+    // Configurar permissionManager com o usuário atual
+    if (authStore.user) {
+        permissionManager.setCurrentUser(authStore.user)
+    }
+
     loadUsers()
 })
 </script>

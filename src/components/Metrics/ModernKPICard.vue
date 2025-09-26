@@ -49,11 +49,11 @@
             <div class="mb-4">
                 <div class="flex justify-between text-xs text-slate-500 mb-2">
                     <span>Progresso</span>
-                    <span>{{ progressPercentage }}%</span>
+                    <span>{{ Math.round(animatedProgress) }}%</span>
                 </div>
                 <div class="w-full bg-slate-200 rounded-full overflow-hidden" :class="isMobile ? 'h-1.5' : 'h-2'">
                     <div class="h-full rounded-full transition-all duration-1000 ease-out" :class="progressColorClass"
-                        :style="{ width: progressPercentage + '%' }"></div>
+                        :style="{ width: animatedProgress + '%' }"></div>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import { useResponsive } from '../../hooks/useResponsive.js'
 
 const props = defineProps({
@@ -108,6 +108,18 @@ const props = defineProps({
     progressPercentage: {
         type: Number,
         default: 0
+    },
+    maxValue: {
+        type: Number,
+        default: 100
+    },
+    currentValue: {
+        type: Number,
+        default: 0
+    },
+    autoCalculate: {
+        type: Boolean,
+        default: false
     },
     status: {
         type: String,
@@ -191,4 +203,23 @@ const formattedValue = computed(() => {
     }
     return props.value
 })
+
+// Calcular progress bar dinamicamente
+const calculatedProgress = computed(() => {
+    if (props.autoCalculate && props.maxValue > 0) {
+        const percentage = Math.min((props.currentValue / props.maxValue) * 100, 100)
+        return Math.max(percentage, 0)
+    }
+    return props.progressPercentage
+})
+
+// Progress bar com animação
+const animatedProgress = ref(0)
+
+// Animar progress bar quando o valor mudar
+watch(() => calculatedProgress.value, (newValue) => {
+    nextTick(() => {
+        animatedProgress.value = newValue
+    })
+}, { immediate: true })
 </script>

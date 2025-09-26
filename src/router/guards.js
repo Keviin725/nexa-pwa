@@ -31,7 +31,9 @@ export const requireManager = (to, from, next) => {
 
 export const redirectIfAuthenticated = (to, from, next) => {
   const token = localStorage.getItem("auth_token");
-  if (token) {
+  const userData = localStorage.getItem("user_data");
+
+  if (token && userData) {
     next("/app");
   } else {
     next();

@@ -15,11 +15,14 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Relatórios</h1>
-                            <p class="text-blue-100 text-sm">Análise do seu negócio</p>
+                            <p class="text-blue-100 text-sm">
+                                {{ isAdmin ? 'Análise do sistema' : isManager ? 'Análise da equipe' : 'Acesso limitado'
+                                }}
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button @click="exportReport"
+                        <button v-if="canExportReports" @click="exportReport"
                             class="p-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,7 +57,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                             <div class="text-2xl font-bold text-green-600 mb-1">{{ formatPrice(metrics.totalRevenue)
-                                }}MT
+                            }}MT
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                         </div>
@@ -123,19 +126,23 @@
             <div class="grid grid-cols-1 gap-4">
                 <ModernKPICard title="Vendas Totais" subtitle="Período selecionado" :value="metrics.totalSales"
                     description="vendas realizadas" trend="up" :trend-percentage="metrics.salesTrendPercentage"
-                    :progress-percentage="75" status="Crescendo" period="Últimos 30 dias" icon="chart" color="green" />
+                    :auto-calculate="true" :current-value="metrics.totalSales" :max-value="100" status="Crescendo"
+                    period="Últimos 30 dias" icon="chart" color="green" />
 
                 <ModernKPICard title="Receita Total" subtitle="Faturamento" :value="formatPrice(metrics.totalRevenue)"
                     description="faturamento total" trend="up" :trend-percentage="metrics.revenueTrendPercentage"
-                    :progress-percentage="85" status="Excelente" period="Últimos 30 dias" icon="money" color="blue" />
+                    :auto-calculate="true" :current-value="metrics.totalRevenue" :max-value="1000" status="Excelente"
+                    period="Últimos 30 dias" icon="money" color="blue" />
 
                 <ModernKPICard title="Produtos Vendidos" subtitle="Quantidade" :value="metrics.productsSold"
                     description="unidades vendidas" trend="up" :trend-percentage="metrics.productsTrendPercentage"
-                    :progress-percentage="60" status="Ativo" period="Últimos 30 dias" icon="box" color="purple" />
+                    :auto-calculate="true" :current-value="metrics.productsSold" :max-value="500" status="Ativo"
+                    period="Últimos 30 dias" icon="box" color="purple" />
 
                 <ModernKPICard title="Novos Clientes" subtitle="Cadastros" :value="metrics.newClients"
                     description="clientes registados" trend="up" :trend-percentage="metrics.clientsTrendPercentage"
-                    :progress-percentage="45" status="Crescendo" period="Últimos 30 dias" icon="users" color="yellow" />
+                    :auto-calculate="true" :current-value="metrics.newClients" :max-value="50" status="Crescendo"
+                    period="Últimos 30 dias" icon="users" color="yellow" />
             </div>
 
             <!-- Gráficos Modernos -->
@@ -158,22 +165,25 @@
                 <!-- Métricas Financeiras Modernas -->
                 <div class="grid grid-cols-1 gap-4">
                     <ModernKPICard title="Ticket Médio" subtitle="Por venda" :value="formatPrice(metrics.averageTicket)"
-                        description="valor médio por venda" trend="up" :trend-percentage="12" :progress-percentage="70"
-                        status="Bom" period="Últimos 30 dias" icon="money" color="blue" />
+                        description="valor médio por venda" trend="up" :trend-percentage="12" :auto-calculate="true"
+                        :current-value="metrics.averageTicket" :max-value="150" status="Bom" period="Últimos 30 dias"
+                        icon="money" color="blue" />
 
                     <ModernKPICard title="Margem de Lucro" subtitle="Percentual" :value="metrics.profitMargin + '%'"
-                        description="margem de lucro" trend="up" :trend-percentage="8" :progress-percentage="85"
-                        status="Excelente" period="Últimos 30 dias" icon="chart" color="green" />
+                        description="margem de lucro" trend="up" :trend-percentage="8" :auto-calculate="true"
+                        :current-value="metrics.profitMargin" :max-value="100" status="Excelente"
+                        period="Últimos 30 dias" icon="chart" color="green" />
 
                     <ModernKPICard title="Vendas por Dia" subtitle="Média diária" :value="metrics.salesPerDay"
-                        description="vendas por dia" trend="up" :trend-percentage="15" :progress-percentage="60"
-                        status="Crescendo" period="Últimos 30 dias" icon="shopping" color="purple" />
+                        description="vendas por dia" trend="up" :trend-percentage="15" :auto-calculate="true"
+                        :current-value="metrics.salesPerDay" :max-value="10" status="Crescendo" period="Últimos 30 dias"
+                        icon="shopping" color="purple" />
 
                     <ModernKPICard title="Crescimento" subtitle="Percentual"
                         :value="(metrics.growth >= 0 ? '+' : '') + metrics.growth + '%'"
                         description="crescimento do negócio" :trend="metrics.growth >= 0 ? 'up' : 'down'"
-                        :trend-percentage="Math.abs(metrics.growth)"
-                        :progress-percentage="Math.min(Math.abs(metrics.growth), 100)"
+                        :trend-percentage="Math.abs(metrics.growth)" :auto-calculate="true"
+                        :current-value="Math.abs(metrics.growth)" :max-value="100"
                         :status="metrics.growth >= 0 ? 'Crescendo' : 'Declinando'" period="Últimos 30 dias" icon="chart"
                         :color="metrics.growth >= 0 ? 'green' : 'red'" />
                 </div>
@@ -264,13 +274,26 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useReportsStore } from '@/stores/reports'
+import { useAuthStore } from '@/stores/auth'
+import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import ModernLineChart from '../components/Charts/ModernLineChart.vue'
 import ModernBarChart from '../components/Charts/ModernBarChart.vue'
 import ModernPieChart from '../components/Charts/ModernPieChart.vue'
 import ModernKPICard from '../components/Metrics/ModernKPICard.vue'
 
 // Store
+const authStore = useAuthStore()
 const reportsStore = useReportsStore()
+
+// Controle de acesso baseado em roles
+const userRole = computed(() => authStore.user?.role || 'seller')
+const isAdmin = computed(() => userRole.value === 'admin')
+const isManager = computed(() => userRole.value === 'manager')
+const isSeller = computed(() => userRole.value === 'seller')
+
+// Permissões específicas
+const canViewReports = computed(() => permissionManager.hasPermission(PERMISSIONS.REPORTS_VIEW))
+const canExportReports = computed(() => permissionManager.hasPermission(PERMISSIONS.REPORTS_EXPORT))
 
 // Computed properties
 const loading = computed(() => reportsStore.loading)
@@ -283,7 +306,7 @@ const detailedSales = computed(() => reportsStore.detailedSales)
 
 // Métodos
 const formatPrice = (price) => {
-    return parseFloat(price).toFixed(3).replace('.', ',')
+    return parseFloat(price).toFixed(2).replace('.', ',')
 }
 
 const formatDate = (date) => {
@@ -317,6 +340,11 @@ const exportReport = async () => {
 
 // Lifecycle
 onMounted(async () => {
+    // Configurar permissionManager com o usuário atual
+    if (authStore.user) {
+        permissionManager.setCurrentUser(authStore.user)
+    }
+
     // Carregar dados iniciais
     await reportsStore.loadReportData()
 })

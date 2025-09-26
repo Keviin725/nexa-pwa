@@ -15,14 +15,17 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Produtos</h1>
-                            <p class="text-purple-100 text-sm">Gerencie seu Stock</p>
+                            <p class="text-purple-100 text-sm">
+                                {{ isAdmin ? 'Gerencie todo o Stock' : isManager ? 'Gerencie Stock da equipe' :
+                                    'Visualize produtos disponíveis' }}
+                            </p>
                         </div>
                     </div>
 
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
-                        <!-- Novo Produto -->
-                        <button @click="openModal('create')"
+                        <!-- Novo Produto (apenas se tiver permissão) -->
+                        <button v-if="canCreateProducts" @click="openModal('create')"
                             class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
                             Novo Produto
                         </button>
@@ -211,7 +214,7 @@
                                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
                                     </path>
                                 </svg>
-                                Estoque
+                                Stock
                             </button>
                             <button @click="deleteProduct(product.id)"
                                 class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
@@ -276,7 +279,7 @@
                             </div>
                         </div>
 
-                        <!-- Estoque -->
+                        <!-- Stock -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">Stock Inicial</label>
@@ -336,7 +339,7 @@
                 </form>
             </CustomBottomSheet>
 
-            <!-- Bottom Sheet de Estoque -->
+            <!-- Bottom Sheet de Stock -->
             <CustomBottomSheet v-model:visible="showStockModal" title="Atualizar Stock" height="70vh"
                 @close="closeStockModal">
 
@@ -393,12 +396,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue'
+import { ref, onMounted, onUnmounted, reactive, computed, nextTick } from 'vue'
 import { useProductsStore } from '@/stores/products'
+import { useAuthStore } from '@/stores/auth'
+import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
 // Store
+const authStore = useAuthStore()
 const productsStore = useProductsStore()
+
+// Controle de acesso baseado em roles
+const userRole = computed(() => authStore.user?.role || 'seller')
+const isAdmin = computed(() => userRole.value === 'admin')
+const isManager = computed(() => userRole.value === 'manager')
+const isSeller = computed(() => userRole.value === 'seller')
+
+// Permissões específicas
+const canCreateProducts = computed(() => permissionManager.hasPermission(PERMISSIONS.PRODUCTS_CREATE))
+const canEditProducts = computed(() => permissionManager.hasPermission(PERMISSIONS.PRODUCTS_EDIT))
+const canDeleteProducts = computed(() => permissionManager.hasPermission(PERMISSIONS.PRODUCTS_DELETE))
+const canViewProducts = computed(() => permissionManager.hasPermission(PERMISSIONS.PRODUCTS_VIEW))
 
 // Estado local
 const showModal = ref(false)
@@ -436,7 +454,7 @@ const form = reactive({
     notes: ''
 })
 
-// Formulário de estoque
+// Formulário de Stock
 const stockForm = reactive({
     operation: 'add',
     quantity: ''
@@ -452,20 +470,36 @@ const formatPrice = (price) => {
 
 const loadProducts = async () => {
     try {
+        console.log('🔄 Carregando produtos...')
+        console.log('🔍 Filtros atuais:', filters)
+
         // Aplicar filtros na store
         productsStore.setFilters(filters)
 
         // Carregar produtos usando a store
-        await productsStore.loadProducts()
+        const result = await productsStore.loadProducts()
+        console.log('✅ Produtos carregados:', result)
+        console.log('📦 Produtos na store:', productsStore.products)
+        console.log('📦 Produtos computados:', products.value)
+
+        // Verificar se os produtos foram atualizados
+        if (products.value && products.value.length > 0) {
+            console.log('📊 Primeiro produto:', products.value[0])
+            console.log('📊 Stock do primeiro produto:', products.value[0].stock)
+        }
+
+        // Forçar reatividade
+        await nextTick()
+        console.log('🔄 Reatividade forçada')
     } catch (error) {
-        console.error('Erro ao carregar produtos:', error)
+        console.error('❌ Erro ao carregar produtos:', error)
     }
 }
 
 const checkLowStockProducts = () => {
     products.value.forEach(product => {
         if (product.stock <= product.minStock && product.stock > 0) {
-            // Notificação de estoque baixo removida
+            // Notificação de Stock baixo removida
         }
     })
 }
@@ -617,17 +651,73 @@ const updateStock = async () => {
             closeStockModal()
             loadProducts()
         } else {
-            alert('Erro ao atualizar estoque: ' + result.error)
+            alert('Erro ao atualizar Stock: ' + result.error)
         }
     } catch (error) {
-        console.error('Erro ao atualizar estoque:', error)
-        alert('Erro ao atualizar estoque')
+        console.error('Erro ao atualizar Stock:', error)
+        alert('Erro ao atualizar Stock')
     }
+}
+
+// Funções para eventos
+const handleSaleCreated = async () => {
+    console.log('🔄 Evento sale-created recebido, recarregando produtos...')
+
+    // Aguardar um pouco para garantir que o backend processou a venda
+    setTimeout(async () => {
+        try {
+            // Forçar recarregamento direto da API
+            const response = await fetch('http://localhost:3000/products')
+            const data = await response.json()
+            console.log('🔄 Dados atualizados da API:', data)
+
+            // Atualizar a store diretamente
+            productsStore.$patch({ products: data })
+            console.log('✅ Store atualizada diretamente')
+        } catch (error) {
+            console.error('❌ Erro ao recarregar produtos:', error)
+        }
+    }, 1000)
+}
+
+const handleSaleDeleted = async () => {
+    console.log('🔄 Evento sale-deleted recebido, recarregando produtos...')
+
+    // Aguardar um pouco para garantir que o backend processou o cancelamento
+    setTimeout(async () => {
+        try {
+            // Forçar recarregamento direto da API
+            const response = await fetch('http://localhost:3000/products')
+            const data = await response.json()
+            console.log('🔄 Dados atualizados da API:', data)
+
+            // Atualizar a store diretamente
+            productsStore.$patch({ products: data })
+            console.log('✅ Store atualizada diretamente')
+        } catch (error) {
+            console.error('❌ Erro ao recarregar produtos:', error)
+        }
+    }, 1000)
 }
 
 // Lifecycle
 onMounted(() => {
+    // Configurar permissionManager com o usuário atual
+    if (authStore.user) {
+        permissionManager.setCurrentUser(authStore.user)
+    }
+
     loadProducts()
     loadCategories()
+
+    // Escutar eventos de venda criada/deletada para atualizar produtos
+    window.addEventListener('sale-created', handleSaleCreated)
+    window.addEventListener('sale-deleted', handleSaleDeleted)
+})
+
+onUnmounted(() => {
+    // Remover listener ao sair da página
+    window.removeEventListener('sale-created', handleSaleCreated)
+    window.removeEventListener('sale-deleted', handleSaleDeleted)
 })
 </script>

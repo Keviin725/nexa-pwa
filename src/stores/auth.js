@@ -22,6 +22,11 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
+    // Inicializar store
+    init() {
+      this.loadFromStorage();
+    },
+
     // Login
     async login(credentials) {
       this.loading = true;
@@ -54,46 +59,45 @@ export const useAuthStore = defineStore("auth", {
 
     // Logout
     async logout() {
-      try {
-        await apiService.auth.logout();
-      } catch (error) {
-        console.error("Erro ao fazer logout:", error);
-      } finally {
-        // Limpar dados locais
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user_data");
+      // Limpar dados locais
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
 
-        // Resetar estado
-        this.user = null;
-        this.token = null;
-        this.isAuthenticated = false;
-        this.error = null;
+      // Resetar estado
+      this.user = null;
+      this.token = null;
+      this.isAuthenticated = false;
+      this.error = null;
 
-        // Limpar permissões
-        permissionManager.clearCurrentUser();
-      }
+      // Limpar permissões
+      permissionManager.clearCurrentUser();
+
+      // Redirecionar para login
+      window.location.href = "/auth/login";
     },
 
     // Carregar dados do usuário do localStorage
     loadFromStorage() {
-      const token = localStorage.getItem("auth_token");
-      const userData = localStorage.getItem("user_data");
+      try {
+        const token = localStorage.getItem("auth_token");
+        const userData = localStorage.getItem("user_data");
 
-      if (token && userData) {
-        try {
+        if (token && userData) {
           const user = JSON.parse(userData);
           this.user = user;
           this.token = token;
           this.isAuthenticated = true;
+
+          // Configurar permissionManager
           permissionManager.setCurrentUser(user);
           return true;
-        } catch (error) {
-          console.error("Erro ao carregar dados do usuário:", error);
-          this.logout();
-          return false;
         }
+        return false;
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+        this.clearAuth();
+        return false;
       }
-      return false;
     },
 
     // Atualizar perfil do usuário
@@ -149,6 +153,16 @@ export const useAuthStore = defineStore("auth", {
     // Limpar erro
     clearError() {
       this.error = null;
+    },
+
+    // Limpar autenticação
+    clearAuth() {
+      this.user = null;
+      this.token = null;
+      this.isAuthenticated = false;
+      this.error = null;
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
     },
   },
 });

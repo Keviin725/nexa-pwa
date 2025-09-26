@@ -87,7 +87,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-// PUT /products/:id/stock - Atualizar estoque
+// PUT /products/:id/stock - Atualizar Stock
 const updateStock = async (req, res) => {
   try {
     const { quantity, operation = "add" } = req.body;
@@ -107,7 +107,7 @@ const updateStock = async (req, res) => {
     }
 
     if (newStock < 0) {
-      return res.status(400).json({ error: "Estoque não pode ser negativo" });
+      return res.status(400).json({ error: "Stock não pode ser negativo" });
     }
 
     await product.update({ stock: newStock });
@@ -140,7 +140,7 @@ const getCategories = async (req, res) => {
   }
 };
 
-// GET /products/low-stock - Produtos com estoque baixo
+// GET /products/low-stock - Produtos com Stock baixo
 const getLowStockProducts = async (req, res) => {
   try {
     const products = await Product.findAll({

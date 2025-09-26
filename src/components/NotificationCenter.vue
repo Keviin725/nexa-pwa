@@ -290,8 +290,8 @@ const addSampleNotification = () => {
         {
             id: Date.now() + 1,
             type: 'warning',
-            title: 'Estoque Baixo',
-            message: 'Produto "Arroz" com apenas 5 unidades em estoque',
+            title: 'Stock Baixo',
+            message: 'Produto "Arroz" com apenas 5 unidades em Stock',
             timestamp: new Date(Date.now() - 3600000), // 1 hora atrás
             read: false,
             action: true,

@@ -106,7 +106,7 @@ export const useProductsStore = defineStore("products", {
       }
     },
 
-    // Carregar produtos com estoque baixo
+    // Carregar produtos com Stock baixo
     async loadLowStockProducts() {
       try {
         const response = await apiService.products.getLowStock();
@@ -115,7 +115,7 @@ export const useProductsStore = defineStore("products", {
       } catch (error) {
         this.error =
           error.response?.data?.error ||
-          "Erro ao carregar produtos com estoque baixo";
+          "Erro ao carregar produtos com Stock baixo";
         return { success: false, error: this.error };
       }
     },
@@ -174,7 +174,7 @@ export const useProductsStore = defineStore("products", {
       }
     },
 
-    // Atualizar estoque
+    // Atualizar Stock
     async updateStock(id, stockData) {
       this.loading = true;
       this.error = null;
@@ -187,7 +187,7 @@ export const useProductsStore = defineStore("products", {
         }
         return { success: true, data: response.data };
       } catch (error) {
-        this.error = error.response?.data?.error || "Erro ao atualizar estoque";
+        this.error = error.response?.data?.error || "Erro ao atualizar Stock";
         return { success: false, error: this.error };
       } finally {
         this.loading = false;

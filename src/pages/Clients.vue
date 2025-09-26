@@ -15,14 +15,17 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Clientes</h1>
-                            <p class="text-blue-100 text-sm">Gerencie seus clientes</p>
+                            <p class="text-blue-100 text-sm">
+                                {{ isAdmin ? 'Gerencie todos os clientes' : isManager ? 'Gerencie clientes da equipe' :
+                                    'Gerencie seus clientes' }}
+                            </p>
                         </div>
                     </div>
 
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
                         <!-- Novo Cliente -->
-                        <button @click="openModal('create')"
+                        <button v-if="canCreateClients" @click="openModal('create')"
                             class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
                             Novo Cliente
                         </button>
@@ -362,10 +365,25 @@
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue'
 import { useClientsStore } from '@/stores/clients'
+import { useAuthStore } from '@/stores/auth'
+import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
 // Store
 const clientsStore = useClientsStore()
+const authStore = useAuthStore()
+
+// Controle de acesso baseado em roles
+const userRole = computed(() => authStore.user?.role || 'seller')
+const isAdmin = computed(() => userRole.value === 'admin')
+const isManager = computed(() => userRole.value === 'manager')
+const isSeller = computed(() => userRole.value === 'seller')
+
+// Permissões específicas
+const canCreateClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_CREATE))
+const canEditClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_EDIT))
+const canDeleteClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_DELETE))
+const canViewClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_VIEW))
 
 // Estado reativo
 const clientHistory = ref([])
@@ -578,6 +596,11 @@ const closeDebtsModal = () => {
 
 // Lifecycle
 onMounted(() => {
+    // Configurar permissionManager com o usuário atual
+    if (authStore.user) {
+        permissionManager.setCurrentUser(authStore.user)
+    }
+
     loadClients()
 })
 </script>

@@ -10,6 +10,7 @@ export const useDashboardStore = defineStore("dashboard", {
       totalProducts: 0,
       lowStockProducts: 0,
       totalClients: 0,
+      totalUsers: 0,
       clientsWithDebts: 0,
       salesByDay: [],
       topProducts: [],
@@ -21,6 +22,16 @@ export const useDashboardStore = defineStore("dashboard", {
       currentPeriod: 0,
       previousPeriod: 0,
       growthRate: 0,
+    },
+    // Metas dinâmicas
+    targets: {
+      monthlyRevenue: 25000,
+      monthlySales: 100,
+      monthlyProducts: 500,
+      monthlyClients: 20,
+      averageTicket: 150,
+      profitMargin: 25,
+      salesPerDay: 5,
     },
     loading: false,
     error: null,
@@ -52,6 +63,46 @@ export const useDashboardStore = defineStore("dashboard", {
         color: rate >= 0 ? "text-green-600" : "text-red-600",
       };
     },
+
+    // Progressos dinâmicos baseados nas metas
+    progressMetrics: (state) => ({
+      revenue: Math.min(
+        (state.data.totalRevenue / state.targets.monthlyRevenue) * 100,
+        100
+      ),
+      sales: Math.min(
+        (state.data.totalSales / state.targets.monthlySales) * 100,
+        100
+      ),
+      products: Math.min(
+        (state.data.totalProducts / state.targets.monthlyProducts) * 100,
+        100
+      ),
+      clients: Math.min(
+        (state.data.totalClients / state.targets.monthlyClients) * 100,
+        100
+      ),
+    }),
+
+    // Status das metas
+    targetStatus: (state) => ({
+      revenue:
+        state.data.totalRevenue >= state.targets.monthlyRevenue
+          ? "achieved"
+          : "pending",
+      sales:
+        state.data.totalSales >= state.targets.monthlySales
+          ? "achieved"
+          : "pending",
+      products:
+        state.data.totalProducts >= state.targets.monthlyProducts
+          ? "achieved"
+          : "pending",
+      clients:
+        state.data.totalClients >= state.targets.monthlyClients
+          ? "achieved"
+          : "pending",
+    }),
 
     // Dados para gráficos
     chartData: (state) => ({
@@ -178,6 +229,31 @@ export const useDashboardStore = defineStore("dashboard", {
     // Limpar erro
     clearError() {
       this.error = null;
+    },
+
+    // Atualizar metas
+    updateTargets(newTargets) {
+      this.targets = { ...this.targets, ...newTargets };
+    },
+
+    // Definir meta específica
+    setTarget(targetName, value) {
+      if (this.targets.hasOwnProperty(targetName)) {
+        this.targets[targetName] = value;
+      }
+    },
+
+    // Resetar metas para valores padrão
+    resetTargets() {
+      this.targets = {
+        monthlyRevenue: 25000,
+        monthlySales: 100,
+        monthlyProducts: 500,
+        monthlyClients: 20,
+        averageTicket: 150,
+        profitMargin: 25,
+        salesPerDay: 5,
+      };
     },
   },
 });

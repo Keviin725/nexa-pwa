@@ -12,34 +12,93 @@ const {
   bulkUserAction,
 } = require("../controllers/userController");
 
-// Middleware de autenticação (assumindo que existe)
-// const auth = require("../middleware/auth");
+// Middleware de autenticação
+const {
+  authenticateToken,
+  requireActiveUser,
+  requireRole,
+  canManageUser,
+} = require("../middleware/auth");
 
 // GET /users/stats - Estatísticas dos usuários
-router.get("/stats", getUserStats);
+router.get(
+  "/stats",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin", "manager"]),
+  getUserStats
+);
 
 // GET /users - Listar todos os usuários
-router.get("/", getUsers);
+router.get(
+  "/",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin", "manager"]),
+  getUsers
+);
 
 // GET /users/:id - Buscar usuário por ID
-router.get("/:id", getUserById);
+router.get(
+  "/:id",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin", "manager"]),
+  getUserById
+);
 
 // POST /users - Criar novo usuário
-router.post("/", createUser);
+router.post(
+  "/",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin", "manager"]),
+  createUser
+);
 
 // PUT /users/:id - Atualizar usuário
-router.put("/:id", updateUser);
+router.put(
+  "/:id",
+  authenticateToken,
+  requireActiveUser,
+  canManageUser,
+  updateUser
+);
 
 // PUT /users/:id/status - Alterar status do usuário
-router.put("/:id/status", toggleUserStatus);
+router.put(
+  "/:id/status",
+  authenticateToken,
+  requireActiveUser,
+  canManageUser,
+  toggleUserStatus
+);
 
 // PUT /users/:id/permissions - Atualizar permissões do usuário
-router.put("/:id/permissions", updateUserPermissions);
+router.put(
+  "/:id/permissions",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin"]),
+  updateUserPermissions
+);
 
 // POST /users/bulk-action - Ações em lote
-router.post("/bulk-action", bulkUserAction);
+router.post(
+  "/bulk-action",
+  authenticateToken,
+  requireActiveUser,
+  requireRole(["admin", "manager"]),
+  bulkUserAction
+);
 
 // DELETE /users/:id - Desativar usuário
-router.delete("/:id", deleteUser);
+router.delete(
+  "/:id",
+  authenticateToken,
+  requireActiveUser,
+  canManageUser,
+  deleteUser
+);
 
 module.exports = router;

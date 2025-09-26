@@ -5,6 +5,7 @@ import LandingPage from "../pages/LandingPage.vue";
 import HomePage from "../pages/HomePage.vue";
 import Products from "../pages/Products.vue";
 import Sales from "../pages/Sales.vue";
+import SaleDetails from "../pages/SaleDetails.vue";
 import Clients from "../pages/Clients.vue";
 import Reports from "../pages/Reports.vue";
 import Settings from "../pages/Settings.vue";
@@ -38,7 +39,11 @@ const routes = [
     component: MainLayout,
     beforeEnter: requireAuth,
     children: [
-      { path: "", name: "Home", component: HomePage },
+      {
+        path: "",
+        name: "Home",
+        component: HomePage,
+      },
       {
         path: "products",
         name: "Products",
@@ -49,6 +54,12 @@ const routes = [
         path: "sales",
         name: "Sales",
         component: Sales,
+        beforeEnter: salesGuard,
+      },
+      {
+        path: "sales/:id",
+        name: "SaleDetails",
+        component: SaleDetails,
         beforeEnter: salesGuard,
       },
       {

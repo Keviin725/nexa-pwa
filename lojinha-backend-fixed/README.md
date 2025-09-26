@@ -12,7 +12,7 @@ Backend completo para o sistema NEXA - Sistema de Gestão para Lojinha.
 - **Category**: Novo modelo para categorias com cores e descrições
 
 ### ✅ **Controllers Completos**
-- **ProductController**: CRUD completo + estoque baixo + categorias
+- **ProductController**: CRUD completo + Stock baixo + categorias
 - **ClientController**: CRUD completo + dívidas + histórico
 - **SaleController**: CRUD completo + recibos + processamento
 - **UserController**: Gestão completa de colaboradores + permissões + ações em lote
@@ -27,9 +27,9 @@ Backend completo para o sistema NEXA - Sistema de Gestão para Lojinha.
 - `POST /` - Criar produto
 - `PUT /:id` - Atualizar produto
 - `DELETE /:id` - Desativar produto
-- `PUT /:id/stock` - Atualizar estoque
+- `PUT /:id/stock` - Atualizar Stock
 - `GET /categories` - Listar categorias
-- `GET /low-stock` - Produtos com estoque baixo
+- `GET /low-stock` - Produtos com Stock baixo
 
 #### **Clientes** (`/clients`)
 - `GET /` - Listar clientes (com filtros)
@@ -150,7 +150,7 @@ O sistema inclui dados de exemplo:
 - Total de vendas
 - Vendas pendentes
 - Total de produtos
-- Produtos com estoque baixo
+- Produtos com Stock baixo
 - Total de clientes
 - Clientes com dívidas
 

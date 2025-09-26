@@ -203,9 +203,10 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { authService } from '../services/authService.js'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Estado reativo
 const loading = ref(false)
@@ -236,7 +237,7 @@ const handleRegister = async () => {
             return
         }
 
-        const result = await authService.register({
+        const result = await authStore.login({
             name: form.name,
             email: form.email,
             phone: form.phone,

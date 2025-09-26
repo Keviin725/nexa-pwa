@@ -59,7 +59,7 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.SYSTEM_BACKUP,
     PERMISSIONS.SYSTEM_RESTORE,
   ],
-  gerente: [
+  manager: [
     PERMISSIONS.SALES_CREATE,
     PERMISSIONS.SALES_EDIT,
     PERMISSIONS.SALES_VIEW,
@@ -73,7 +73,7 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.REPORTS_EXPORT,
     PERMISSIONS.USERS_VIEW,
   ],
-  vendedor: [
+  seller: [
     PERMISSIONS.SALES_CREATE,
     PERMISSIONS.SALES_EDIT,
     PERMISSIONS.SALES_VIEW,
@@ -97,6 +97,12 @@ export class PermissionManager {
     this.userPermissions = user?.permissions || [];
   }
 
+  // Limpar utilizador actual
+  clearCurrentUser() {
+    this.currentUser = null;
+    this.userPermissions = [];
+  }
+
   // Verificar se utilizador tem permissão específica
   hasPermission(permission) {
     if (!this.currentUser) return false;
@@ -104,7 +110,13 @@ export class PermissionManager {
     // Admin tem todas as permissões
     if (this.currentUser.role === "admin") return true;
 
-    return this.userPermissions.includes(permission);
+    // Verificar permissões específicas do usuário
+    const userPermissions = this.currentUser.permissions || [];
+    if (userPermissions.includes(permission)) return true;
+
+    // Verificar permissões baseadas no role
+    const rolePermissions = this.getRolePermissions(this.currentUser.role);
+    return rolePermissions.includes(permission);
   }
 
   // Verificar se utilizador tem qualquer uma das permissões
@@ -113,8 +125,15 @@ export class PermissionManager {
 
     if (this.currentUser.role === "admin") return true;
 
+    // Verificar permissões específicas do usuário
+    const userPermissions = this.currentUser.permissions || [];
+    if (permissions.some((permission) => userPermissions.includes(permission)))
+      return true;
+
+    // Verificar permissões baseadas no role
+    const rolePermissions = this.getRolePermissions(this.currentUser.role);
     return permissions.some((permission) =>
-      this.userPermissions.includes(permission)
+      rolePermissions.includes(permission)
     );
   }
 
@@ -124,8 +143,15 @@ export class PermissionManager {
 
     if (this.currentUser.role === "admin") return true;
 
+    // Verificar permissões específicas do usuário
+    const userPermissions = this.currentUser.permissions || [];
+    if (permissions.every((permission) => userPermissions.includes(permission)))
+      return true;
+
+    // Verificar permissões baseadas no role
+    const rolePermissions = this.getRolePermissions(this.currentUser.role);
     return permissions.every((permission) =>
-      this.userPermissions.includes(permission)
+      rolePermissions.includes(permission)
     );
   }
 
@@ -174,12 +200,12 @@ export class PermissionManager {
 
   // Verificar se utilizador é gerente
   isManager() {
-    return this.currentUser?.role === "gerente";
+    return this.currentUser?.role === "manager";
   }
 
   // Verificar se utilizador é vendedor
   isSeller() {
-    return this.currentUser?.role === "vendedor";
+    return this.currentUser?.role === "seller";
   }
 
   // Obter nível de acesso do utilizador
@@ -188,8 +214,8 @@ export class PermissionManager {
 
     const levels = {
       admin: 3,
-      gerente: 2,
-      vendedor: 1,
+      manager: 2,
+      seller: 1,
     };
 
     return levels[this.currentUser.role] || 0;
@@ -203,7 +229,7 @@ export class PermissionManager {
     if (this.currentUser.role === "admin") return true;
 
     // Gerente pode gerir vendedores
-    if (this.currentUser.role === "gerente" && targetUser.role === "vendedor")
+    if (this.currentUser.role === "manager" && targetUser.role === "seller")
       return true;
 
     return false;
@@ -247,9 +273,9 @@ export class PermissionManager {
       [PERMISSIONS.CLIENTS_VIEW]: "Ver Clientes",
       [PERMISSIONS.REPORTS_VIEW]: "Ver Relatórios",
       [PERMISSIONS.REPORTS_EXPORT]: "Exportar Relatórios",
-      [PERMISSIONS.USERS_MANAGE]: "Gerenciar Usuários",
+      [PERMISSIONS.USERS_MANAGE]: "Gerir Usuários",
       [PERMISSIONS.USERS_VIEW]: "Ver Usuários",
-      [PERMISSIONS.SETTINGS_MANAGE]: "Gerenciar Configurações",
+      [PERMISSIONS.SETTINGS_MANAGE]: "Gerir Configurações",
       [PERMISSIONS.SETTINGS_VIEW]: "Ver Configurações",
       [PERMISSIONS.SYSTEM_BACKUP]: "Fazer Backup",
       [PERMISSIONS.SYSTEM_RESTORE]: "Restaurar Backup",

@@ -111,7 +111,7 @@ const seedDatabase = async () => {
           category: "Cereais",
           code: "ARR001",
           description: "Arroz branco tipo 1, 5kg",
-          notes: "Produto básico, sempre em estoque",
+          notes: "Produto básico, sempre em Stock",
           is_active: true,
         },
         {
@@ -336,6 +336,23 @@ const seedDatabase = async () => {
       ]);
 
       console.log("✅ Sale items created");
+
+      // Atualizar stock dos produtos baseado nas vendas
+      console.log("🔄 Updating product stock based on sales...");
+
+      // Venda V001: 2x Coca-Cola + 3x Pão
+      await Product.decrement("stock", { by: 2, where: { id: 1 } }); // Coca-Cola
+      await Product.decrement("stock", { by: 3, where: { id: 2 } }); // Pão
+
+      // Venda V002: 1x Leite + 1x Arroz
+      await Product.decrement("stock", { by: 1, where: { id: 3 } }); // Leite
+      await Product.decrement("stock", { by: 1, where: { id: 4 } }); // Arroz
+
+      // Venda V003: 4x Coca-Cola + 2x Pão
+      await Product.decrement("stock", { by: 4, where: { id: 1 } }); // Coca-Cola
+      await Product.decrement("stock", { by: 2, where: { id: 2 } }); // Pão
+
+      console.log("✅ Product stock updated based on sales");
     }
 
     console.log("🎉 Database seeding completed successfully!");

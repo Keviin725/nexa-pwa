@@ -13,8 +13,8 @@ Um sistema de gestão completo e moderno desenvolvido com Vue.js 3, Tailwind CSS
 
 ### 📦 **Gestão de Produtos**
 - Cadastro completo de produtos
-- Controle de estoque
-- Alertas de estoque baixo
+- Controle de Stock
+- Alertas de Stock baixo
 - Categorização
 - Busca e filtros avançados
 

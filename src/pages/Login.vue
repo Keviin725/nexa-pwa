@@ -132,9 +132,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { authService } from '../services/authService.js'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Estado reativo
 const loading = ref(false)
@@ -150,7 +151,10 @@ const handleLogin = async () => {
     try {
         loading.value = true
 
-        const result = await authService.login(form.email, form.password)
+        const result = await authStore.login({
+            email: form.email,
+            password: form.password
+        })
 
         if (result.success) {
             // Redirecionar para home
