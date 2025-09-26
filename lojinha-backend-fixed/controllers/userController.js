@@ -90,7 +90,7 @@ const createUser = async (req, res) => {
 
     // Verificar se email já existe
     const existingUser = await User.findOne({
-      where: { email: { [Op.iLike]: email } },
+      where: { email: { [Op.like]: email } },
     });
 
     if (existingUser) {
