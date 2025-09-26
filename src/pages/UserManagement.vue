@@ -519,10 +519,9 @@
                         </label>
                     </div>
                 </div>
-            </form>
 
-            <template #footer>
-                <div class="flex gap-3">
+                <!-- Botões de Ação -->
+                <div class="flex gap-3 pt-6">
                     <button type="button" @click="closeModal"
                         class="flex-1 px-4 py-3 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
                         Cancelar
@@ -541,7 +540,7 @@
                         </div>
                     </button>
                 </div>
-            </template>
+            </form>
         </CustomBottomSheet>
 
         <!-- Paginação -->
