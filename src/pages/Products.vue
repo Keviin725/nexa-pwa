@@ -392,6 +392,11 @@
                 </form>
             </CustomBottomSheet>
         </div>
+
+        <!-- Paginação -->
+        <PaginationComponent :current-page="productsStore.pagination.page" :total-items="productsStore.pagination.total"
+            :items-per-page="productsStore.pagination.limit" @page-change="handlePageChange"
+            @items-per-page-change="handleItemsPerPageChange" />
     </div>
 </template>
 
@@ -401,6 +406,7 @@ import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
+import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const authStore = useAuthStore()
@@ -698,6 +704,18 @@ const handleSaleDeleted = async () => {
             console.error('❌ Erro ao recarregar produtos:', error)
         }
     }, 1000)
+}
+
+// Métodos de paginação
+const handlePageChange = (page) => {
+    productsStore.setPage(page)
+    loadProducts()
+}
+
+const handleItemsPerPageChange = (itemsPerPage) => {
+    productsStore.setLimit(itemsPerPage)
+    productsStore.setPage(1) // Reset para primeira página
+    loadProducts()
 }
 
 // Lifecycle

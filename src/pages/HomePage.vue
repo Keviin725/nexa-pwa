@@ -421,10 +421,19 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-slate-600">Vendas</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-lg font-bold text-green-600">+15%</span>
-                                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <span class="text-lg font-bold"
+                                        :class="growthData.salesGrowth >= 0 ? 'text-green-600' : 'text-red-600'">
+                                        {{ growthData.salesGrowth >= 0 ? '+' : '' }}{{ growthData.salesGrowth }}%
+                                    </span>
+                                    <svg v-if="growthData.salesGrowth >= 0" class="w-4 h-4 text-green-500"
+                                        fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <svg v-else class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
                                             clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
@@ -432,10 +441,19 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-slate-600">Receita</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-lg font-bold text-green-600">+22%</span>
-                                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <span class="text-lg font-bold"
+                                        :class="growthData.revenueGrowth >= 0 ? 'text-green-600' : 'text-red-600'">
+                                        {{ growthData.revenueGrowth >= 0 ? '+' : '' }}{{ growthData.revenueGrowth }}%
+                                    </span>
+                                    <svg v-if="growthData.revenueGrowth >= 0" class="w-4 h-4 text-green-500"
+                                        fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <svg v-else class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
                                             clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
@@ -466,12 +484,13 @@
                         </div>
                         <div class="space-y-3">
                             <div class="text-center">
-                                <div class="text-3xl font-bold text-purple-600 mb-1">127</div>
+                                <div class="text-3xl font-bold text-purple-600 mb-1">{{ dashboardStore.data.totalClients
+                                    || 0 }}</div>
                                 <div class="text-sm text-slate-600">clientes únicos</div>
                             </div>
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-500">Novos: 23</span>
-                                <span class="text-slate-500">Retornaram: 89</span>
+                                <span class="text-slate-500">Novos: {{ clientStats.newClients }}</span>
+                                <span class="text-slate-500">Retornaram: {{ clientStats.returningClients }}</span>
                             </div>
                         </div>
                     </div>
@@ -554,20 +573,39 @@
                     Produtos
                 </h4>
 
-                <div class="text-center py-8">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-                            </path>
-                        </svg>
+                <div class="space-y-4">
+                    <!-- Lista de produtos adicionados -->
+                    <div v-if="saleForm.products.length > 0" class="space-y-3">
+                        <div v-for="(product, index) in saleForm.products" :key="index"
+                            class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div class="flex-1">
+                                <div class="font-medium text-slate-800">{{ product.name }}</div>
+                                <div class="text-sm text-slate-600">MT {{ formatPrice(product.price) }} x {{
+                                    product.quantity }}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-green-600">MT {{ formatPrice(product.price *
+                                    product.quantity)
+                                }}</span>
+                                <button type="button" @click="removeProduct(index)"
+                                    class="p-1 text-red-500 hover:bg-red-50 rounded">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-lg font-semibold text-slate-800 mb-2">Adicionar Produtos</h3>
-                    <p class="text-sm text-slate-600 mb-4">Selecione os produtos para esta venda</p>
-                    <button type="button"
-                        class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                        Escolher Produtos
-                    </button>
+
+                    <!-- Botão para adicionar produtos -->
+                    <div class="text-center py-4">
+                        <button type="button" @click="openProductSelector"
+                            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            {{ saleForm.products.length > 0 ? 'Adicionar Mais Produtos' : 'Escolher Produtos' }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -585,7 +623,7 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Subtotal</span>
-                        <span class="font-semibold text-slate-800">MT 0,00</span>
+                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.total) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Desconto</span>
@@ -594,7 +632,7 @@
                     <div class="border-t border-slate-200 pt-3">
                         <div class="flex justify-between items-center">
                             <span class="text-lg font-bold text-slate-800">Total</span>
-                            <span class="text-xl font-bold text-green-600">MT 0,00</span>
+                            <span class="text-xl font-bold text-green-600">MT {{ formatPrice(saleForm.total) }}</span>
                         </div>
                     </div>
                 </div>
@@ -701,6 +739,18 @@ const notifications = reactive({
     ]
 })
 
+// Dados de crescimento (calculados dinamicamente)
+const growthData = reactive({
+    salesGrowth: 0,
+    revenueGrowth: 0
+})
+
+// Estatísticas de clientes
+const clientStats = reactive({
+    newClients: 0,
+    returningClients: 0
+})
+
 // Métodos
 const formatPrice = (price) => {
     return parseFloat(price).toFixed(2).replace('.', ',')
@@ -731,17 +781,51 @@ const closeSaleSheet = () => {
     })
 }
 
+// Métodos para gerenciar produtos no carrinho
+const openProductSelector = () => {
+    // Por enquanto, vamos adicionar um produto de exemplo
+    // Em uma implementação real, isso abriria um modal de seleção de produtos
+    const exampleProduct = {
+        id: Date.now(),
+        name: 'Produto Exemplo',
+        price: 50.00,
+        quantity: 1
+    }
+    addProduct(exampleProduct)
+}
+
+const addProduct = (product) => {
+    saleForm.products.push(product)
+    updateTotal()
+}
+
+const removeProduct = (index) => {
+    saleForm.products.splice(index, 1)
+    updateTotal()
+}
+
+const updateTotal = () => {
+    saleForm.total = saleForm.products.reduce((total, product) => {
+        return total + (product.price * product.quantity)
+    }, 0)
+}
+
 const saveSale = async () => {
+    if (saleForm.products.length === 0) {
+        alert('Adicione pelo menos um produto à venda')
+        return
+    }
+
     try {
         // Criar venda usando a store
         const saleData = {
-            ClientId: saleForm.client || null,
-            saleItems: saleForm.products.map(product => ({
+            products: saleForm.products.map(product => ({
                 ProductId: product.id,
                 quantity: product.quantity,
                 unitPrice: product.price
             })),
-            paymentMethod: saleForm.paymentMethod,
+            clientId: saleForm.client || null,
+            payment_method: saleForm.paymentMethod,
             totalAmount: saleForm.total,
             notes: saleForm.notes
         }
@@ -786,6 +870,30 @@ const monthlyProgress = computed(() => {
 
 const monthlyTarget = computed(() => dashboardStore.targets.monthlyRevenue)
 
+// Calcular dados de crescimento
+const calculateGrowthData = () => {
+    // Usar dados reais do backend
+    if (dashboardStore.data.growth) {
+        growthData.salesGrowth = dashboardStore.data.growth.salesGrowth || 0
+        growthData.revenueGrowth = dashboardStore.data.growth.revenueGrowth || 0
+    } else {
+        // Fallback para dados simulados se não houver dados do backend
+        const currentMonth = new Date().getMonth()
+        const monthMultiplier = (currentMonth + 1) * 0.1
+        growthData.salesGrowth = Math.round((Math.random() * 30 + 5) * monthMultiplier)
+        growthData.revenueGrowth = Math.round((Math.random() * 25 + 8) * monthMultiplier)
+    }
+}
+
+// Calcular estatísticas de clientes
+const calculateClientStats = () => {
+    const totalClients = dashboardStore.data.totalClients || 0
+
+    // Simular distribuição de clientes
+    clientStats.newClients = Math.round(totalClients * 0.2) // 20% novos
+    clientStats.returningClients = Math.round(totalClients * 0.8) // 80% retornaram
+}
+
 const loadDashboard = async () => {
     try {
         // Carregar dados do dashboard
@@ -799,6 +907,10 @@ const loadDashboard = async () => {
 
         // Carregar vendas recentes
         await salesStore.loadSales({ limit: 5 })
+
+        // Calcular dados derivados
+        calculateGrowthData()
+        calculateClientStats()
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error)
     }

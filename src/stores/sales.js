@@ -254,6 +254,55 @@ export const useSalesStore = defineStore("sales", {
       return this.sales.find((s) => s.id === id);
     },
 
+    // Criar nova venda
+    async createSale(saleData) {
+      try {
+        this.loading = true;
+        this.error = null;
+
+        const response = await apiService.sales.create(saleData);
+
+        // Adicionar à lista de vendas
+        this.sales.unshift(response.data);
+
+        // Atualizar estatísticas
+        await this.loadSales();
+
+        return { success: true, data: response.data };
+      } catch (error) {
+        this.error = error.response?.data?.error || "Erro ao criar venda";
+        return { success: false, error: this.error };
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Métodos de paginação
+    setPage(page) {
+      this.pagination.page = page;
+    },
+
+    setLimit(limit) {
+      this.pagination.limit = limit;
+    },
+
+    setFilters(filters) {
+      this.filters = { ...this.filters, ...filters };
+      this.pagination.page = 1; // Reset para primeira página
+    },
+
+    clearFilters() {
+      this.filters = {
+        search: "",
+        startDate: "",
+        endDate: "",
+        clientId: "",
+        paymentStatus: "",
+        paymentMethod: "",
+      };
+      this.pagination.page = 1;
+    },
+
     // Limpar erro
     clearError() {
       this.error = null;

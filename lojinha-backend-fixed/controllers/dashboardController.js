@@ -83,6 +83,86 @@ const getDashboardData = async (req, res) => {
     // Produtos mais vendidos - Simplificado
     const topProducts = [];
 
+    // Calcular crescimento vs mês anterior
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // Mês anterior
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    // Vendas do mês atual
+    const currentMonthSales = await Sale.count({
+      where: {
+        is_active: true,
+        created_at: {
+          [Op.and]: [
+            { [Op.gte]: new Date(currentYear, currentMonth, 1) },
+            { [Op.lt]: new Date(currentYear, currentMonth + 1, 1) },
+          ],
+        },
+      },
+    });
+
+    // Vendas do mês anterior
+    const lastMonthSales = await Sale.count({
+      where: {
+        is_active: true,
+        created_at: {
+          [Op.and]: [
+            { [Op.gte]: new Date(lastMonthYear, lastMonth, 1) },
+            { [Op.lt]: new Date(lastMonthYear, lastMonth + 1, 1) },
+          ],
+        },
+      },
+    });
+
+    // Receita do mês atual
+    const currentMonthRevenue =
+      (await Sale.sum("total_amount", {
+        where: {
+          is_active: true,
+          payment_status: "paid",
+          created_at: {
+            [Op.and]: [
+              { [Op.gte]: new Date(currentYear, currentMonth, 1) },
+              { [Op.lt]: new Date(currentYear, currentMonth + 1, 1) },
+            ],
+          },
+        },
+      })) || 0;
+
+    // Receita do mês anterior
+    const lastMonthRevenue =
+      (await Sale.sum("total_amount", {
+        where: {
+          is_active: true,
+          payment_status: "paid",
+          created_at: {
+            [Op.and]: [
+              { [Op.gte]: new Date(lastMonthYear, lastMonth, 1) },
+              { [Op.lt]: new Date(lastMonthYear, lastMonth + 1, 1) },
+            ],
+          },
+        },
+      })) || 0;
+
+    // Calcular percentual de crescimento
+    const salesGrowth =
+      lastMonthSales > 0
+        ? Math.round(
+            ((currentMonthSales - lastMonthSales) / lastMonthSales) * 100
+          )
+        : 0;
+
+    const revenueGrowth =
+      lastMonthRevenue > 0
+        ? Math.round(
+            ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+          )
+        : 0;
+
     res.json({
       totalRevenue,
       totalSales,
@@ -94,6 +174,10 @@ const getDashboardData = async (req, res) => {
       clientsWithDebts,
       salesByDay,
       topProducts,
+      growth: {
+        salesGrowth,
+        revenueGrowth,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

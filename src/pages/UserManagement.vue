@@ -543,6 +543,11 @@
                 </div>
             </template>
         </CustomBottomSheet>
+
+        <!-- Paginação -->
+        <PaginationComponent :current-page="usersStore.pagination.page" :total-items="usersStore.pagination.total"
+            :items-per-page="usersStore.pagination.limit" @page-change="handlePageChange"
+            @items-per-page-change="handleItemsPerPageChange" />
     </div>
 </template>
 
@@ -552,6 +557,7 @@ import { PERMISSIONS, ROLE_PERMISSIONS, permissionManager } from '@/utils/permis
 import { useUsersStore } from '@/stores/users'
 import { useAuthStore } from '@/stores/auth'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
+import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const authStore = useAuthStore()
@@ -940,6 +946,18 @@ const loadUsers = async () => {
     } catch (error) {
         console.error('Erro ao carregar colaboradores:', error)
     }
+}
+
+// Métodos de paginação
+const handlePageChange = (page) => {
+    usersStore.setPage(page)
+    loadUsers()
+}
+
+const handleItemsPerPageChange = (itemsPerPage) => {
+    usersStore.setLimit(itemsPerPage)
+    usersStore.setPage(1) // Reset para primeira página
+    loadUsers()
 }
 
 // Lifecycle

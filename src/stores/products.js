@@ -213,6 +213,20 @@ export const useProductsStore = defineStore("products", {
       return this.products.find((p) => p.id === id);
     },
 
+    // Métodos de paginação
+    setPage(page) {
+      this.pagination.page = page;
+    },
+
+    setLimit(limit) {
+      this.pagination.limit = limit;
+    },
+
+    setFilters(filters) {
+      this.filters = { ...this.filters, ...filters };
+      this.pagination.page = 1; // Reset para primeira página
+    },
+
     // Limpar erro
     clearError() {
       this.error = null;

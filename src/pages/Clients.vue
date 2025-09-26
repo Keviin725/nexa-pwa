@@ -328,7 +328,7 @@
                                     <p class="text-sm font-medium text-slate-800 mt-1">Total: R$ {{
                                         formatPrice(debt.totalAmount) }}</p>
                                     <p class="text-xs text-green-600 mt-1">Pago: MT {{ formatPrice(debt.totalPaid)
-                                    }}</p>
+                                        }}</p>
                                     <p class="text-sm font-bold text-red-600 mt-1">Restante: MT {{
                                         formatPrice(debt.balance) }}</p>
                                 </div>
@@ -358,6 +358,11 @@
                     </div>
                 </div>
             </CustomBottomSheet>
+
+            <!-- Paginação -->
+            <PaginationComponent :current-page="clientsStore.pagination.page"
+                :total-items="clientsStore.pagination.total" :items-per-page="clientsStore.pagination.limit"
+                @page-change="handlePageChange" @items-per-page-change="handleItemsPerPageChange" />
         </div>
     </div>
 </template>
@@ -368,6 +373,7 @@ import { useClientsStore } from '@/stores/clients'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
+import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const clientsStore = useClientsStore()
@@ -592,6 +598,18 @@ const closeDebtsModal = () => {
     showDebtsModal.value = false
     selectedClient.value = null
     clientDebts.value = []
+}
+
+// Métodos de paginação
+const handlePageChange = (page) => {
+    clientsStore.setPage(page)
+    loadClients()
+}
+
+const handleItemsPerPageChange = (itemsPerPage) => {
+    clientsStore.setLimit(itemsPerPage)
+    clientsStore.setPage(1) // Reset para primeira página
+    loadClients()
 }
 
 // Lifecycle

@@ -170,7 +170,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->
@@ -452,6 +452,11 @@
                     </div>
                 </form>
             </CustomBottomSheet>
+
+            <!-- Paginação -->
+            <PaginationComponent :current-page="salesStore.pagination.page" :total-items="salesStore.pagination.total"
+                :items-per-page="salesStore.pagination.limit" @page-change="handlePageChange"
+                @items-per-page-change="handleItemsPerPageChange" />
         </div>
     </div>
 </template>
@@ -465,6 +470,7 @@ import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
+import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Router
 const router = useRouter()
@@ -785,6 +791,18 @@ const createPayment = async () => {
     } finally {
         loading.value = false
     }
+}
+
+// Métodos de paginação
+const handlePageChange = (page) => {
+    salesStore.setPage(page)
+    loadSales()
+}
+
+const handleItemsPerPageChange = (itemsPerPage) => {
+    salesStore.setLimit(itemsPerPage)
+    salesStore.setPage(1) // Reset para primeira página
+    loadSales()
 }
 
 // Lifecycle

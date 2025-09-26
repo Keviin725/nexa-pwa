@@ -14,6 +14,10 @@ export const useDashboardStore = defineStore("dashboard", {
       clientsWithDebts: 0,
       salesByDay: [],
       topProducts: [],
+      growth: {
+        salesGrowth: 0,
+        revenueGrowth: 0,
+      },
     },
     salesSummary: [],
     analytics: {

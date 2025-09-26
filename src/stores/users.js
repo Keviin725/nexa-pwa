@@ -253,6 +253,29 @@ export const useUsersStore = defineStore("users", {
       return this.users.find((u) => u.id === id);
     },
 
+    // Métodos de paginação
+    setPage(page) {
+      this.pagination.page = page;
+    },
+
+    setLimit(limit) {
+      this.pagination.limit = limit;
+    },
+
+    setFilters(filters) {
+      this.filters = { ...this.filters, ...filters };
+      this.pagination.page = 1; // Reset para primeira página
+    },
+
+    clearFilters() {
+      this.filters = {
+        search: "",
+        role: "",
+        status: "",
+      };
+      this.pagination.page = 1;
+    },
+
     // Limpar erro
     clearError() {
       this.error = null;
