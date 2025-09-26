@@ -153,7 +153,7 @@
                     </div>
                     <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                         <div class="text-2xl font-bold text-green-600 mb-1">{{ dashboardStore.data.totalRevenue || 0
-                            }}MT</div>
+                        }}MT</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
                     <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
@@ -227,7 +227,7 @@
                             </div>
                         </router-link>
 
-                        <!-- 3. CLIENTES - Terceiro mais importante -->
+                        <!-- 3. CLIENTES A FIADO - Gestão de vendas a crédito -->
                         <router-link to="/app/clients" class="group">
                             <div
                                 class="p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg hover:from-orange-100 hover:to-red-100 transition-all duration-200 text-center border-2 border-orange-200 hover:border-orange-300 hover:shadow-lg">
@@ -236,12 +236,12 @@
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-800 mb-1"> Clientes</h3>
-                                <p class="text-sm text-orange-600 font-medium">Gerir clientes</p>
+                                <h3 class="font-bold text-slate-800 mb-1">Clientes a Fiado</h3>
+                                <p class="text-sm text-orange-600 font-medium">Vendas a crédito</p>
                             </div>
                         </router-link>
 
@@ -283,7 +283,7 @@
                             <div>
                                 <span class="font-medium text-slate-800">Venda #{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                }}</span>
+                                    }}</span>
 
                             </div>
                             <div class="text-right">
@@ -462,31 +462,31 @@
                     </div>
                 </div>
 
-                <!-- Clientes Ativos - Menos importante -->
+                <!-- Clientes a Fiado - Gestão de crédito -->
                 <div
                     class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-50/30 to-pink-50/20 pointer-events-none">
+                    <div class="absolute inset-0 bg-gradient-to-br from-orange-50/30 to-red-50/20 pointer-events-none">
                     </div>
                     <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
                                     </path>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-slate-800">Clientes Ativos</h3>
-                                <p class="text-xs text-slate-500">Últimos 30 dias</p>
+                                <h3 class="font-semibold text-slate-800">Clientes a Fiado</h3>
+                                <p class="text-xs text-slate-500">Gestão de crédito</p>
                             </div>
                         </div>
                         <div class="space-y-3">
                             <div class="text-center">
-                                <div class="text-3xl font-bold text-purple-600 mb-1">{{ dashboardStore.data.totalClients
+                                <div class="text-3xl font-bold text-orange-600 mb-1">{{ dashboardStore.data.totalClients
                                     || 0 }}</div>
-                                <div class="text-sm text-slate-600">clientes únicos</div>
+                                <div class="text-sm text-slate-600">clientes com fiado</div>
                             </div>
                             <div class="flex justify-between items-center text-xs">
                                 <span class="text-slate-500">Novos: {{ clientStats.newClients }}</span>
@@ -533,11 +533,18 @@
                 </h4>
 
                 <div class="grid grid-cols-1 gap-4">
-                    <!-- Cliente -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Cliente</label>
-                        <input v-model="saleForm.client" type="text" placeholder="Nome do cliente (opcional)"
-                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors" />
+                    <!-- Cliente a Fiado - Apenas para vendas a crédito -->
+                    <div v-if="saleForm.paymentMethod === 'credit'">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Cliente a Fiado *</label>
+                        <select v-model="saleForm.clientId"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                            required>
+                            <option value="">Selecione um cliente</option>
+                            <option v-for="client in clients" :key="client.id" :value="client.id">
+                                {{ client.name }}
+                            </option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-1">Selecione um cliente para controle de dívidas</p>
                     </div>
 
                     <!-- Método de Pagamento -->
@@ -545,11 +552,36 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">Método de Pagamento</label>
                         <select v-model="saleForm.paymentMethod"
                             class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
-                            <option value="cash">Dinheiro</option>
-                            <option value="card">Cartão</option>
-                            <option value="transfer">Transferência</option>
-                            <option value="credit">Fiado</option>
+                            <option value="cash">Dinheiro (À vista)</option>
+                            <option value="card">Cartão (À vista)</option>
+                            <option value="transfer">Transferência (À vista)</option>
+                            <option value="credit">A Fiado (Crédito)</option>
                         </select>
+                        <p class="text-xs text-slate-500 mt-1">Escolha "A Fiado" para vendas a crédito</p>
+                    </div>
+
+                    <!-- Data de Vencimento (se fiado) -->
+                    <div v-if="saleForm.paymentMethod === 'credit'">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Data de Vencimento</label>
+                        <input v-model="saleForm.dueDate" type="date"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors" />
+                        <p class="text-xs text-slate-500 mt-1">Data limite para pagamento</p>
+                    </div>
+
+                    <!-- Desconto e Imposto -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Desconto (MT)</label>
+                            <input v-model.number="saleForm.discount" type="number" step="0.01" placeholder="0.00"
+                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                                @input="updateTotal" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Imposto (MT)</label>
+                            <input v-model.number="saleForm.tax" type="number" step="0.01" placeholder="0.00"
+                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                                @input="updateTotal" />
+                        </div>
                     </div>
 
                     <!-- Observações -->
@@ -574,6 +606,18 @@
                 </h4>
 
                 <div class="space-y-4">
+                    <!-- Seleção de Produto -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Adicionar Produto</label>
+                        <select v-model="selectedProduct" @change="addProductToSale"
+                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                            <option value="">Selecione um produto</option>
+                            <option v-for="product in availableProducts" :key="product.id" :value="product.id">
+                                {{ product.name }} - MT {{ formatPrice(product.price) }} (Stock: {{ product.stock }})
+                            </option>
+                        </select>
+                    </div>
+
                     <!-- Lista de produtos adicionados -->
                     <div v-if="saleForm.products.length > 0" class="space-y-3">
                         <div v-for="(product, index) in saleForm.products" :key="index"
@@ -585,9 +629,11 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
+                                <input v-model.number="product.quantity" type="number" min="1" :max="product.maxStock"
+                                    class="w-16 px-2 py-1 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors text-center"
+                                    @change="updateTotal" />
                                 <span class="font-semibold text-green-600">MT {{ formatPrice(product.price *
-                                    product.quantity)
-                                }}</span>
+                                    product.quantity) }}</span>
                                 <button type="button" @click="removeProduct(index)"
                                     class="p-1 text-red-500 hover:bg-red-50 rounded">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -597,14 +643,6 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Botão para adicionar produtos -->
-                    <div class="text-center py-4">
-                        <button type="button" @click="openProductSelector"
-                            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                            {{ saleForm.products.length > 0 ? 'Adicionar Mais Produtos' : 'Escolher Produtos' }}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -623,16 +661,30 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Subtotal</span>
-                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.total) }}</span>
+                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.subtotal) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Desconto</span>
-                        <span class="font-semibold text-slate-800">MT 0,00</span>
+                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.discount) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-slate-600">Imposto</span>
+                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.tax) }}</span>
+                    </div>
+                    <div v-if="saleForm.paymentMethod === 'credit'" class="flex justify-between items-center">
+                        <span class="text-sm text-orange-600">Status</span>
+                        <span class="font-semibold text-orange-600">A Fiado</span>
                     </div>
                     <div class="border-t border-slate-200 pt-3">
                         <div class="flex justify-between items-center">
                             <span class="text-lg font-bold text-slate-800">Total</span>
-                            <span class="text-xl font-bold text-green-600">MT {{ formatPrice(saleForm.total) }}</span>
+                            <span class="text-xl font-bold"
+                                :class="saleForm.paymentMethod === 'credit' ? 'text-orange-600' : 'text-green-600'">
+                                MT {{ formatPrice(saleForm.totalAmount) }}
+                            </span>
+                        </div>
+                        <div v-if="saleForm.paymentMethod === 'credit'" class="text-xs text-orange-600 mt-1">
+                            Venda a crédito - Cliente: {{ getClientName(saleForm.clientId) || 'Não selecionado' }}
                         </div>
                     </div>
                 </div>
@@ -646,14 +698,17 @@
                     Cancelar
                 </button>
                 <button type="submit" @click="saveSale"
-                    class="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg"
-                    :disabled="saleForm.products.length === 0">
+                    class="flex-1 px-4 py-3 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg"
+                    :class="saleForm.paymentMethod === 'credit'
+                        ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'"
+                    :disabled="saleForm.products.length === 0 || (saleForm.paymentMethod === 'credit' && !saleForm.clientId)">
                     <div class="flex items-center justify-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
-                        Finalizar Venda
+                        {{ saleForm.paymentMethod === 'credit' ? 'Finalizar Venda a Fiado' : 'Finalizar Venda' }}
                     </div>
                 </button>
             </div>
@@ -671,6 +726,7 @@ import { useProductsStore } from '@/stores/products'
 import { useClientsStore } from '@/stores/clients'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
+import { apiService } from '@/services/api'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 import AnimatedProgressBar from '@/components/Progress/AnimatedProgressBar.vue'
 
@@ -703,11 +759,18 @@ const loading = computed(() => dashboardStore.loading)
 
 // Estado para bottom sheet de venda
 const showSaleSheet = ref(false)
+const clients = ref([])
+const availableProducts = ref([])
+const selectedProduct = ref('')
 const saleForm = reactive({
-    client: '',
-    products: [],
-    total: 0,
+    clientId: '',
     paymentMethod: 'cash',
+    dueDate: '',
+    products: [],
+    subtotal: 0,
+    discount: 0,
+    tax: 0,
+    totalAmount: 0,
     notes: ''
 })
 
@@ -765,7 +828,8 @@ const formatDate = (date) => {
 }
 
 // Funções para bottom sheet de venda
-const openSaleSheet = () => {
+const openSaleSheet = async () => {
+    await Promise.all([loadClients(), loadProducts()])
     showSaleSheet.value = true
 }
 
@@ -773,30 +837,48 @@ const closeSaleSheet = () => {
     showSaleSheet.value = false
     // Reset form
     Object.assign(saleForm, {
-        client: '',
-        products: [],
-        total: 0,
+        clientId: '',
         paymentMethod: 'cash',
+        dueDate: '',
+        products: [],
+        subtotal: 0,
+        discount: 0,
+        tax: 0,
+        totalAmount: 0,
         notes: ''
     })
 }
 
 // Métodos para gerenciar produtos no carrinho
-const openProductSelector = () => {
-    // Por enquanto, vamos adicionar um produto de exemplo
-    // Em uma implementação real, isso abriria um modal de seleção de produtos
-    const exampleProduct = {
-        id: Date.now(),
-        name: 'Produto Exemplo',
-        price: 50.00,
-        quantity: 1
-    }
-    addProduct(exampleProduct)
-}
 
 const addProduct = (product) => {
     saleForm.products.push(product)
     updateTotal()
+}
+
+// Adicionar produto selecionado à venda
+const addProductToSale = () => {
+    if (!selectedProduct.value) return
+
+    const product = availableProducts.value.find(p => p.id == selectedProduct.value)
+    if (!product) return
+
+    // Verificar se produto já existe
+    const existingIndex = saleForm.products.findIndex(p => p.id === product.id)
+    if (existingIndex >= 0) {
+        saleForm.products[existingIndex].quantity += 1
+    } else {
+        saleForm.products.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            maxStock: product.stock
+        })
+    }
+
+    updateTotal()
+    selectedProduct.value = '' // Reset selection
 }
 
 const removeProduct = (index) => {
@@ -805,9 +887,36 @@ const removeProduct = (index) => {
 }
 
 const updateTotal = () => {
-    saleForm.total = saleForm.products.reduce((total, product) => {
+    saleForm.subtotal = saleForm.products.reduce((total, product) => {
         return total + (product.price * product.quantity)
     }, 0)
+    saleForm.totalAmount = saleForm.subtotal - saleForm.discount + saleForm.tax
+}
+
+// Método auxiliar para obter nome do cliente
+const getClientName = (clientId) => {
+    const client = clients.value.find(c => c.id == clientId)
+    return client ? client.name : null
+}
+
+// Carregar clientes
+const loadClients = async () => {
+    try {
+        const response = await apiService.clients.getAll()
+        clients.value = response.data.clients || response.data
+    } catch (error) {
+        console.error('Erro ao carregar clientes:', error)
+    }
+}
+
+// Carregar produtos
+const loadProducts = async () => {
+    try {
+        const response = await apiService.products.getAll({ limit: 100 })
+        availableProducts.value = response.data.products || response.data
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error)
+    }
 }
 
 const saveSale = async () => {
@@ -816,17 +925,26 @@ const saveSale = async () => {
         return
     }
 
+    // Validação para vendas a crédito
+    if (saleForm.paymentMethod === 'credit' && !saleForm.clientId) {
+        alert('Seleção de cliente é obrigatória para vendas a crédito')
+        return
+    }
+
     try {
-        // Criar venda usando a store
+        // Criar venda usando a estrutura correta do backend
         const saleData = {
             products: saleForm.products.map(product => ({
-                ProductId: product.id,
-                quantity: product.quantity,
-                unitPrice: product.price
+                productId: product.id,
+                quantity: product.quantity
             })),
-            clientId: saleForm.client || null,
+            clientId: saleForm.paymentMethod === 'credit' ? saleForm.clientId : null,
             payment_method: saleForm.paymentMethod,
-            totalAmount: saleForm.total,
+            due_date: saleForm.paymentMethod === 'credit' ? saleForm.dueDate : null,
+            subtotal: saleForm.subtotal,
+            discount: saleForm.discount,
+            tax: saleForm.tax,
+            totalAmount: saleForm.totalAmount,
             notes: saleForm.notes
         }
 

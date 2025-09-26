@@ -97,7 +97,7 @@
                             <select v-model="filters.clientId"
                                 class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                                 @change="searchSales">
-                                <option value="">Todos os clientes</option>
+                                <option value="">Todos os clientes a fiado</option>
                                 <option v-for="client in clients" :key="client.id" :value="client.id">
                                     {{ client.name }}
                                 </option>
@@ -170,7 +170,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->

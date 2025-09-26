@@ -121,7 +121,8 @@
                                 class="absolute inset-0 bg-orange-500/20 rounded-full blur-sm scale-150"></div>
                         </div>
                         <span class="text-xs font-semibold mt-1 transition-all duration-300"
-                            :class="$route.path === '/app/clients' ? 'text-orange-600' : 'text-slate-600'">Clientes</span>
+                            :class="$route.path === '/app/clients' ? 'text-orange-600' : 'text-slate-600'">Clientes a
+                            Fiado</span>
                     </router-link>
 
                     <!-- 5. RELATÓRIOS - Análise e insights -->

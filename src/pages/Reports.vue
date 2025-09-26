@@ -57,7 +57,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                             <div class="text-2xl font-bold text-green-600 mb-1">{{ formatPrice(metrics.totalRevenue)
-                            }}MT
+                                }}MT
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                         </div>
@@ -108,7 +108,7 @@
                                 class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="sales">Vendas</option>
                                 <option value="products">Produtos</option>
-                                <option value="clients">Clientes</option>
+                                <option value="clients">Clientes a Fiado</option>
                                 <option value="financial">Financeiro</option>
                             </select>
                         </div>
@@ -139,10 +139,11 @@
                     :auto-calculate="true" :current-value="metrics.productsSold" :max-value="500" status="Ativo"
                     period="Últimos 30 dias" icon="box" color="purple" />
 
-                <ModernKPICard title="Novos Clientes" subtitle="Cadastros" :value="metrics.newClients"
-                    description="clientes registados" trend="up" :trend-percentage="metrics.clientsTrendPercentage"
-                    :auto-calculate="true" :current-value="metrics.newClients" :max-value="50" status="Crescendo"
-                    period="Últimos 30 dias" icon="users" color="yellow" />
+                <ModernKPICard title="Novos Clientes a Fiado" subtitle="Cadastros" :value="metrics.newClients"
+                    description="clientes a fiado registados" trend="up"
+                    :trend-percentage="metrics.clientsTrendPercentage" :auto-calculate="true"
+                    :current-value="metrics.newClients" :max-value="50" status="Crescendo" period="Últimos 30 dias"
+                    icon="users" color="yellow" />
             </div>
 
             <!-- Gráficos Modernos -->

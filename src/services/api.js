@@ -72,7 +72,7 @@ export const apiService = {
     getLowStock: () => api.get("/products/low-stock"),
   },
 
-  // Clientes
+  // Clientes a Fiado
   clients: {
     getAll: (params = {}) => api.get("/clients", { params }),
     getById: (id) => api.get(`/clients/${id}`),
