@@ -122,6 +122,18 @@ export const apiService = {
     getStats: () => api.get("/categories/stats"),
   },
 
+  // Pagamentos a Crédito
+  creditPayments: {
+    create: (data) => api.post("/credit-payments", data),
+    getAll: (params = {}) => api.get("/credit-payments", { params }),
+    getById: (id) => api.get(`/credit-payments/${id}`),
+    update: (id, data) => api.put(`/credit-payments/${id}`, data),
+    delete: (id) => api.delete(`/credit-payments/${id}`),
+    getBySale: (saleId) => api.get(`/credit-payments/sale/${saleId}`),
+    getByClient: (clientId, params = {}) =>
+      api.get(`/credit-payments/client/${clientId}`, { params }),
+  },
+
   // Relatórios
   reports: {
     getSales: (params = {}) => api.get("/reports/sales", { params }),

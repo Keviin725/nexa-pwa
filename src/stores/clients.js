@@ -47,15 +47,25 @@ export const useClientsStore = defineStore("clients", {
     },
 
     // Estatísticas
-    stats: (state) => ({
-      total: state.clients.length,
-      withDebts: state.clients.filter((c) => c.creditBalance > 0).length,
-      totalDebts: state.clients.reduce((sum, c) => sum + c.creditBalance, 0),
-      totalPurchases: state.clients.reduce(
-        (sum, c) => sum + c.totalPurchases,
+    stats: (state) => {
+      const withDebts = state.clients.filter(
+        (c) => (c.creditBalance || 0) > 0
+      ).length;
+      const totalDebts = state.clients.reduce(
+        (sum, c) => sum + (c.creditBalance || 0),
         0
-      ),
-    }),
+      );
+
+      return {
+        total: state.clients.length,
+        withDebts,
+        totalDebts,
+        totalPurchases: state.clients.reduce(
+          (sum, c) => sum + (c.totalPurchases || 0),
+          0
+        ),
+      };
+    },
   },
 
   actions: {
@@ -69,7 +79,9 @@ export const useClientsStore = defineStore("clients", {
           ...params,
           ...this.filters,
         });
+
         this.clients = response.data;
+
         return { success: true, data: response.data };
       } catch (error) {
         this.error = error.response?.data?.error || "Erro ao carregar clientes";

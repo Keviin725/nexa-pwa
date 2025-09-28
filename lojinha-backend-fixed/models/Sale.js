@@ -13,6 +13,7 @@ const Sale = sequelize.define(
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
+      field: "sale_number",
     },
     subtotal: {
       type: DataTypes.FLOAT,
@@ -29,18 +30,22 @@ const Sale = sequelize.define(
     totalAmount: {
       type: DataTypes.FLOAT,
       allowNull: false,
+      field: "total_amount",
     },
     paymentMethod: {
       type: DataTypes.ENUM("cash", "card", "transfer", "credit"),
       allowNull: false,
+      field: "payment_method",
     },
     paymentStatus: {
       type: DataTypes.ENUM("paid", "pending", "partial"),
       defaultValue: "paid",
+      field: "payment_status",
     },
     dueDate: {
       type: DataTypes.DATE,
       allowNull: true,
+      field: "due_date",
       comment: "Data de vencimento para vendas fiadas",
     },
     notes: {

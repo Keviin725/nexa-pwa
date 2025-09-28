@@ -42,6 +42,14 @@ const getDashboardData = async (req, res) => {
       },
     });
 
+    // Vendas parciais
+    const partialSales = await Sale.count({
+      where: {
+        ...whereClause,
+        payment_status: "partial",
+      },
+    });
+
     // Total de produtos
     const totalProducts = await Product.count({
       where: { is_active: true },
@@ -167,6 +175,7 @@ const getDashboardData = async (req, res) => {
       totalRevenue,
       totalSales,
       pendingSales,
+      partialSales,
       totalProducts,
       lowStockProducts,
       totalClients,

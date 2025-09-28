@@ -22,10 +22,13 @@ const createCreditPayment = async (req, res) => {
       throw new Error("Esta venda não é fiada");
     }
 
-    // Calcular total já pago
+    // Calcular total já pago (excluindo pagamentos inativos)
     const totalPaid =
       (await CreditPayment.sum("amountPaid", {
-        where: { SaleId: saleId },
+        where: {
+          SaleId: saleId,
+          is_active: true,
+        },
         transaction,
       })) || 0;
 
@@ -50,7 +53,7 @@ const createCreditPayment = async (req, res) => {
     );
 
     // Atualizar saldo do cliente
-    await Client.decrement("creditBalance", {
+    await Client.decrement("credit_balance", {
       by: amountPaid,
       where: { id: clientId },
       transaction,
@@ -60,12 +63,12 @@ const createCreditPayment = async (req, res) => {
     const newTotalPaid = totalPaid + amountPaid;
     if (newTotalPaid >= sale.totalAmount) {
       await Sale.update(
-        { payment_status: "paid" },
+        { paymentStatus: "paid" },
         { where: { id: saleId }, transaction }
       );
     } else {
       await Sale.update(
-        { payment_status: "partial" },
+        { paymentStatus: "partial" },
         { where: { id: saleId }, transaction }
       );
     }
@@ -179,7 +182,7 @@ const deleteCreditPayment = async (req, res) => {
     }
 
     // Reverter saldo do cliente
-    await Client.increment("creditBalance", {
+    await Client.increment("credit_balance", {
       by: payment.amountPaid,
       where: { id: payment.ClientId },
       transaction,
@@ -192,6 +195,7 @@ const deleteCreditPayment = async (req, res) => {
         where: {
           SaleId: sale.id,
           id: { [Op.ne]: payment.id },
+          is_active: true,
         },
         transaction,
       })) || 0;
@@ -202,7 +206,7 @@ const deleteCreditPayment = async (req, res) => {
     }
 
     await Sale.update(
-      { payment_status: newStatus },
+      { paymentStatus: newStatus },
       { where: { id: sale.id }, transaction }
     );
 
@@ -226,7 +230,7 @@ const getPaymentsBySale = async (req, res) => {
         SaleId: saleId,
         is_active: true,
       },
-      include: [{ model: Client, attributes: ["name", "contact"] }],
+      include: [{ model: Client, attributes: ["name", "phone"] }],
       order: [["created_at", "ASC"]],
     });
 

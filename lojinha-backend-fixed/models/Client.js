@@ -25,7 +25,7 @@ const Client = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    creditBalance: {
+    credit_balance: {
       type: DataTypes.FLOAT,
       defaultValue: 0,
     },

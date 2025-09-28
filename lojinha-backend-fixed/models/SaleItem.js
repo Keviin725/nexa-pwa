@@ -19,6 +19,7 @@ const SaleItem = sequelize.define(
     unitPrice: {
       type: DataTypes.FLOAT,
       allowNull: false,
+      field: "unit_price",
     },
   },
   {

@@ -83,6 +83,11 @@ export const useSalesStore = defineStore("sales", {
       return grouped;
     },
 
+    // Vendas parciais
+    partialSales: (state) => {
+      return state.sales.filter((s) => s.paymentStatus === "partial");
+    },
+
     // Vendas por método de pagamento
     salesByPaymentMethod: (state) => {
       const grouped = {};

@@ -55,6 +55,19 @@
                             <div class="text-sm font-medium text-slate-700">Pendentes</div>
                         </div>
                     </div>
+
+                    <!-- Segunda linha com vendas parciais -->
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div class="text-2xl font-bold text-yellow-600 mb-1">{{ partialSales.length }}</div>
+                            <div class="text-sm font-medium text-slate-700">Parciais</div>
+                        </div>
+                        <div class="text-center p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div class="text-2xl font-bold text-emerald-600 mb-1">{{ sales.length - pendingSales.length
+                                - partialSales.length }}</div>
+                            <div class="text-sm font-medium text-slate-700">Pagas</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -170,7 +183,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->
@@ -469,6 +482,7 @@ import { useClientsStore } from '@/stores/clients'
 import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
+import { apiService } from '@/services/api'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
@@ -505,6 +519,7 @@ const clients = computed(() => clientsStore.clients)
 const availableProducts = computed(() => productsStore.products)
 const loading = computed(() => salesStore.loading)
 const pendingSales = computed(() => salesStore.pendingSales)
+const partialSales = computed(() => salesStore.partialSales)
 
 // Filtros
 const filters = reactive({
@@ -517,7 +532,7 @@ const filters = reactive({
 // Formulário de venda
 const saleForm = reactive({
     clientId: '',
-    paymentMethod: 'immediate',
+    paymentMethod: 'cash',
     dueDate: '',
     products: [],
     subtotal: 0,
@@ -534,8 +549,6 @@ const paymentForm = reactive({
     notes: ''
 })
 
-// API Base URL
-const API_BASE = 'http://localhost:3000'
 
 // Métodos
 const formatPrice = (price) => {
@@ -673,10 +686,21 @@ const calculateTotal = () => {
 
 const createSale = async () => {
     try {
+        // Validações
+        if (saleForm.products.length === 0) {
+            alert('Adicione pelo menos um produto à venda')
+            return
+        }
+
+        if (saleForm.paymentMethod === 'credit' && !saleForm.clientId) {
+            alert('Seleção de cliente é obrigatória para vendas a crédito')
+            return
+        }
+
         const saleData = {
             clientId: saleForm.clientId || null,
-            paymentMethod: saleForm.paymentMethod,
-            dueDate: saleForm.paymentMethod === 'credit' ? saleForm.dueDate : null,
+            payment_method: saleForm.paymentMethod,
+            due_date: saleForm.paymentMethod === 'credit' ? saleForm.dueDate : null,
             products: saleForm.products.map(p => ({
                 productId: p.id,
                 quantity: p.quantity
@@ -762,32 +786,23 @@ const createPayment = async () => {
     try {
         loading.value = true
 
-        const response = await fetch(`${API_BASE}/credit-payments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                saleId: selectedSale.value.id,
-                clientId: selectedSale.value.ClientId,
-                amountPaid: paymentForm.amountPaid,
-                paymentMethod: paymentForm.paymentMethod,
-                notes: paymentForm.notes
-            })
-        })
-
-        if (response.ok) {
-            const paymentData = await response.json()
-            // Notificação de pagamento removida
-            closePaymentModal()
-            loadSales()
-        } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+        const paymentData = {
+            saleId: selectedSale.value.id,
+            clientId: selectedSale.value.ClientId,
+            amountPaid: paymentForm.amountPaid,
+            paymentMethod: paymentForm.paymentMethod,
+            notes: paymentForm.notes
         }
+
+        const response = await apiService.creditPayments.create(paymentData)
+
+        closePaymentModal()
+        loadSales()
+        loadClients() // Recarregar clientes para atualizar dívidas
+        alert('Pagamento registrado com sucesso!')
     } catch (error) {
         console.error('Erro ao registrar pagamento:', error)
-        alert('Erro ao registrar pagamento')
+        alert('Erro: ' + (error.response?.data?.error || error.message || 'Erro ao registrar pagamento'))
     } finally {
         loading.value = false
     }

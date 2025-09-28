@@ -14,18 +14,92 @@ const getClients = async (req, res) => {
       ];
     }
 
-    if (hasDebt === "true") {
-      whereClause.creditBalance = {
-        [Op.gt]: 0,
-      };
-    }
-
     const clients = await Client.findAll({
       where: whereClause,
       order: [["name", "ASC"]],
     });
 
-    res.json(clients);
+    // Calcular dívidas reais baseadas nas vendas a crédito
+    const clientsWithDebts = await Promise.all(
+      clients.map(async (client) => {
+        // Buscar vendas a crédito pendentes do cliente
+        const pendingSales = await Sale.findAll({
+          where: {
+            ClientId: client.id,
+            paymentMethod: "credit",
+            paymentStatus: "pending",
+          },
+          attributes: ["id", "totalAmount"],
+        });
+
+        // Buscar vendas a crédito parciais do cliente
+        const partialSales = await Sale.findAll({
+          where: {
+            ClientId: client.id,
+            paymentMethod: "credit",
+            paymentStatus: "partial",
+          },
+          attributes: ["id", "totalAmount"],
+        });
+
+        // Calcular dívidas reais considerando pagamentos já feitos
+        let totalDebt = 0;
+        let partialDebt = 0;
+
+        // Para vendas pendentes - calcular saldo restante
+        for (const sale of pendingSales) {
+          // Buscar pagamentos já feitos para esta venda (apenas ativos)
+          const payments =
+            (await CreditPayment.sum("amountPaid", {
+              where: {
+                SaleId: sale.id,
+                is_active: true,
+              },
+            })) || 0;
+
+          const remainingAmount = sale.totalAmount - payments;
+          if (remainingAmount > 0) {
+            totalDebt += remainingAmount;
+          }
+        }
+
+        // Para vendas parciais - calcular saldo restante
+        for (const sale of partialSales) {
+          // Buscar pagamentos já feitos para esta venda (apenas ativos)
+          const payments =
+            (await CreditPayment.sum("amountPaid", {
+              where: {
+                SaleId: sale.id,
+                is_active: true,
+              },
+            })) || 0;
+
+          const remainingAmount = sale.totalAmount - payments;
+          if (remainingAmount > 0) {
+            partialDebt += remainingAmount;
+          }
+        }
+
+        // Total de dívidas (pendentes + saldos parciais)
+        const creditBalance = totalDebt + partialDebt;
+
+        return {
+          ...client.toJSON(),
+          creditBalance,
+          hasDebt: creditBalance > 0,
+          totalDebt,
+          partialDebt,
+        };
+      })
+    );
+
+    // Filtrar por dívidas se solicitado
+    let result = clientsWithDebts;
+    if (hasDebt === "true") {
+      result = clientsWithDebts.filter((client) => client.creditBalance > 0);
+    }
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -105,7 +179,7 @@ const getClientDebts = async (req, res) => {
     };
 
     if (status) {
-      whereClause.payment_status = status;
+      whereClause.paymentStatus = status;
     }
 
     const sales = await Sale.findAll({

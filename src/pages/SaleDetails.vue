@@ -158,14 +158,14 @@
                             <div class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-sm text-slate-600">Subtotal</span>
                                 <span class="text-sm font-medium text-slate-800">MT {{ formatPrice(sale.subtotal)
-                                    }}</span>
+                                }}</span>
                             </div>
 
                             <div v-if="sale.discount > 0"
                                 class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-sm text-slate-600">Desconto</span>
                                 <span class="text-sm font-medium text-red-600">- MT {{ formatPrice(sale.discount)
-                                    }}</span>
+                                }}</span>
                             </div>
 
                             <div v-if="sale.tax > 0"
@@ -177,13 +177,102 @@
                             <div class="flex justify-between items-center py-3 bg-green-50 rounded-lg px-3">
                                 <span class="text-base font-semibold text-slate-800">Total</span>
                                 <span class="text-lg font-bold text-green-600">MT {{ formatPrice(sale.totalAmount)
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. Ações -->
+                <!-- 4. Status de Pagamento (para vendas a crédito) -->
+                <div v-if="sale.paymentMethod === 'credit'"
+                    class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Status de Pagamento</h3>
+
+                        <div class="space-y-4">
+                            <!-- Valor Total -->
+                            <div class="flex justify-between items-center py-3 bg-slate-50 rounded-lg px-4">
+                                <span class="text-sm font-medium text-slate-700">Valor Total da Venda</span>
+                                <span class="text-lg font-bold text-slate-800">MT {{ formatPrice(sale.totalAmount)
+                                    }}</span>
+                            </div>
+
+                            <!-- Valor Pago -->
+                            <div class="flex justify-between items-center py-3 bg-blue-50 rounded-lg px-4">
+                                <span class="text-sm font-medium text-blue-700">Valor Já Pago</span>
+                                <span class="text-lg font-bold text-blue-600">MT {{ formatPrice(totalPaid) }}</span>
+                            </div>
+
+                            <!-- Valor Restante -->
+                            <div class="flex justify-between items-center py-3 rounded-lg px-4" :class="{
+                                'bg-green-50': remainingAmount <= 0,
+                                'bg-yellow-50': remainingAmount > 0 && remainingAmount < sale.totalAmount,
+                                'bg-red-50': remainingAmount >= sale.totalAmount
+                            }">
+                                <span class="text-sm font-medium" :class="{
+                                    'text-green-700': remainingAmount <= 0,
+                                    'text-yellow-700': remainingAmount > 0 && remainingAmount < sale.totalAmount,
+                                    'text-red-700': remainingAmount >= sale.totalAmount
+                                }">Valor Restante</span>
+                                <span class="text-lg font-bold" :class="{
+                                    'text-green-600': remainingAmount <= 0,
+                                    'text-yellow-600': remainingAmount > 0 && remainingAmount < sale.totalAmount,
+                                    'text-red-600': remainingAmount >= sale.totalAmount
+                                }">MT {{ formatPrice(remainingAmount) }}</span>
+                            </div>
+
+                            <!-- Progresso do Pagamento -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-medium text-slate-600">Progresso do Pagamento</span>
+                                    <span class="text-xs font-medium text-slate-600">{{ paymentProgress }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="h-2 rounded-full transition-all duration-300" :class="{
+                                        'bg-green-500': paymentProgress >= 100,
+                                        'bg-yellow-500': paymentProgress > 0 && paymentProgress < 100,
+                                        'bg-red-500': paymentProgress === 0
+                                    }" :style="{ width: `${Math.min(paymentProgress, 100)}%` }"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Histórico de Pagamentos (para vendas a crédito) -->
+                <div v-if="sale.paymentMethod === 'credit' && payments.length > 0"
+                    class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Histórico de Pagamentos</h3>
+
+                        <div class="space-y-3">
+                            <div v-for="payment in payments" :key="payment.id"
+                                class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">MT {{
+                                            formatPrice(payment.amountPaid) }}</p>
+                                        <p class="text-xs text-slate-500">{{ getPaymentMethodText(payment.paymentMethod)
+                                            }} • {{ formatDate(payment.createdAt) }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-slate-500">{{ formatDate(payment.createdAt) }}</p>
+                                    <p v-if="payment.notes" class="text-xs text-slate-400 mt-1">{{ payment.notes }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Ações -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold text-slate-800 mb-4">Ações</h3>
@@ -288,9 +377,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSalesStore } from '@/stores/sales'
+import { apiService } from '@/services/api'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 
 // Router
@@ -305,12 +395,28 @@ const sale = ref(null)
 const loading = ref(false)
 const error = ref(null)
 const showPaymentModal = ref(false)
+const payments = ref([])
 
 // Formulário de pagamento
 const paymentForm = reactive({
     amountPaid: 0,
     paymentMethod: 'cash',
     notes: ''
+})
+
+// Computed properties para cálculos de pagamento
+const totalPaid = computed(() => {
+    return payments.value.reduce((sum, payment) => sum + parseFloat(payment.amountPaid || 0), 0)
+})
+
+const remainingAmount = computed(() => {
+    if (!sale.value) return 0
+    return Math.max(0, parseFloat(sale.value.totalAmount) - totalPaid.value)
+})
+
+const paymentProgress = computed(() => {
+    if (!sale.value || sale.value.totalAmount === 0) return 0
+    return Math.round((totalPaid.value / parseFloat(sale.value.totalAmount)) * 100)
 })
 
 // API Base URL
@@ -350,13 +456,24 @@ const loadSaleDetails = async () => {
 
     try {
         const saleId = route.params.id
-        const response = await fetch(`${API_BASE}/sales/${saleId}`)
 
-        if (!response.ok) {
+        // Carregar detalhes da venda
+        const saleResponse = await fetch(`${API_BASE}/sales/${saleId}`)
+        if (!saleResponse.ok) {
             throw new Error('Venda não encontrada')
         }
+        sale.value = await saleResponse.json()
 
-        sale.value = await response.json()
+        // Se for venda a crédito, carregar pagamentos
+        if (sale.value.paymentMethod === 'credit') {
+            try {
+                const paymentsResponse = await apiService.creditPayments.getBySale(saleId)
+                payments.value = paymentsResponse.data || []
+            } catch (err) {
+                console.warn('Erro ao carregar pagamentos:', err)
+                payments.value = []
+            }
+        }
     } catch (err) {
         error.value = err.message
     } finally {
@@ -397,31 +514,34 @@ const createPayment = async () => {
     try {
         loading.value = true
 
-        const response = await fetch(`${API_BASE}/credit-payments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                saleId: sale.value.id,
-                clientId: sale.value.ClientId,
-                amountPaid: paymentForm.amountPaid,
-                paymentMethod: paymentForm.paymentMethod,
-                notes: paymentForm.notes
-            })
-        })
-
-        if (response.ok) {
-            const paymentData = await response.json()
-            closePaymentModal()
-            loadSaleDetails() // Recarregar detalhes da venda
-        } else {
-            const error = await response.json()
-            alert('Erro: ' + error.error)
+        const paymentData = {
+            saleId: sale.value.id,
+            clientId: sale.value.ClientId,
+            amountPaid: paymentForm.amountPaid,
+            paymentMethod: paymentForm.paymentMethod,
+            notes: paymentForm.notes
         }
+
+        const response = await apiService.creditPayments.create(paymentData)
+
+        closePaymentModal()
+
+        // Recarregar pagamentos da venda
+        if (sale.value.paymentMethod === 'credit') {
+            try {
+                const paymentsResponse = await apiService.creditPayments.getBySale(sale.value.id)
+                payments.value = paymentsResponse.data || []
+            } catch (err) {
+                console.warn('Erro ao recarregar pagamentos:', err)
+            }
+        }
+
+        // Notificar que os dados devem ser atualizados
+        window.dispatchEvent(new CustomEvent('payment-created'))
+        alert('Pagamento registrado com sucesso!')
     } catch (error) {
         console.error('Erro ao registrar pagamento:', error)
-        alert('Erro ao registrar pagamento')
+        alert('Erro: ' + (error.response?.data?.error || error.message || 'Erro ao registrar pagamento'))
     } finally {
         loading.value = false
     }

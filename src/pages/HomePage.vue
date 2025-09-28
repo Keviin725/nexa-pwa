@@ -110,6 +110,15 @@
                             <div class="text-xs text-yellow-600 mt-1">{{ dashboardStore.data.pendingSales }} vendas
                             </div>
                         </div>
+                        <!-- Vendas Parciais - ATENÇÃO -->
+                        <div
+                            class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                            <div class="text-3xl font-bold text-blue-600 mb-1">
+                                {{ dashboardStore.data.partialSales || 0 }}
+                            </div>
+                            <div class="text-sm font-medium text-slate-700">Parciais</div>
+                            <div class="text-xs text-blue-600 mt-1">Pagamentos em andamento</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,7 +162,7 @@
                     </div>
                     <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                         <div class="text-2xl font-bold text-green-600 mb-1">{{ dashboardStore.data.totalRevenue || 0
-                        }}MT</div>
+                            }}MT</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
                     <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
@@ -283,7 +292,7 @@
                             <div>
                                 <span class="font-medium text-slate-800">Venda #{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                    }}</span>
+                                }}</span>
 
                             </div>
                             <div class="text-right">

@@ -237,7 +237,7 @@
                                     {{ client.hasDebt ? 'Com Dívida' : 'Sem Dívida' }}
                                 </span>
                                 <div class="text-sm font-semibold text-slate-800">
-                                    MT {{ formatPrice(client.totalDebt || 0) }}
+                                    MT {{ formatPrice(client.creditBalance || 0) }}
                                 </div>
                             </div>
                         </div>
@@ -504,10 +504,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue'
+import { ref, onMounted, onUnmounted, reactive, computed } from 'vue'
 import { useClientsStore } from '@/stores/clients'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
+import { apiService } from '@/services/api'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
@@ -562,9 +563,15 @@ const loading = computed(() => clientsStore.loading)
 const filteredClients = computed(() => clientsStore.filteredClients)
 
 // Estatísticas dos clientes a fiado
-const clientsWithDebts = computed(() => clientsStore.stats.clientsWithDebts)
-const totalDebts = computed(() => clientsStore.stats.totalDebts)
-const creditSalesToday = computed(() => clientsStore.stats.creditSalesToday)
+const clientsWithDebts = computed(() => {
+    // Cálculo direto dos clientes com dívidas
+    return clientsStore.clients.filter(client => (client.creditBalance || 0) > 0).length
+})
+const totalDebts = computed(() => {
+    // Cálculo direto do total de dívidas
+    return clientsStore.clients.reduce((sum, client) => sum + (client.creditBalance || 0), 0)
+})
+const creditSalesToday = computed(() => 0) // Placeholder por enquanto
 
 // Métodos
 const formatPrice = (price) => {
@@ -681,8 +688,8 @@ const deleteClient = async (clientId) => {
 const viewClientHistory = async (client) => {
     selectedClient.value = client
     try {
-        const response = await fetch(`${API_BASE}/clients/${client.id}/history`)
-        clientHistory.value = await response.json()
+        const response = await apiService.clients.getHistory(client.id)
+        clientHistory.value = response.data
         showHistoryModal.value = true
     } catch (error) {
         console.error('Erro ao carregar histórico:', error)
@@ -699,8 +706,8 @@ const closeHistoryModal = () => {
 const viewClientDebts = async (client) => {
     selectedClient.value = client
     try {
-        const response = await fetch(`${API_BASE}/clients/${client.id}/debts`)
-        clientDebts.value = await response.json()
+        const response = await apiService.clients.getDebts(client.id)
+        clientDebts.value = response.data
         showDebtsModal.value = true
     } catch (error) {
         console.error('Erro ao carregar dívidas:', error)
@@ -834,5 +841,13 @@ onMounted(() => {
     }
 
     loadClients()
+
+    // Escutar eventos de pagamento para atualizar dados
+    window.addEventListener('payment-created', loadClients)
+})
+
+onUnmounted(() => {
+    // Remover listener ao sair da página
+    window.removeEventListener('payment-created', loadClients)
 })
 </script>
