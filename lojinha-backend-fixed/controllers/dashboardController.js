@@ -74,7 +74,7 @@ const getDashboardData = async (req, res) => {
     const clientsWithDebts = await Client.count({
       where: {
         is_active: true,
-        creditBalance: {
+        credit_balance: {
           [Op.gt]: 0,
         },
       },

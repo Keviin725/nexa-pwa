@@ -253,11 +253,11 @@ const getClientsWithDebts = async (req, res) => {
     const clients = await Client.findAll({
       where: {
         is_active: true,
-        creditBalance: {
+        credit_balance: {
           [Op.gt]: 0,
         },
       },
-      order: [["creditBalance", "DESC"]],
+      order: [["credit_balance", "DESC"]],
     });
 
     res.json(clients);

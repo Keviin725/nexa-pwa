@@ -158,14 +158,14 @@
                             <div class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-sm text-slate-600">Subtotal</span>
                                 <span class="text-sm font-medium text-slate-800">MT {{ formatPrice(sale.subtotal)
-                                }}</span>
+                                    }}</span>
                             </div>
 
                             <div v-if="sale.discount > 0"
                                 class="flex justify-between items-center py-2 border-b border-slate-100">
                                 <span class="text-sm text-slate-600">Desconto</span>
                                 <span class="text-sm font-medium text-red-600">- MT {{ formatPrice(sale.discount)
-                                }}</span>
+                                    }}</span>
                             </div>
 
                             <div v-if="sale.tax > 0"
@@ -177,7 +177,7 @@
                             <div class="flex justify-between items-center py-3 bg-green-50 rounded-lg px-3">
                                 <span class="text-base font-semibold text-slate-800">Total</span>
                                 <span class="text-lg font-bold text-green-600">MT {{ formatPrice(sale.totalAmount)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -194,7 +194,7 @@
                             <div class="flex justify-between items-center py-3 bg-slate-50 rounded-lg px-4">
                                 <span class="text-sm font-medium text-slate-700">Valor Total da Venda</span>
                                 <span class="text-lg font-bold text-slate-800">MT {{ formatPrice(sale.totalAmount)
-                                    }}</span>
+                                }}</span>
                             </div>
 
                             <!-- Valor Pago -->
@@ -260,7 +260,7 @@
                                         <p class="text-sm font-medium text-slate-800">MT {{
                                             formatPrice(payment.amountPaid) }}</p>
                                         <p class="text-xs text-slate-500">{{ getPaymentMethodText(payment.paymentMethod)
-                                            }} • {{ formatDate(payment.createdAt) }}</p>
+                                        }} • {{ formatDate(payment.createdAt) }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
