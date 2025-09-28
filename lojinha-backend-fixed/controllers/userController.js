@@ -66,7 +66,7 @@ const getUserById = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["id", "saleNumber", "totalAmount", "created_at"],
+          attributes: ["id", "sale_number", "total_amount", "created_at"],
           order: [["created_at", "DESC"]],
           limit: 10,
         },

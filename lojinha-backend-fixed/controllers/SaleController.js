@@ -115,7 +115,7 @@ const getSales = async (req, res) => {
       startDate,
       endDate,
       clientId,
-      paymentStatus,
+      payment_status,
       payment_method,
       search,
     } = req.query;
@@ -132,8 +132,8 @@ const getSales = async (req, res) => {
       whereClause.ClientId = clientId;
     }
 
-    if (paymentStatus) {
-      whereClause.paymentStatus = paymentStatus;
+    if (payment_status) {
+      whereClause.payment_status = payment_status;
     }
 
     if (payment_method) {
@@ -276,7 +276,7 @@ const generateReceipt = async (req, res) => {
       tax: sale.tax,
       total: sale.total_amount,
       payment_method: sale.payment_method,
-      paymentStatus: sale.paymentStatus,
+      payment_status: sale.payment_status,
     };
 
     res.json(receipt);
@@ -296,7 +296,7 @@ const getSalesByClient = async (req, res) => {
     };
 
     if (status) {
-      whereClause.paymentStatus = status;
+      whereClause.payment_status = status;
     }
 
     const sales = await Sale.findAll({

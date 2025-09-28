@@ -26,20 +26,20 @@ const getClients = async (req, res) => {
         const pendingSales = await Sale.findAll({
           where: {
             ClientId: client.id,
-            paymentMethod: "credit",
-            paymentStatus: "pending",
+            payment_method: "credit",
+            payment_status: "pending",
           },
-          attributes: ["id", "totalAmount"],
+          attributes: ["id", "total_amount"],
         });
 
         // Buscar vendas a crédito parciais do cliente
         const partialSales = await Sale.findAll({
           where: {
             ClientId: client.id,
-            paymentMethod: "credit",
-            paymentStatus: "partial",
+            payment_method: "credit",
+            payment_status: "partial",
           },
-          attributes: ["id", "totalAmount"],
+          attributes: ["id", "total_amount"],
         });
 
         // Calcular dívidas reais considerando pagamentos já feitos
@@ -57,7 +57,7 @@ const getClients = async (req, res) => {
               },
             })) || 0;
 
-          const remainingAmount = sale.totalAmount - payments;
+          const remainingAmount = sale.total_amount - payments;
           if (remainingAmount > 0) {
             totalDebt += remainingAmount;
           }
@@ -74,7 +74,7 @@ const getClients = async (req, res) => {
               },
             })) || 0;
 
-          const remainingAmount = sale.totalAmount - payments;
+          const remainingAmount = sale.total_amount - payments;
           if (remainingAmount > 0) {
             partialDebt += remainingAmount;
           }
@@ -179,7 +179,7 @@ const getClientDebts = async (req, res) => {
     };
 
     if (status) {
-      whereClause.paymentStatus = status;
+      whereClause.payment_status = status;
     }
 
     const sales = await Sale.findAll({
@@ -199,7 +199,7 @@ const getClientDebts = async (req, res) => {
         (sum, payment) => sum + payment.amountPaid,
         0
       );
-      const balance = sale.totalAmount - totalPaid;
+      const balance = sale.total_amount - totalPaid;
 
       return {
         ...sale.toJSON(),

@@ -265,7 +265,7 @@ const getAnalytics = async (req, res) => {
     // Receita por método de pagamento
     const revenueByPaymentMethod = await Sale.findAll({
       attributes: [
-        "paymentMethod",
+        "payment_method",
         [Sale.sequelize.fn("COUNT", Sale.sequelize.col("id")), "count"],
         [Sale.sequelize.fn("SUM", Sale.sequelize.col("total_amount")), "total"],
       ],
@@ -273,7 +273,7 @@ const getAnalytics = async (req, res) => {
         ...whereClause,
         payment_status: "paid",
       },
-      group: ["paymentMethod"],
+      group: ["payment_method"],
     });
 
     // Vendas por categoria - Simplificado

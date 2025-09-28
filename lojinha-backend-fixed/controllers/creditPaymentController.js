@@ -18,7 +18,7 @@ const createCreditPayment = async (req, res) => {
     if (!sale) {
       throw new Error("Venda não encontrada");
     }
-    if (sale.paymentMethod !== "credit") {
+    if (sale.payment_method !== "credit") {
       throw new Error("Esta venda não é fiada");
     }
 
@@ -33,7 +33,7 @@ const createCreditPayment = async (req, res) => {
       })) || 0;
 
     // Verificar se o pagamento não excede o valor restante
-    const remainingAmount = sale.totalAmount - totalPaid;
+    const remainingAmount = sale.total_amount - totalPaid;
     if (amountPaid > remainingAmount) {
       throw new Error(
         `Valor do pagamento (${amountPaid}) excede o valor restante (${remainingAmount})`
@@ -61,14 +61,14 @@ const createCreditPayment = async (req, res) => {
 
     // Verificar se a dívida foi totalmente paga
     const newTotalPaid = totalPaid + amountPaid;
-    if (newTotalPaid >= sale.totalAmount) {
+    if (newTotalPaid >= sale.total_amount) {
       await Sale.update(
-        { paymentStatus: "paid" },
+        { payment_status: "paid" },
         { where: { id: saleId }, transaction }
       );
     } else {
       await Sale.update(
-        { paymentStatus: "partial" },
+        { payment_status: "partial" },
         { where: { id: saleId }, transaction }
       );
     }
@@ -78,7 +78,7 @@ const createCreditPayment = async (req, res) => {
     // Retornar pagamento com dados relacionados
     const paymentWithDetails = await CreditPayment.findByPk(payment.id, {
       include: [
-        { model: Sale, attributes: ["saleNumber", "totalAmount"] },
+        { model: Sale, attributes: ["sale_number", "total_amount"] },
         { model: Client, attributes: ["name", "phone"] },
       ],
     });
@@ -111,7 +111,7 @@ const getCreditPayments = async (req, res) => {
     }
 
     if (paymentMethod) {
-      whereClause.paymentMethod = paymentMethod;
+      whereClause.payment_method = paymentMethod;
     }
 
     const payments = await CreditPayment.findAll({
@@ -119,7 +119,7 @@ const getCreditPayments = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["saleNumber", "totalAmount", "created_at"],
+          attributes: ["sale_number", "total_amount", "created_at"],
           include: [{ model: Client, attributes: ["name"] }],
         },
         { model: Client, attributes: ["name", "phone"] },
@@ -202,11 +202,11 @@ const deleteCreditPayment = async (req, res) => {
 
     let newStatus = "pending";
     if (remainingPayments > 0) {
-      newStatus = remainingPayments >= sale.totalAmount ? "paid" : "partial";
+      newStatus = remainingPayments >= sale.total_amount ? "paid" : "partial";
     }
 
     await Sale.update(
-      { paymentStatus: newStatus },
+      { payment_status: newStatus },
       { where: { id: sale.id }, transaction }
     );
 
@@ -261,7 +261,7 @@ const getPaymentsByClient = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["saleNumber", "totalAmount", "created_at"],
+          attributes: ["sale_number", "total_amount", "created_at"],
         },
       ],
       order: [["created_at", "DESC"]],

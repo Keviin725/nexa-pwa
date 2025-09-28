@@ -105,7 +105,7 @@ router.get("/products", async (req, res) => {
         [
           SaleItem.sequelize.fn(
             "SUM",
-            SaleItem.sequelize.literal("quantity * unitPrice")
+            SaleItem.sequelize.literal("quantity * unit_price")
           ),
           "totalRevenue",
         ],
@@ -157,7 +157,7 @@ router.get("/profit", async (req, res) => {
 
     sales.forEach((sale) => {
       sale.SaleItems.forEach((item) => {
-        const revenue = item.quantity * item.unitPrice;
+        const revenue = item.quantity * item.unit_price;
         const cost = item.Product.cost_price
           ? item.quantity * item.Product.cost_price
           : 0;
@@ -204,7 +204,7 @@ router.get("/credit", async (req, res) => {
 
     let whereClause = {
       is_active: true,
-      paymentMethod: "credit",
+      payment_method: "credit",
     };
 
     if (status === "pending") {
@@ -229,13 +229,13 @@ router.get("/credit", async (req, res) => {
         (sum, payment) => sum + payment.amountPaid,
         0
       );
-      const balance = sale.totalAmount - totalPaid;
+      const balance = sale.total_amount - totalPaid;
 
       return {
         ...sale.toJSON(),
         totalPaid,
         balance,
-        isOverdue: sale.dueDate && new Date() > new Date(sale.dueDate),
+        isOverdue: sale.due_date && new Date() > new Date(sale.due_date),
       };
     });
 
@@ -281,11 +281,11 @@ router.get("/dashboard", async (req, res) => {
     });
 
     const totalTodayRevenue = todaySales.reduce(
-      (sum, sale) => sum + sale.totalAmount,
+      (sum, sale) => sum + sale.total_amount,
       0
     );
     const totalPendingAmount = pendingSales.reduce(
-      (sum, sale) => sum + sale.totalAmount,
+      (sum, sale) => sum + sale.total_amount,
       0
     );
 
