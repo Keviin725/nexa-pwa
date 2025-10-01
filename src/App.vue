@@ -1,8 +1,10 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+    <NotificationContainer />
+  </div>
 </template>
 
 <script setup>
-// App.vue agora apenas renderiza o router-view
-// Os layouts são gerenciados pelas rotas
+import NotificationContainer from '@/components/NotificationContainer.vue'
 </script>

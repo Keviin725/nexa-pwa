@@ -13,14 +13,47 @@ const createCreditPayment = async (req, res) => {
       notes,
     } = req.body;
 
+    console.log("💳 Dados recebidos no backend:", req.body);
+
     // Verificar se a venda existe e é fiada
     const sale = await Sale.findByPk(saleId, { transaction });
+    console.log("💳 Venda encontrada:", sale ? "Sim" : "Não");
     if (!sale) {
       throw new Error("Venda não encontrada");
     }
-    if (sale.payment_method !== "credit") {
+    console.log("💳 Método de pagamento da venda:", sale.paymentMethod);
+    console.log("💳 Venda completa:", sale.toJSON());
+    if (sale.paymentMethod !== "credit") {
       throw new Error("Esta venda não é fiada");
     }
+
+    // Verificar se clientId é válido
+    if (!clientId) {
+      throw new Error("ClientId é obrigatório");
+    }
+
+    // Verificar se amountPaid é válido
+    if (!amountPaid || amountPaid <= 0) {
+      throw new Error("Valor do pagamento deve ser maior que zero");
+    }
+
+    // Verificar se paymentMethod é válido
+    const validPaymentMethods = ["cash", "card", "pix", "transfer"];
+    if (!validPaymentMethods.includes(paymentMethod)) {
+      throw new Error(`Método de pagamento inválido: ${paymentMethod}`);
+    }
+
+    // Verificar se o cliente existe
+    const client = await Client.findByPk(clientId, { transaction });
+    if (!client) {
+      throw new Error("Cliente não encontrado");
+    }
+
+    console.log("💳 Cliente encontrado:", client ? "Sim" : "Não");
+    console.log(
+      "💳 Dados do cliente:",
+      client ? { id: client.id, name: client.name } : "N/A"
+    );
 
     // Calcular total já pago (excluindo pagamentos inativos)
     const totalPaid =
@@ -33,7 +66,11 @@ const createCreditPayment = async (req, res) => {
       })) || 0;
 
     // Verificar se o pagamento não excede o valor restante
-    const remainingAmount = sale.total_amount - totalPaid;
+    const remainingAmount = sale.totalAmount - totalPaid;
+    console.log("💳 Total já pago:", totalPaid);
+    console.log("💳 Valor restante:", remainingAmount);
+    console.log("💳 Valor do pagamento:", amountPaid);
+
     if (amountPaid > remainingAmount) {
       throw new Error(
         `Valor do pagamento (${amountPaid}) excede o valor restante (${remainingAmount})`
@@ -41,6 +78,14 @@ const createCreditPayment = async (req, res) => {
     }
 
     // Criar pagamento
+    console.log("💳 Criando pagamento com dados:", {
+      amountPaid,
+      paymentMethod,
+      notes,
+      SaleId: saleId,
+      ClientId: clientId,
+    });
+
     const payment = await CreditPayment.create(
       {
         amountPaid,
@@ -61,14 +106,14 @@ const createCreditPayment = async (req, res) => {
 
     // Verificar se a dívida foi totalmente paga
     const newTotalPaid = totalPaid + amountPaid;
-    if (newTotalPaid >= sale.total_amount) {
+    if (newTotalPaid >= sale.totalAmount) {
       await Sale.update(
-        { payment_status: "paid" },
+        { paymentStatus: "paid" },
         { where: { id: saleId }, transaction }
       );
     } else {
       await Sale.update(
-        { payment_status: "partial" },
+        { paymentStatus: "partial" },
         { where: { id: saleId }, transaction }
       );
     }
@@ -78,7 +123,7 @@ const createCreditPayment = async (req, res) => {
     // Retornar pagamento com dados relacionados
     const paymentWithDetails = await CreditPayment.findByPk(payment.id, {
       include: [
-        { model: Sale, attributes: ["sale_number", "total_amount"] },
+        { model: Sale, attributes: ["saleNumber", "totalAmount"] },
         { model: Client, attributes: ["name", "phone"] },
       ],
     });
@@ -86,6 +131,7 @@ const createCreditPayment = async (req, res) => {
     res.status(201).json(paymentWithDetails);
   } catch (error) {
     await transaction.rollback();
+    console.error("💳 Erro ao criar pagamento:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -111,7 +157,7 @@ const getCreditPayments = async (req, res) => {
     }
 
     if (paymentMethod) {
-      whereClause.payment_method = paymentMethod;
+      whereClause.paymentMethod = paymentMethod;
     }
 
     const payments = await CreditPayment.findAll({
@@ -119,7 +165,7 @@ const getCreditPayments = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["sale_number", "total_amount", "created_at"],
+          attributes: ["saleNumber", "totalAmount", "createdAt"],
           include: [{ model: Client, attributes: ["name"] }],
         },
         { model: Client, attributes: ["name", "phone"] },
@@ -202,11 +248,11 @@ const deleteCreditPayment = async (req, res) => {
 
     let newStatus = "pending";
     if (remainingPayments > 0) {
-      newStatus = remainingPayments >= sale.total_amount ? "paid" : "partial";
+      newStatus = remainingPayments >= sale.totalAmount ? "paid" : "partial";
     }
 
     await Sale.update(
-      { payment_status: newStatus },
+      { paymentStatus: newStatus },
       { where: { id: sale.id }, transaction }
     );
 
@@ -261,7 +307,7 @@ const getPaymentsByClient = async (req, res) => {
       include: [
         {
           model: Sale,
-          attributes: ["sale_number", "total_amount", "created_at"],
+          attributes: ["saleNumber", "totalAmount", "createdAt"],
         },
       ],
       order: [["created_at", "DESC"]],

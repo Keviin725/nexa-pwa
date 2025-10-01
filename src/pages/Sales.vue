@@ -140,12 +140,7 @@
             </div>
 
             <!-- Loading State -->
-            <div v-if="loading" class="flex justify-center py-8">
-                <div class="flex flex-col items-center space-y-3">
-                    <div class="w-6 h-6 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
-                    <p class="text-sm text-slate-600">Carregando...</p>
-                </div>
-            </div>
+            <LoadingSpinner v-if="loading" message="Carregando vendas..." />
 
             <!-- Empty State -->
             <div v-else-if="sales.length === 0" class="text-center py-8">
@@ -483,8 +478,11 @@ import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import { apiService } from '@/services/api'
+import { useNotifications } from '@/composables/useNotifications'
+import { useFormValidation } from '@/composables/useFormValidation'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 // Router
 const router = useRouter()
@@ -494,6 +492,19 @@ const authStore = useAuthStore()
 const salesStore = useSalesStore()
 const clientsStore = useClientsStore()
 const productsStore = useProductsStore()
+
+// Notifications
+const { handleApiError, handleApiSuccess } = useNotifications()
+
+// Form Validation
+const {
+    errors: validationErrors,
+    validateSaleForm,
+    validatePaymentForm,
+    hasError,
+    getError,
+    clearAllErrors
+} = useFormValidation()
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')
@@ -686,14 +697,16 @@ const calculateTotal = () => {
 
 const createSale = async () => {
     try {
-        // Validações
-        if (saleForm.products.length === 0) {
-            alert('Adicione pelo menos um produto à venda')
-            return
-        }
+        // Limpar erros anteriores
+        clearAllErrors()
 
-        if (saleForm.paymentMethod === 'credit' && !saleForm.clientId) {
-            alert('Seleção de cliente é obrigatória para vendas a crédito')
+        // Validações
+        if (!validateSaleForm(saleForm)) {
+            // Mostrar primeiro erro encontrado
+            const firstError = Object.values(validationErrors)[0]
+            if (firstError) {
+                handleApiError(new Error(firstError), 'Validação')
+            }
             return
         }
 
@@ -722,12 +735,11 @@ const createSale = async () => {
             // Notificar que o dashboard deve ser atualizado
             console.log('🔥 Disparando evento sale-created')
             window.dispatchEvent(new CustomEvent('sale-created'))
-        } else {
-            alert('Erro ao criar venda: ' + result.error)
         }
+        // Erros já são tratados pelo store com notificações
     } catch (error) {
         console.error('Erro ao criar venda:', error)
-        alert('Erro ao criar venda')
+        handleApiError(error, 'Criar Venda')
     }
 }
 
@@ -742,13 +754,13 @@ const generateReceipt = async (saleId) => {
         if (result.success) {
             // Aqui você pode implementar a geração de PDF
             console.log('Recibo:', result.data)
-            alert('Recibo gerado com sucesso!')
+            handleApiSuccess('Recibo gerado com sucesso!', 'Gerar Recibo')
         } else {
-            alert('Erro ao gerar recibo: ' + result.error)
+            handleApiError(new Error(result.error), 'Gerar Recibo')
         }
     } catch (error) {
         console.error('Erro ao gerar recibo:', error)
-        alert('Erro ao gerar recibo')
+        handleApiError(error, 'Gerar Recibo')
     }
 }
 
@@ -764,12 +776,11 @@ const deleteSale = async (saleId) => {
             // Notificar que o dashboard deve ser atualizado
             console.log('🔥 Disparando evento sale-deleted')
             window.dispatchEvent(new CustomEvent('sale-deleted'))
-        } else {
-            alert('Erro ao cancelar venda: ' + result.error)
         }
+        // Erros já são tratados pelo store com notificações
     } catch (error) {
         console.error('Erro ao cancelar venda:', error)
-        alert('Erro ao cancelar venda')
+        handleApiError(error, 'Cancelar Venda')
     }
 }
 
@@ -790,6 +801,18 @@ const createPayment = async () => {
     try {
         loading.value = true
 
+        // Limpar erros anteriores
+        clearAllErrors()
+
+        // Validações
+        if (!validatePaymentForm(paymentForm, selectedSale.value?.totalAmount)) {
+            const firstError = Object.values(validationErrors)[0]
+            if (firstError) {
+                handleApiError(new Error(firstError), 'Validação de Pagamento')
+            }
+            return
+        }
+
         const paymentData = {
             saleId: selectedSale.value.id,
             clientId: selectedSale.value.ClientId,
@@ -798,15 +821,19 @@ const createPayment = async () => {
             notes: paymentForm.notes
         }
 
+        console.log('💳 Dados do pagamento sendo enviados:', paymentData)
+        console.log('💳 Venda selecionada:', selectedSale.value)
+
         const response = await apiService.creditPayments.create(paymentData)
 
         closePaymentModal()
         loadSales()
         loadClients() // Recarregar clientes para atualizar dívidas
-        alert('Pagamento registrado com sucesso!')
+
+        handleApiSuccess('Pagamento registrado com sucesso!', 'Registrar Pagamento')
     } catch (error) {
         console.error('Erro ao registrar pagamento:', error)
-        alert('Erro: ' + (error.response?.data?.error || error.message || 'Erro ao registrar pagamento'))
+        handleApiError(error, 'Registrar Pagamento')
     } finally {
         loading.value = false
     }

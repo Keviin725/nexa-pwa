@@ -19,6 +19,7 @@ const CreditPayment = sequelize.define(
     paymentMethod: {
       type: DataTypes.ENUM("cash", "card", "pix", "transfer"),
       allowNull: false,
+      field: "payment_method",
     },
     notes: {
       type: DataTypes.TEXT,

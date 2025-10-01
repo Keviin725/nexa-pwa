@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { apiService } from "@/services/api";
+import { useNotifications } from "@/composables/useNotifications";
 
 export const useSalesStore = defineStore("sales", {
   state: () => ({
@@ -164,16 +165,29 @@ export const useSalesStore = defineStore("sales", {
     async createSale(saleData) {
       this.loading = true;
       this.error = null;
+      const { handleApiError, handleApiSuccess } = useNotifications();
 
       try {
         console.log("🔄 Enviando dados para API:", saleData);
         const response = await apiService.sales.create(saleData);
         console.log("✅ Resposta da API:", response.data);
+
         this.sales.unshift(response.data);
+
+        // Notificação de sucesso
+        handleApiSuccess(
+          `Venda #${response.data.saleNumber} criada com sucesso!`,
+          "Nova Venda"
+        );
+
         return { success: true, data: response.data };
       } catch (error) {
         console.error("❌ Erro ao criar venda:", error);
         console.error("❌ Detalhes do erro:", error.response?.data);
+
+        // Notificação de erro amigável
+        handleApiError(error, "Criar Venda");
+
         this.error =
           error.response?.data?.error || error.message || "Erro ao criar venda";
         return { success: false, error: this.error };
@@ -206,12 +220,20 @@ export const useSalesStore = defineStore("sales", {
     async deleteSale(id) {
       this.loading = true;
       this.error = null;
+      const { handleApiError, handleApiSuccess } = useNotifications();
 
       try {
         await apiService.sales.delete(id);
         this.sales = this.sales.filter((s) => s.id !== id);
+
+        // Notificação de sucesso
+        handleApiSuccess("Venda cancelada com sucesso!", "Cancelar Venda");
+
         return { success: true };
       } catch (error) {
+        // Notificação de erro amigável
+        handleApiError(error, "Cancelar Venda");
+
         this.error = error.response?.data?.error || "Erro ao deletar venda";
         return { success: false, error: this.error };
       } finally {
