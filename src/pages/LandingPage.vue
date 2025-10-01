@@ -75,19 +75,20 @@
 
                         <!-- Main Headline -->
                         <h1 class="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-                            Transforme sua
+                            Revolucione sua loja com
                             <span
                                 class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                                gestão
+                                Inteligência Artificial
                             </span>
-                            <br>com inteligência
+                            <br>que pensa por você
                         </h1>
 
                         <!-- Subtitle -->
                         <p class="text-xl lg:text-2xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
-                            O sistema completo que sua loja precisa.
-                            <span class="text-blue-300 font-semibold">Stock, vendas, clientes</span> e muito mais
-                            em uma plataforma inteligente e acessível.
+                            A única plataforma que usa
+                            <span class="text-blue-300 font-semibold">Machine Learning</span> para prever vendas,
+                            <span class="text-green-300 font-semibold">otimizar estoque</span> e
+                            <span class="text-purple-300 font-semibold">maximizar lucros</span> automaticamente.
                         </p>
 
                         <!-- CTA Buttons -->
@@ -100,13 +101,13 @@
                                 </div>
                             </router-link>
 
-                            <button
+                            <!-- <button
                                 class="px-8 py-4 border-2 border-white/20 text-white rounded-2xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
                                 Ver Demonstração
-                            </button>
+                            </button> -->
                         </div>
 
-                        <!-- Trust Indicators -->
+                        <!-- Trust Indicators
                         <div class="flex flex-col sm:flex-row items-center gap-8 text-gray-400">
                             <div class="flex items-center gap-2">
                                 <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -132,7 +133,7 @@
                                 </svg>
                                 <span class="text-sm">Suporte 24/7</span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- Right Content - Dashboard Preview -->
@@ -204,7 +205,7 @@
                                 </div>
                                 <div>
                                     <div class="text-white font-semibold">Venda Concluída</div>
-                                    <div class="text-gray-300 text-sm">+R$ 150,00</div>
+                                    <div class="text-gray-300 text-sm">+MZN 150,00</div>
                                 </div>
                             </div>
                         </div>
@@ -247,102 +248,162 @@
         <section id="features" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
+                    <div
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 rounded-full px-4 py-2 mb-6">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold">Powered by AI</span>
+                    </div>
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        Tudo que você precisa para sua loja
+                        Algoritmos que
+                        <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            transformam
+                        </span>
+                        seu negócio
                     </h2>
-                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Funcionalidades poderosas em uma interface simples e intuitiva
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Machine Learning avançado que aprende com seus dados e toma decisões inteligentes para maximizar
+                        vendas e reduzir custos automaticamente
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Feature 1 -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+                <!-- Features Pro -->
+                <div class="mb-12">
+                    <div class="text-center mb-8">
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full px-6 py-3 mb-4">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.78 1.745 3.066 3.066 0 001.745 3.78 3.066 3.066 0 003.78 1.745 3.066 3.066 0 001.745-3.78 3.066 3.066 0 00-3.78-1.745 3.066 3.066 0 00-1.745 3.78 3.066 3.066 0 00-3.78 1.745z"
+                                    clip-rule="evenodd"></path>
                             </svg>
+                            <span class="font-bold">PRO FEATURES</span>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Gestão de Stock</h3>
-                        <p class="text-gray-600">Controle completo do Stock com alertas de produtos em falta e
-                            relatórios detalhados.</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Inteligência Artificial Avançada</h3>
+                        <p class="text-gray-600">Funcionalidades de IA disponíveis no plano Professional</p>
                     </div>
 
-                    <!-- Feature 2 -->
-                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Feature 1 - Pro -->
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-                                </path>
-                            </svg>
+                            class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                PRO
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Stock Predictor</h3>
+                            <p class="text-gray-600">Algoritmos de IA que preveem demanda e otimizam automaticamente seu
+                                estoque, reduzindo custos e evitando rupturas.</p>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Vendas Inteligentes</h3>
-                        <p class="text-gray-600">Sistema de vendas com suporte a fiado, pagamentos parciais e geração
-                            automática de recibos.</p>
-                    </div>
 
-                    <!-- Feature 3 -->
-                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
+                        <!-- Feature 2 - Pro -->
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.103-1.274-.293-1.857M7 20v-2a3 3 0 015.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M12 10a6 6 0 110-12 6 6 0 010 12z">
-                                </path>
-                            </svg>
+                            class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                PRO
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Sales Optimizer</h3>
+                            <p class="text-gray-600">IA que analisa padrões de venda e sugere estratégias personalizadas
+                                para maximizar receita e identificar oportunidades.</p>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Gestão de Clientes</h3>
-                        <p class="text-gray-600">Cadastro completo de clientes com histórico de compras e controle de
-                            crédito.</p>
-                    </div>
 
-                    <!-- Feature 4 -->
-                    <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-8 border border-yellow-100">
+                        <!-- Feature 3 - Pro -->
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
+                            class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                PRO
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Customer Insights</h3>
+                            <p class="text-gray-600">Machine Learning que analisa comportamento dos clientes e gera
+                                insights
+                                personalizados para aumentar fidelização e vendas.</p>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Relatórios Avançados</h3>
-                        <p class="text-gray-600">Dashboards e relatórios detalhados para análise de vendas e performance
-                            do negócio.</p>
-                    </div>
 
-                    <!-- Feature 5 -->
-                    <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-8 border border-red-100">
+                        <!-- Feature 4 - Enterprise -->
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
-                                </path>
-                            </svg>
+                            class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-8 border border-yellow-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                ENTERPRISE
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Analytics Dashboard</h3>
+                            <p class="text-gray-600">Relatórios inteligentes gerados por IA que identificam tendências,
+                                anomalias e oportunidades de crescimento automáticamente.</p>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">PWA Mobile</h3>
-                        <p class="text-gray-600">Aplicação web progressiva que funciona offline e pode ser instalada no
-                            telemóvel.</p>
-                    </div>
 
-                    <!-- Feature 6 -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-8 border border-indigo-100">
+                        <!-- Feature 5 - Enterprise -->
                         <div
-                            class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
-                                </path>
-                            </svg>
+                            class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-8 border border-red-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                ENTERPRISE
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Mobile Assistant</h3>
+                            <p class="text-gray-600">Assistente inteligente que funciona offline, com IA integrada para
+                                gestão móvel e notificações preditivas em tempo real.</p>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">Multi-utilizador</h3>
-                        <p class="text-gray-600">Sistema de permissões com diferentes níveis de acesso para
-                            administradores e vendedores.</p>
+
+                        <!-- Feature 6 - Enterprise -->
+                        <div
+                            class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-8 border border-indigo-100 relative">
+                            <div
+                                class="absolute -top-3 -right-3 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                ENTERPRISE
+                            </div>
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI Security & Permissions</h3>
+                            <p class="text-gray-600">Sistema inteligente de segurança que aprende padrões de acesso e
+                                detecta automaticamente atividades suspeitas com IA.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -711,8 +772,9 @@
                             </div>
                         </div>
                         <p class="text-gray-400 mb-6 max-w-md">
-                            A solução completa para gestão de pequenas e médias empresas.
-                            Simples, eficiente e acessível.
+                            A primeira plataforma de gestão com Inteligência Artificial integrada.
+                            <span class="text-blue-300 font-semibold">Powered by AI</span> - Simples, eficiente e
+                            inteligente.
                         </p>
                     </div>
 
