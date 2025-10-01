@@ -217,9 +217,44 @@ export const useReportsStore = defineStore("reports", {
         this.salesData = [];
       }
 
-      // Dados vazios - serão preenchidos quando houver endpoints específicos
-      this.topProductsData = [];
-      this.salesDistributionData = [];
+      // Carregar produtos mais vendidos
+      try {
+        const topProductsResponse = await apiService.reports.getTopProducts({
+          startDate: this.getDate30DaysAgo(),
+          endDate: new Date().toISOString().split("T")[0],
+          limit: 10,
+        });
+
+        if (topProductsResponse.data && topProductsResponse.data.length > 0) {
+          this.topProductsData = topProductsResponse.data.map((product) => ({
+            name: product.name,
+            value: product.quantity,
+          }));
+        } else {
+          this.topProductsData = [];
+        }
+      } catch (error) {
+        console.warn("Erro ao carregar produtos mais vendidos:", error);
+        this.topProductsData = [];
+      }
+
+      // Carregar distribuição de vendas
+      try {
+        const distributionResponse =
+          await apiService.reports.getSalesDistribution({
+            startDate: this.getDate30DaysAgo(),
+            endDate: new Date().toISOString().split("T")[0],
+          });
+
+        if (distributionResponse.data && distributionResponse.data.length > 0) {
+          this.salesDistributionData = distributionResponse.data;
+        } else {
+          this.salesDistributionData = [];
+        }
+      } catch (error) {
+        console.warn("Erro ao carregar distribuição de vendas:", error);
+        this.salesDistributionData = [];
+      }
     },
 
     // Carregar dados adicionais de relatórios

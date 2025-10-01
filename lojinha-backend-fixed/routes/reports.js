@@ -157,9 +157,9 @@ router.get("/profit", async (req, res) => {
 
     sales.forEach((sale) => {
       sale.SaleItems.forEach((item) => {
-        const revenue = item.quantity * item.unit_price;
-        const cost = item.Product.cost_price
-          ? item.quantity * item.Product.cost_price
+        const revenue = item.quantity * item.unitPrice;
+        const cost = item.Product.costPrice
+          ? item.quantity * item.Product.costPrice
           : 0;
 
         totalRevenue += revenue;
@@ -214,7 +214,7 @@ router.get("/credit", async (req, res) => {
     const creditSales = await Sale.findAll({
       where: whereClause,
       include: [
-        { model: Client, attributes: ["name", "contact"] },
+        { model: Client, attributes: ["name", "phone"] },
         {
           model: CreditPayment,
           attributes: ["amountPaid", "createdAt"],
@@ -307,6 +307,104 @@ router.get("/dashboard", async (req, res) => {
         })),
       },
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /reports/top-products - Produtos mais vendidos
+router.get("/top-products", async (req, res) => {
+  try {
+    const { startDate, endDate, limit = 10 } = req.query;
+
+    let whereClause = { is_active: true };
+    if (startDate && endDate) {
+      whereClause.createdAt = {
+        [Op.between]: [new Date(startDate), new Date(endDate)],
+      };
+    }
+
+    const sales = await Sale.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: SaleItem,
+          include: [{ model: Product, attributes: ["name", "price"] }],
+        },
+      ],
+    });
+
+    // Agrupar produtos por vendas
+    const productSales = {};
+    sales.forEach((sale) => {
+      sale.SaleItems.forEach((item) => {
+        const productName = item.Product.name;
+        if (!productSales[productName]) {
+          productSales[productName] = {
+            name: productName,
+            quantity: 0,
+            revenue: 0,
+          };
+        }
+        productSales[productName].quantity += item.quantity;
+        productSales[productName].revenue += item.quantity * item.unitPrice;
+      });
+    });
+
+    // Converter para array e ordenar por quantidade
+    const topProducts = Object.values(productSales)
+      .sort((a, b) => b.quantity - a.quantity)
+      .slice(0, parseInt(limit));
+
+    res.json(topProducts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /reports/sales-distribution - Distribuição de vendas por categoria
+router.get("/sales-distribution", async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let whereClause = { is_active: true };
+    if (startDate && endDate) {
+      whereClause.createdAt = {
+        [Op.between]: [new Date(startDate), new Date(endDate)],
+      };
+    }
+
+    const sales = await Sale.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: SaleItem,
+          include: [{ model: Product, attributes: ["name", "category"] }],
+        },
+      ],
+    });
+
+    // Agrupar por categoria
+    const categorySales = {};
+    sales.forEach((sale) => {
+      sale.SaleItems.forEach((item) => {
+        const category = item.Product.category || "Outros";
+        if (!categorySales[category]) {
+          categorySales[category] = {
+            label: category,
+            value: 0,
+          };
+        }
+        categorySales[category].value += item.quantity * item.unitPrice;
+      });
+    });
+
+    // Converter para array e ordenar por valor
+    const distribution = Object.values(categorySales).sort(
+      (a, b) => b.value - a.value
+    );
+
+    res.json(distribution);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

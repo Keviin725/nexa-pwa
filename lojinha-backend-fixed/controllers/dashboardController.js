@@ -85,11 +85,84 @@ const getDashboardData = async (req, res) => {
       where: { is_active: true },
     });
 
-    // Vendas por dia (últimos 7 dias) - Simplificado
+    // Vendas por dia (últimos 7 dias)
     const salesByDay = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const startOfDay = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+      const endOfDay = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate() + 1
+      );
 
-    // Produtos mais vendidos - Simplificado
-    const topProducts = [];
+      const daySales = await Sale.findAll({
+        where: {
+          is_active: true,
+          createdAt: {
+            [Op.between]: [startOfDay, endOfDay],
+          },
+        },
+        include: [
+          {
+            model: SaleItem,
+            include: [{ model: Product, attributes: ["name", "price"] }],
+          },
+        ],
+      });
+
+      const dayTotal = daySales.reduce((sum, sale) => {
+        return (
+          sum +
+          sale.SaleItems.reduce((itemSum, item) => {
+            return itemSum + item.quantity * item.unitPrice;
+          }, 0)
+        );
+      }, 0);
+
+      salesByDay.push({
+        date: date.toISOString().split("T")[0],
+        count: daySales.length,
+        total: dayTotal,
+      });
+    }
+
+    // Produtos mais vendidos
+    const allSales = await Sale.findAll({
+      where: { is_active: true },
+      include: [
+        {
+          model: SaleItem,
+          include: [{ model: Product, attributes: ["name", "price"] }],
+        },
+      ],
+    });
+
+    const productSales = {};
+    allSales.forEach((sale) => {
+      sale.SaleItems.forEach((item) => {
+        const productName = item.Product.name;
+        if (!productSales[productName]) {
+          productSales[productName] = {
+            Product: { name: productName },
+            totalQuantity: 0,
+            totalRevenue: 0,
+          };
+        }
+        productSales[productName].totalQuantity += item.quantity;
+        productSales[productName].totalRevenue +=
+          item.quantity * item.unitPrice;
+      });
+    });
+
+    const topProducts = Object.values(productSales)
+      .sort((a, b) => b.totalQuantity - a.totalQuantity)
+      .slice(0, 5);
 
     // Calcular crescimento vs mês anterior
     const currentDate = new Date();

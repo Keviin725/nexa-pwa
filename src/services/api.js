@@ -66,6 +66,10 @@ export const apiService = {
     getProfit: (params = {}) => api.get("/reports/profit", { params }),
     getCredit: (params = {}) => api.get("/reports/credit", { params }),
     getDashboard: (params = {}) => api.get("/reports/dashboard", { params }),
+    getTopProducts: (params = {}) =>
+      api.get("/reports/top-products", { params }),
+    getSalesDistribution: (params = {}) =>
+      api.get("/reports/sales-distribution", { params }),
   },
 
   // Produtos
