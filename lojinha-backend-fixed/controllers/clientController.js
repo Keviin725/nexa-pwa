@@ -1,5 +1,6 @@
 const { Client, Sale, CreditPayment } = require("../models/associations");
 const { Op } = require("sequelize");
+const codeGenerator = require("../utils/codeGenerator");
 
 const getClients = async (req, res) => {
   try {
@@ -107,9 +108,18 @@ const getClients = async (req, res) => {
 
 const createClient = async (req, res) => {
   try {
-    const client = await Client.create(req.body);
+    // Gerar código único para o cliente
+    const clientCode = await codeGenerator.generateClientCode(Client);
+
+    const clientData = {
+      ...req.body,
+      code: clientCode,
+    };
+
+    const client = await Client.create(clientData);
     res.status(201).json(client);
   } catch (error) {
+    console.error("Erro ao criar cliente:", error);
     res.status(400).json({ error: error.message });
   }
 };

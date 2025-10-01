@@ -45,6 +45,12 @@ const Client = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+      comment: "Código único do cliente",
+    },
   },
   {
     tableName: "clients",

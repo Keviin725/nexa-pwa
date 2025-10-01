@@ -1,5 +1,6 @@
 const { User, Sale } = require("../models/associations");
 const bcrypt = require("bcryptjs");
+const codeGenerator = require("../utils/codeGenerator");
 const { Op } = require("sequelize");
 
 // GET /users - Listar todos os usuários
@@ -102,6 +103,9 @@ const createUser = async (req, res) => {
     // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Gerar código único para o usuário
+    const userCode = await codeGenerator.generateUserCode(User);
+
     const user = await User.create({
       name,
       email,
@@ -109,6 +113,7 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       role: role || "seller",
       permissions: permissions || [],
+      code: userCode,
     });
 
     // Retornar usuário sem senha

@@ -7,6 +7,7 @@ const {
 } = require("../models/associations");
 const sequelize = require("../config/database");
 const { Op } = require("sequelize");
+const codeGenerator = require("../utils/codeGenerator");
 
 const createSale = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -22,8 +23,8 @@ const createSale = async (req, res) => {
       notes,
     } = req.body;
 
-    // Gerar número da venda
-    const sale_number = `V${Date.now()}`;
+    // Gerar código único para a venda
+    const sale_number = await codeGenerator.generateSaleCode(Sale);
 
     // Calcular subtotal
     let subtotal = 0;

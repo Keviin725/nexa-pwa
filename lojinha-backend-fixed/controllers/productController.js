@@ -1,5 +1,6 @@
 const { Product } = require("../models/associations");
 const { Op } = require("sequelize");
+const codeGenerator = require("../utils/codeGenerator");
 
 // GET /products - Listar todos os produtos
 const getProducts = async (req, res) => {
@@ -52,9 +53,18 @@ const getProductById = async (req, res) => {
 // POST /products - Criar novo produto
 const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    // Gerar código único para o produto
+    const productCode = await codeGenerator.generateProductCode(Product);
+
+    const productData = {
+      ...req.body,
+      code: productCode,
+    };
+
+    const product = await Product.create(productData);
     res.status(201).json(product);
   } catch (error) {
+    console.error("Erro ao criar produto:", error);
     res.status(400).json({ error: error.message });
   }
 };

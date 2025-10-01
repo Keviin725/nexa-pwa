@@ -47,7 +47,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-red-800">🚨 ALERTA CRÍTICO: Stock Baixo</h3>
+                            <h3 class="font-semibold text-red-800"> ALERTA CRÍTICO: Stock Baixo</h3>
                             <p class="text-sm text-red-600">{{ dashboardStore.data.lowStockProducts }} produtos precisam
                                 de
                                 reposição URGENTE</p>
@@ -93,31 +93,22 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- Receita Total - MAIS IMPORTANTE -->
                         <div
-                            class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                            <div class="text-3xl font-bold text-green-600 mb-1">
-                                {{ dashboardStore.formattedMetrics.totalRevenue }}
+                            class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 min-h-[120px] flex flex-col justify-center">
+                            <div class="text-2xl font-bold text-green-600 mb-1 break-words">
+                                {{ formatPrice(dashboardStore.formattedMetrics.totalRevenue) }}
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                             <div class="text-xs text-green-600 mt-1">{{ dashboardStore.data.totalSales }} vendas</div>
                         </div>
                         <!-- Vendas Pendentes - CRÍTICO -->
                         <div
-                            class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
-                            <div class="text-3xl font-bold text-yellow-600 mb-1">
-                                MT {{ formatPrice(salesStore.stats.pendingRevenue) }}
+                            class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 min-h-[120px] flex flex-col justify-center">
+                            <div class="text-2xl font-bold text-yellow-600 mb-1 break-words">
+                                {{ formatPrice(salesStore.stats.pendingRevenue) }}
                             </div>
                             <div class="text-sm font-medium text-slate-700">Pendente</div>
                             <div class="text-xs text-yellow-600 mt-1">{{ dashboardStore.data.pendingSales }} vendas
                             </div>
-                        </div>
-                        <!-- Vendas Parciais - ATENÇÃO -->
-                        <div
-                            class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">
-                                {{ dashboardStore.data.partialSales || 0 }}
-                            </div>
-                            <div class="text-sm font-medium text-slate-700">Parciais</div>
-                            <div class="text-xs text-blue-600 mt-1">Pagamentos em andamento</div>
                         </div>
                     </div>
                 </div>
@@ -129,24 +120,35 @@
             <div v-if="isAdmin" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4">Visão Administrativa</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="text-center p-4 bg-red-50 rounded-lg border border-red-200">
-                        <div class="text-2xl font-bold text-red-600 mb-1">{{ dashboardStore.data.totalUsers || 0 }}
+                    <div
+                        class="text-center p-4 bg-red-50 rounded-lg border border-red-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-red-600 mb-1 break-words">{{ dashboardStore.data.totalUsers
+                            || 0 }}
                         </div>
                         <div class="text-sm font-medium text-slate-700">Usuários</div>
                     </div>
-                    <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div class="text-2xl font-bold text-blue-600 mb-1">{{ dashboardStore.data.totalRevenue || 0 }}MT
+                    <div
+                        class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-1 break-words">MZN {{
+                            dashboardStore.data.totalRevenue || 0 }}
                         </div>
                         <div class="text-sm font-medium text-slate-700">Receita Total</div>
                     </div>
-                    <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div class="text-2xl font-bold text-green-600 mb-1">{{ dashboardStore.data.totalSales || 0 }}
+                    <div
+                        class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-green-600 mb-1 break-words">{{
+                            dashboardStore.data.totalSales || 0 }}
                         </div>
                         <div class="text-sm font-medium text-slate-700">Vendas</div>
                     </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
-                        <div class="text-2xl font-bold text-purple-600 mb-1">Online</div>
-                        <div class="text-sm font-medium text-slate-700">Sistema</div>
+                    <!-- Vendas Parciais - ATENÇÃO -->
+                    <div
+                        class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 min-h-[120px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-1 break-words">
+                            {{ dashboardStore.data.partialSales || 0 }}
+                        </div>
+                        <div class="text-sm font-medium text-slate-700">Parciais</div>
+                        <div class="text-xs text-blue-600 mt-1">Pagamentos em andamento</div>
                     </div>
                 </div>
             </div>
@@ -155,18 +157,23 @@
             <div v-else-if="isManager" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4">Gestão da Equipe</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div class="text-2xl font-bold text-blue-600 mb-1">{{ dashboardStore.data.totalUsers || 0 }}
+                    <div
+                        class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-1 break-words">{{ dashboardStore.data.totalUsers
+                            || 0 }}
                         </div>
                         <div class="text-sm font-medium text-slate-700">Equipe Ativa</div>
                     </div>
-                    <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div class="text-2xl font-bold text-green-600 mb-1">{{ dashboardStore.data.totalRevenue || 0
-                            }}MT</div>
+                    <div
+                        class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-green-600 mb-1 break-words">MZN {{
+                            dashboardStore.data.totalRevenue || 0
+                        }}</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
-                        <div class="text-2xl font-bold text-purple-600 mb-1">85%</div>
+                    <div
+                        class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-purple-600 mb-1 break-words">85%</div>
                         <div class="text-sm font-medium text-slate-700">Performance</div>
                     </div>
                 </div>
@@ -176,12 +183,16 @@
             <div v-else-if="isSeller" class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4">Minhas Vendas</h2>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div class="text-2xl font-bold text-green-600 mb-1">{{ dashboardStore.data.mySales || 0 }}</div>
+                    <div
+                        class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-green-600 mb-1 break-words">{{ dashboardStore.data.mySales
+                            || 0 }}</div>
                         <div class="text-sm font-medium text-slate-700">Minhas Vendas</div>
                     </div>
-                    <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div class="text-2xl font-bold text-blue-600 mb-1">{{ dashboardStore.data.monthlyTarget || 0 }}
+                    <div
+                        class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200 min-h-[100px] flex flex-col justify-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-1 break-words">{{
+                            dashboardStore.data.monthlyTarget || 0 }}
                         </div>
                         <div class="text-sm font-medium text-slate-700">Meta Mensal</div>
                     </div>
@@ -249,7 +260,7 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-800 mb-1">Clientes a Fiado</h3>
+                                <h3 class="font-bold text-slate-800 mb-1">Dividendos</h3>
                                 <p class="text-sm text-orange-600 font-medium">Vendas a crédito</p>
                             </div>
                         </router-link>
@@ -292,11 +303,11 @@
                             <div>
                                 <span class="font-medium text-slate-800">Venda #{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                }}</span>
+                                    }}</span>
 
                             </div>
                             <div class="text-right">
-                                <div class="font-semibold text-green-600">MT {{ formatPrice(sale.totalAmount) }}</div>
+                                <div class="font-semibold text-green-600">{{ formatPrice(sale.totalAmount) }}</div>
                                 <div class="text-xs text-slate-500">{{ formatDate(sale.createdAt) }}</div>
                             </div>
                         </div>
@@ -325,7 +336,7 @@
                                     <span class="text-sm text-slate-600">{{ period.date }}</span>
                                     <div class="text-right">
                                         <div class="font-semibold text-slate-800">{{ period.count }} vendas</div>
-                                        <div class="text-sm text-green-600">MT {{ formatPrice(period.total) }}</div>
+                                        <div class="text-sm text-green-600">{{ formatPrice(period.total) }}</div>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
@@ -363,7 +374,7 @@
                                     </div>
                                     <div class="text-right">
                                         <div class="font-semibold text-slate-800">{{ product.quantity }} vendidos</div>
-                                        <div class="text-sm text-green-600">MT {{ formatPrice(product.revenue) }}</div>
+                                        <div class="text-sm text-green-600">{{ formatPrice(product.revenue) }}</div>
                                     </div>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
@@ -493,7 +504,8 @@
                         </div>
                         <div class="space-y-3">
                             <div class="text-center">
-                                <div class="text-3xl font-bold text-orange-600 mb-1">{{ dashboardStore.data.totalClients
+                                <div class="text-2xl font-bold text-orange-600 mb-1 break-words">{{
+                                    dashboardStore.data.totalClients
                                     || 0 }}</div>
                                 <div class="text-sm text-slate-600">clientes com fiado</div>
                             </div>
@@ -580,13 +592,13 @@
                     <!-- Desconto e Imposto -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Desconto (MT)</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Desconto (MZN)</label>
                             <input v-model.number="saleForm.discount" type="number" step="0.01" placeholder="0.00"
                                 class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                                 @input="updateTotal" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Imposto (MT)</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Imposto (MZN)</label>
                             <input v-model.number="saleForm.tax" type="number" step="0.01" placeholder="0.00"
                                 class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                                 @input="updateTotal" />
@@ -622,7 +634,7 @@
                             class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                             <option value="">Selecione um produto</option>
                             <option v-for="product in availableProducts" :key="product.id" :value="product.id">
-                                {{ product.name }} - MT {{ formatPrice(product.price) }} (Stock: {{ product.stock }})
+                                {{ product.name }} - {{ formatPrice(product.price) }} (Stock: {{ product.stock }})
                             </option>
                         </select>
                     </div>
@@ -633,7 +645,7 @@
                             class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                             <div class="flex-1">
                                 <div class="font-medium text-slate-800">{{ product.name }}</div>
-                                <div class="text-sm text-slate-600">MT {{ formatPrice(product.price) }} x {{
+                                <div class="text-sm text-slate-600">{{ formatPrice(product.price) }} x {{
                                     product.quantity }}
                                 </div>
                             </div>
@@ -641,7 +653,7 @@
                                 <input v-model.number="product.quantity" type="number" min="1" :max="product.maxStock"
                                     class="w-16 px-2 py-1 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors text-center"
                                     @change="updateTotal" />
-                                <span class="font-semibold text-green-600">MT {{ formatPrice(product.price *
+                                <span class="font-semibold text-green-600">{{ formatPrice(product.price *
                                     product.quantity) }}</span>
                                 <button type="button" @click="removeProduct(index)"
                                     class="p-1 text-red-500 hover:bg-red-50 rounded">
@@ -670,15 +682,15 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Subtotal</span>
-                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.subtotal) }}</span>
+                        <span class="font-semibold text-slate-800">{{ formatPrice(saleForm.subtotal) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Desconto</span>
-                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.discount) }}</span>
+                        <span class="font-semibold text-slate-800">{{ formatPrice(saleForm.discount) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-slate-600">Imposto</span>
-                        <span class="font-semibold text-slate-800">MT {{ formatPrice(saleForm.tax) }}</span>
+                        <span class="font-semibold text-slate-800">{{ formatPrice(saleForm.tax) }}</span>
                     </div>
                     <div v-if="saleForm.paymentMethod === 'credit'" class="flex justify-between items-center">
                         <span class="text-sm text-orange-600">Status</span>
@@ -689,7 +701,7 @@
                             <span class="text-lg font-bold text-slate-800">Total</span>
                             <span class="text-xl font-bold"
                                 :class="saleForm.paymentMethod === 'credit' ? 'text-orange-600' : 'text-green-600'">
-                                MT {{ formatPrice(saleForm.totalAmount) }}
+                                {{ formatPrice(saleForm.totalAmount) }}
                             </span>
                         </div>
                         <div v-if="saleForm.paymentMethod === 'credit'" class="text-xs text-orange-600 mt-1">
@@ -791,7 +803,7 @@ const notifications = reactive({
             id: 1,
             type: 'success',
             title: 'Nova venda realizada',
-            message: 'Venda #004 por MT 150,00 - há 2 minutos',
+            message: 'Venda #004 por MZN 150,00 - há 2 minutos',
             timestamp: new Date(Date.now() - 2 * 60 * 1000)
         },
         {
@@ -825,7 +837,7 @@ const clientStats = reactive({
 
 // Métodos
 const formatPrice = (price) => {
-    return parseFloat(price).toFixed(2).replace('.', ',')
+    return `MZN ${parseFloat(price).toFixed(2).replace('.', ',')}`
 }
 
 const formatDate = (date) => {

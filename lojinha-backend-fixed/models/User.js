@@ -43,6 +43,12 @@ const User = sequelize.define(
       allowNull: true,
       comment: "Permissões específicas do usuário",
     },
+    code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+      comment: "Código único do usuário",
+    },
   },
   {
     tableName: "users",

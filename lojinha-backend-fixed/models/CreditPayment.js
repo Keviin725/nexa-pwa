@@ -28,6 +28,12 @@ const CreditPayment = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    code: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+      comment: "Código único do pagamento",
+    },
   },
   {
     tableName: "credit_payments",

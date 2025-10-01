@@ -1,5 +1,6 @@
 const { CreditPayment, Sale, Client } = require("../models/associations");
 const sequelize = require("../config/database");
+const codeGenerator = require("../utils/codeGenerator");
 
 const createCreditPayment = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -86,8 +87,12 @@ const createCreditPayment = async (req, res) => {
       ClientId: clientId,
     });
 
+    // Gerar código único para o pagamento
+    const paymentCode = await codeGenerator.generatePaymentCode(CreditPayment);
+
     const payment = await CreditPayment.create(
       {
+        code: paymentCode,
         amountPaid,
         paymentMethod,
         notes,
