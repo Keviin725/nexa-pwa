@@ -177,19 +177,65 @@
             <!-- Gráficos Modernos -->
             <div class="space-y-6">
                 <!-- Vendas por Período -->
-                <ModernLineChart title="Vendas por Período" subtitle="Evolução das vendas - Últimos 30 dias"
-                    :data="salesData" period="Últimos 30 dias" />
+                <div v-if="salesData.length > 0">
+                    <ModernLineChart title="Vendas por Período" subtitle="Evolução das vendas - Últimos 30 dias"
+                        :data="salesData" period="Últimos 30 dias" />
+                </div>
+                <div v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Nenhum dado de vendas encontrado</h3>
+                        <p class="text-slate-600">Não há vendas registradas no período selecionado.</p>
+                    </div>
+                </div>
 
                 <!-- Produtos Mais Vendidos -->
-                <ModernBarChart title="Produtos Mais Vendidos" subtitle="Top 10 produtos - Período selecionado"
-                    :data="topProductsData" period="Período selecionado" />
+                <div v-if="topProductsData.length > 0">
+                    <ModernBarChart title="Produtos Mais Vendidos" subtitle="Top 10 produtos - Período selecionado"
+                        :data="topProductsData" period="Período selecionado" />
+                </div>
+                <div v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Dados de produtos em desenvolvimento</h3>
+                        <p class="text-slate-600">Esta funcionalidade será implementada em breve.</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Análise Financeira Moderna -->
             <div class="space-y-6">
                 <!-- Distribuição de Vendas -->
-                <ModernPieChart title="Distribuição de Vendas" subtitle="Por categoria" :data="salesDistributionData"
-                    total-label="Total" period="Período atual" />
+                <div v-if="salesDistributionData.length > 0">
+                    <ModernPieChart title="Distribuição de Vendas" subtitle="Por categoria"
+                        :data="salesDistributionData" total-label="Total" period="Período atual" />
+                </div>
+                <div v-else class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Análise de distribuição em desenvolvimento
+                        </h3>
+                        <p class="text-slate-600">Esta funcionalidade será implementada em breve.</p>
+                    </div>
+                </div>
 
                 <!-- Métricas Financeiras Modernas -->
                 <div class="grid grid-cols-1 gap-4">
@@ -328,7 +374,10 @@ const canExportReports = computed(() => permissionManager.hasPermission(PERMISSI
 const loading = computed(() => reportsStore.loading)
 const error = computed(() => reportsStore.error)
 const filters = computed(() => reportsStore.filters)
-const metrics = computed(() => reportsStore.metrics)
+const metrics = computed(() => {
+    console.log("📊 Metrics na interface:", reportsStore.metrics)
+    return reportsStore.metrics
+})
 const salesData = computed(() => reportsStore.salesData)
 const topProductsData = computed(() => reportsStore.topProductsData)
 const salesDistributionData = computed(() => reportsStore.salesDistributionData)

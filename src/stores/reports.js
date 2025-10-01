@@ -79,16 +79,22 @@ export const useReportsStore = defineStore("reports", {
           });
 
           if (dashboardResponse.data) {
-            // Calcular métricas baseadas nos dados reais
-            const today = dashboardResponse.data.today || {};
-            const pending = dashboardResponse.data.pending || {};
+            // Usar dados diretos do backend
+            const data = dashboardResponse.data;
+            console.log("📊 Dashboard data recebido:", data);
 
-            // Calcular métricas adicionais
-            const totalSales = today.sales || 0;
-            const totalRevenue = today.revenue || 0;
+            // Calcular métricas baseadas nos dados reais
+            const totalSales = data.totalSales || 0;
+            const totalRevenue = data.totalRevenue || 0;
+            console.log(
+              "💰 Total Sales:",
+              totalSales,
+              "Total Revenue:",
+              totalRevenue
+            );
             const averageTicket =
               totalSales > 0 ? totalRevenue / totalSales : 0;
-            const salesPerDay = totalSales; // Para o dia atual
+            const salesPerDay = totalSales; // Para o período atual
 
             this.metrics = {
               totalSales: totalSales,
@@ -98,11 +104,12 @@ export const useReportsStore = defineStore("reports", {
               averageTicket: averageTicket,
               profitMargin: 0, // Será calculado com dados de lucro
               salesPerDay: salesPerDay,
-              growth: 0, // Será calculado com comparação de períodos
-              salesTrend: "up",
-              salesTrendPercentage: 0,
-              revenueTrend: "up",
-              revenueTrendPercentage: 0,
+              growth: data.growth?.salesGrowth || 0,
+              salesTrend: (data.growth?.salesGrowth || 0) >= 0 ? "up" : "down",
+              salesTrendPercentage: Math.abs(data.growth?.salesGrowth || 0),
+              revenueTrend:
+                (data.growth?.revenueGrowth || 0) >= 0 ? "up" : "down",
+              revenueTrendPercentage: Math.abs(data.growth?.revenueGrowth || 0),
               productsTrend: "up",
               productsTrendPercentage: 0,
               clientsTrend: "up",
@@ -203,69 +210,40 @@ export const useReportsStore = defineStore("reports", {
             value: Math.round(item.totalAmount),
           }));
         } else {
-          // Dados simulados se não há dados reais
-          this.salesData = this.generateMockSalesData();
+          this.salesData = [];
         }
       } catch (error) {
-        console.warn(
-          "Erro ao carregar dados de vendas, usando dados simulados:",
-          error
-        );
-        // Fallback para dados simulados
-        this.salesData = this.generateMockSalesData();
+        console.warn("Erro ao carregar dados de vendas:", error);
+        this.salesData = [];
       }
 
-      // Dados simulados para produtos e distribuição (sempre)
-      this.topProductsData = [
-        { name: "Produto A", value: 45 },
-        { name: "Produto B", value: 38 },
-        { name: "Produto C", value: 32 },
-        { name: "Produto D", value: 28 },
-        { name: "Produto E", value: 25 },
-      ];
-
-      this.salesDistributionData = [
-        { label: "Bebidas", value: 45000 },
-        { label: "Padaria", value: 32000 },
-        { label: "Laticínios", value: 28000 },
-        { label: "Carnes", value: 15000 },
-        { label: "Outros", value: 5430 },
-      ];
+      // Dados vazios - serão preenchidos quando houver endpoints específicos
+      this.topProductsData = [];
+      this.salesDistributionData = [];
     },
 
     // Carregar dados adicionais de relatórios
     async loadAdditionalReportData() {
       try {
-        // Carregar dados de lucro (usando endpoint que existe)
-        try {
-          const profitResponse = await apiService.reports.getProfit({
-            startDate: this.filters.startDate,
-            endDate: this.filters.endDate,
-          });
+        // Carregar dados de lucro
+        const profitResponse = await apiService.reports.getProfit({
+          startDate: this.filters.startDate,
+          endDate: this.filters.endDate,
+        });
 
-          if (profitResponse.data) {
-            const profitData = profitResponse.data.summary;
-            this.metrics.profitMargin = profitData.profitMargin || 0;
-          }
-        } catch (profitError) {
-          console.warn("Erro ao carregar dados de lucro:", profitError);
-          // Usar margem padrão
-          this.metrics.profitMargin = 15; // 15% padrão
+        if (profitResponse.data) {
+          const profitData = profitResponse.data.summary;
+          this.metrics.profitMargin = profitData.profitMargin || 0;
         }
 
         // Carregar dados de clientes
-        try {
-          const clientsResponse = await apiService.clients.getAll({
-            startDate: this.filters.startDate,
-            endDate: this.filters.endDate,
-          });
+        const clientsResponse = await apiService.clients.getAll({
+          startDate: this.filters.startDate,
+          endDate: this.filters.endDate,
+        });
 
-          if (clientsResponse.data) {
-            this.metrics.newClients = clientsResponse.data.length;
-          }
-        } catch (clientsError) {
-          console.warn("Erro ao carregar dados de clientes:", clientsError);
-          this.metrics.newClients = 0;
+        if (clientsResponse.data) {
+          this.metrics.newClients = clientsResponse.data.length;
         }
 
         // Calcular produtos vendidos baseado nas vendas
@@ -276,7 +254,8 @@ export const useReportsStore = defineStore("reports", {
           );
         }
       } catch (error) {
-        console.error("Erro ao carregar dados adicionais:", error);
+        console.warn("Erro ao carregar dados adicionais:", error);
+        // Manter valores padrão (0) se não conseguir carregar
       }
     },
 
@@ -320,29 +299,6 @@ export const useReportsStore = defineStore("reports", {
       const date = new Date();
       date.setDate(date.getDate() - 30);
       return date.toISOString().split("T")[0];
-    },
-
-    generateMockSalesData() {
-      const data = [];
-      const today = new Date();
-
-      for (let i = 29; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        const period = date.toLocaleDateString("pt-PT", {
-          day: "2-digit",
-          month: "short",
-        });
-
-        // Gerar dados simulados com variação
-        const baseValue = 1000 + Math.random() * 2000;
-        const variation = (Math.random() - 0.5) * 0.3; // ±15% de variação
-        const value = Math.round(baseValue * (1 + variation));
-
-        data.push({ period, value });
-      }
-
-      return data;
     },
 
     getStatusText(status) {
