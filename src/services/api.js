@@ -60,6 +60,14 @@ export const apiService = {
     getAnalytics: (params = {}) => api.get("/dashboard/analytics", { params }),
   },
 
+  // Relatórios
+  reports: {
+    getSales: (params = {}) => api.get("/reports/sales", { params }),
+    getProfit: (params = {}) => api.get("/reports/profit", { params }),
+    getCredit: (params = {}) => api.get("/reports/credit", { params }),
+    getDashboard: (params = {}) => api.get("/reports/dashboard", { params }),
+  },
+
   // Produtos
   products: {
     getAll: (params = {}) => api.get("/products", { params }),

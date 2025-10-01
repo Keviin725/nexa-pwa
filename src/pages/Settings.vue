@@ -210,6 +210,67 @@
                 </div>
             </div>
 
+            <!-- Relatórios e Análises -->
+            <div v-if="canViewReports" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-purple-100 rounded-lg">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-semibold text-slate-800">Relatórios e Análises</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-sm text-slate-600">Acesse relatórios detalhados e análises do negócio</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <router-link to="/app/reports"
+                            class="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">Relatórios</h3>
+                                    <p class="text-sm text-slate-600">Vendas, produtos e análises</p>
+                                </div>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </router-link>
+
+                        <div
+                            class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800">Dashboard Avançado</h3>
+                                    <p class="text-sm text-slate-600">Métricas e KPIs detalhados</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-slate-500">Em breve</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Subscrições -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <div class="flex items-center gap-3 mb-4">
@@ -331,6 +392,10 @@ const API_BASE = 'http://localhost:3000'
 // Computed
 const canManageUsers = computed(() => {
     return permissionManager.hasPermission(PERMISSIONS.USERS_MANAGE)
+})
+
+const canViewReports = computed(() => {
+    return permissionManager.hasPermission(PERMISSIONS.REPORTS_VIEW)
 })
 
 // Métodos

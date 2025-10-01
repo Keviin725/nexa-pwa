@@ -14,9 +14,9 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-white">Gestão de Colaboradores</h1>
+                            <h1 class="text-xl font-bold text-white">Colaboradores</h1>
                             <p class="text-indigo-100 text-sm">
-                                {{ isAdmin ? 'Gerencie todos os colaboradores' : isManager ? 'Colaboradores' : ''
+                                {{ isAdmin ? 'Gerir colaboradores' : isManager ? 'Colaboradores' : ''
                                 }}
                             </p>
                         </div>

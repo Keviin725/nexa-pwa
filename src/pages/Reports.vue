@@ -44,8 +44,36 @@
         </div>
 
         <div class="p-4 space-y-4">
+            <!-- Loading State -->
+            <div v-if="loading" class="flex items-center justify-center py-12">
+                <div class="flex items-center gap-3">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span class="text-slate-600">Carregando relatórios...</span>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-red-800">Erro ao carregar relatórios</h3>
+                        <p class="text-sm text-red-600">{{ error }}</p>
+                    </div>
+                </div>
+                <button @click="refreshData"
+                    class="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                    Tentar novamente
+                </button>
+            </div>
+
             <!-- 1. KPIs PRINCIPAIS - Mais importantes -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div v-else class="bg-white rounded-xl border border-slate-200 shadow-sm">
                 <div class="p-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-slate-800"> KPIs Principais</h3>
@@ -298,6 +326,7 @@ const canExportReports = computed(() => permissionManager.hasPermission(PERMISSI
 
 // Computed properties
 const loading = computed(() => reportsStore.loading)
+const error = computed(() => reportsStore.error)
 const filters = computed(() => reportsStore.filters)
 const metrics = computed(() => reportsStore.metrics)
 const salesData = computed(() => reportsStore.salesData)
@@ -332,6 +361,8 @@ const clearFilters = async () => {
 }
 
 const refreshData = async () => {
+    // Limpar erro antes de recarregar
+    reportsStore.clearError()
     await reportsStore.loadReportData()
 }
 

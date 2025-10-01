@@ -15,7 +15,7 @@ const getDashboardData = async (req, res) => {
     let whereClause = { is_active: true };
 
     if (startDate && endDate) {
-      whereClause.created_at = {
+      whereClause.createdAt = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -104,7 +104,7 @@ const getDashboardData = async (req, res) => {
     const currentMonthSales = await Sale.count({
       where: {
         is_active: true,
-        created_at: {
+        createdAt: {
           [Op.and]: [
             { [Op.gte]: new Date(currentYear, currentMonth, 1) },
             { [Op.lt]: new Date(currentYear, currentMonth + 1, 1) },
@@ -117,7 +117,7 @@ const getDashboardData = async (req, res) => {
     const lastMonthSales = await Sale.count({
       where: {
         is_active: true,
-        created_at: {
+        createdAt: {
           [Op.and]: [
             { [Op.gte]: new Date(lastMonthYear, lastMonth, 1) },
             { [Op.lt]: new Date(lastMonthYear, lastMonth + 1, 1) },
@@ -132,7 +132,7 @@ const getDashboardData = async (req, res) => {
         where: {
           is_active: true,
           payment_status: "paid",
-          created_at: {
+          createdAt: {
             [Op.and]: [
               { [Op.gte]: new Date(currentYear, currentMonth, 1) },
               { [Op.lt]: new Date(currentYear, currentMonth + 1, 1) },
@@ -147,7 +147,7 @@ const getDashboardData = async (req, res) => {
         where: {
           is_active: true,
           payment_status: "paid",
-          created_at: {
+          createdAt: {
             [Op.and]: [
               { [Op.gte]: new Date(lastMonthYear, lastMonth, 1) },
               { [Op.lt]: new Date(lastMonthYear, lastMonth + 1, 1) },
@@ -231,7 +231,7 @@ const getSalesSummary = async (req, res) => {
     const sales = await Sale.findAll({
       where: {
         is_active: true,
-        created_at: dateFilter,
+        createdAt: dateFilter,
       },
       include: [
         {
@@ -240,7 +240,7 @@ const getSalesSummary = async (req, res) => {
         },
         { model: Client, attributes: ["name"] },
       ],
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(sales);
@@ -257,7 +257,7 @@ const getAnalytics = async (req, res) => {
     let whereClause = { is_active: true };
 
     if (startDate && endDate) {
-      whereClause.created_at = {
+      whereClause.createdAt = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -304,7 +304,7 @@ const getAnalytics = async (req, res) => {
         where: {
           is_active: true,
           payment_status: "paid",
-          created_at: {
+          createdAt: {
             [Op.between]: [previousStartDate, previousEndDate],
           },
         },

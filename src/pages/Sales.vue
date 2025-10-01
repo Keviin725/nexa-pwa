@@ -178,7 +178,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->

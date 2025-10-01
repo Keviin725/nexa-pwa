@@ -16,7 +16,7 @@ router.get("/sales", async (req, res) => {
 
     let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.created_at = {
+      whereClause.createdAt = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -30,13 +30,13 @@ router.get("/sales", async (req, res) => {
           include: [{ model: Product, attributes: ["name", "price"] }],
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     // Agrupar por período
     const groupedSales = {};
     sales.forEach((sale) => {
-      const date = new Date(sale.created_at);
+      const date = new Date(sale.createdAt);
       let key;
 
       switch (period) {
@@ -85,7 +85,7 @@ router.get("/products", async (req, res) => {
 
     let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.created_at = {
+      whereClause.createdAt = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -134,7 +134,7 @@ router.get("/profit", async (req, res) => {
 
     let whereClause = { is_active: true };
     if (startDate && endDate) {
-      whereClause.created_at = {
+      whereClause.createdAt = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
     }
@@ -217,10 +217,10 @@ router.get("/credit", async (req, res) => {
         { model: Client, attributes: ["name", "contact"] },
         {
           model: CreditPayment,
-          attributes: ["amountPaid", "created_at"],
+          attributes: ["amountPaid", "createdAt"],
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     // Calcular saldo pendente para cada venda
@@ -256,7 +256,7 @@ router.get("/dashboard", async (req, res) => {
     const todaySales = await Sale.findAll({
       where: {
         is_active: true,
-        created_at: {
+        createdAt: {
           [Op.between]: [startOfDay, endOfDay],
         },
       },

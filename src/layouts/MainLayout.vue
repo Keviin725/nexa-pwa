@@ -39,7 +39,7 @@
                 <!-- Gradient overlay -->
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5"></div>
 
-                <!-- Navigation tabs - Ordem de Relevância -->
+                <!-- Navigation tabs - Apenas os mais importantes -->
                 <div class="relative flex items-center justify-around px-4 py-3">
                     <!-- 1. VENDAS - Mais importante (receita) -->
                     <router-link v-if="canViewSales" to="/app/sales"
@@ -125,49 +125,7 @@
                             Fiado</span>
                     </router-link>
 
-                    <!-- 5. RELATÓRIOS - Análise e insights -->
-                    <router-link v-if="canViewReports" to="/app/reports"
-                        class="group flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 hover:scale-110"
-                        :class="$route.path === '/app/reports'
-                            ? 'text-purple-600'
-                            : 'text-slate-600 hover:text-purple-600'">
-                        <div class="relative">
-                            <svg class="w-6 h-6 transition-all duration-300" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" :class="$route.path === '/app/reports' ? 'drop-shadow-lg' : ''">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
-                            <!-- Active glow effect -->
-                            <div v-if="$route.path === '/app/reports'"
-                                class="absolute inset-0 bg-purple-500/20 rounded-full blur-sm scale-150"></div>
-                        </div>
-                        <span class="text-xs font-semibold mt-1 transition-all duration-300"
-                            :class="$route.path === '/app/reports' ? 'text-purple-600' : 'text-slate-600'">Relatórios</span>
-                    </router-link>
-
-                    <!-- 6. USUÁRIOS - Gestão de colaboradores (apenas admin e gerente) -->
-                    <router-link v-if="canManageUsers" to="/app/users"
-                        class="group flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 hover:scale-110"
-                        :class="$route.path === '/app/users'
-                            ? 'text-indigo-600'
-                            : 'text-slate-600 hover:text-indigo-600'">
-                        <div class="relative">
-                            <svg class="w-6 h-6 transition-all duration-300" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" :class="$route.path === '/app/users' ? 'drop-shadow-lg' : ''">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
-                                </path>
-                            </svg>
-                            <!-- Active glow effect -->
-                            <div v-if="$route.path === '/app/users'"
-                                class="absolute inset-0 bg-indigo-500/20 rounded-full blur-sm scale-150"></div>
-                        </div>
-                        <span class="text-xs font-semibold mt-1 transition-all duration-300"
-                            :class="$route.path === '/app/users' ? 'text-indigo-600' : 'text-slate-600'">Colaboradores</span>
-                    </router-link>
-
-                    <!-- 7. CONFIGURAÇÕES - Apenas admin -->
+                    <!-- 5. CONFIGURAÇÕES - Acesso rápido para admin -->
                     <router-link v-if="canViewSettings" to="/app/settings"
                         class="group flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 hover:scale-110"
                         :class="$route.path === '/app/settings'
