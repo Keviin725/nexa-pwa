@@ -226,7 +226,7 @@
                                 </svg>
                                 Ver
                             </button>
-                            <button @click="generateReceipt(sale.id)"
+                            <button @click="generateReceipt(sale)"
                                 class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -461,6 +461,9 @@
                 </form>
             </CustomBottomSheet>
 
+            <!-- Modal de Recibo -->
+            <ReceiptModal :show="showReceiptModal" :sale="selectedSaleForReceipt" @close="showReceiptModal = false" />
+
             <!-- Paginação -->
             <PaginationComponent :current-page="salesStore.pagination.page" :total-items="salesStore.pagination.total"
                 :items-per-page="salesStore.pagination.limit" @page-change="handlePageChange"
@@ -483,6 +486,7 @@ import { useFormValidation } from '@/composables/useFormValidation'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import ReceiptModal from '@/components/ReceiptModal.vue'
 
 // Router
 const router = useRouter()
@@ -523,6 +527,10 @@ const showSaleModal = ref(false)
 const showPaymentModal = ref(false)
 const selectedSale = ref(null)
 const selectedProduct = ref('')
+
+// Modal de recibo
+const showReceiptModal = ref(false)
+const selectedSaleForReceipt = ref(null)
 
 // Computed properties
 const sales = computed(() => salesStore.sales)
@@ -747,20 +755,20 @@ const viewSale = (sale) => {
     router.push(`/app/sales/${sale.id}`)
 }
 
-const generateReceipt = async (saleId) => {
+const generateReceipt = async (sale) => {
     try {
-        const result = await salesStore.generateReceipt(saleId)
+        // Buscar dados completos da venda
+        const saleData = salesStore.getSaleById(sale.id)
 
-        if (result.success) {
-            // Aqui você pode implementar a geração de PDF
-            console.log('Recibo:', result.data)
-            handleApiSuccess('Recibo gerado com sucesso!', 'Gerar Recibo')
+        if (saleData) {
+            selectedSaleForReceipt.value = saleData
+            showReceiptModal.value = true
         } else {
-            handleApiError(new Error(result.error), 'Gerar Recibo')
+            handleApiError('Venda não encontrada')
         }
     } catch (error) {
-        console.error('Erro ao gerar recibo:', error)
-        handleApiError(error, 'Gerar Recibo')
+        console.error('❌ Erro ao gerar recibo:', error)
+        handleApiError(`Erro ao gerar recibo: ${error.message || 'Erro desconhecido'}`)
     }
 }
 
