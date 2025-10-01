@@ -166,11 +166,16 @@ export const useSalesStore = defineStore("sales", {
       this.error = null;
 
       try {
+        console.log("🔄 Enviando dados para API:", saleData);
         const response = await apiService.sales.create(saleData);
+        console.log("✅ Resposta da API:", response.data);
         this.sales.unshift(response.data);
         return { success: true, data: response.data };
       } catch (error) {
-        this.error = error.response?.data?.error || "Erro ao criar venda";
+        console.error("❌ Erro ao criar venda:", error);
+        console.error("❌ Detalhes do erro:", error.response?.data);
+        this.error =
+          error.response?.data?.error || error.message || "Erro ao criar venda";
         return { success: false, error: this.error };
       } finally {
         this.loading = false;
@@ -257,29 +262,6 @@ export const useSalesStore = defineStore("sales", {
     // Buscar venda por ID
     getSaleById(id) {
       return this.sales.find((s) => s.id === id);
-    },
-
-    // Criar nova venda
-    async createSale(saleData) {
-      try {
-        this.loading = true;
-        this.error = null;
-
-        const response = await apiService.sales.create(saleData);
-
-        // Adicionar à lista de vendas
-        this.sales.unshift(response.data);
-
-        // Atualizar estatísticas
-        await this.loadSales();
-
-        return { success: true, data: response.data };
-      } catch (error) {
-        this.error = error.response?.data?.error || "Erro ao criar venda";
-        return { success: false, error: this.error };
-      } finally {
-        this.loading = false;
-      }
     },
 
     // Métodos de paginação

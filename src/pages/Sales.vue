@@ -624,7 +624,7 @@ const clearFilters = () => {
 const openSaleModal = () => {
     Object.assign(saleForm, {
         clientId: '',
-        paymentMethod: 'immediate',
+        paymentMethod: 'cash',
         dueDate: '',
         products: [],
         subtotal: 0,
@@ -708,10 +708,11 @@ const createSale = async () => {
             subtotal: saleForm.subtotal,
             discount: saleForm.discount,
             tax: saleForm.tax,
-            totalAmount: saleForm.totalAmount,
+            total_amount: saleForm.totalAmount,
             notes: saleForm.notes
         }
 
+        console.log('📦 Dados da venda sendo enviados:', saleData)
         const result = await salesStore.createSale(saleData)
 
         if (result.success) {
@@ -736,12 +737,15 @@ const viewSale = (sale) => {
 
 const generateReceipt = async (saleId) => {
     try {
-        const response = await fetch(`${API_BASE}/sales/${saleId}/receipt`)
-        const receipt = await response.json()
+        const result = await salesStore.generateReceipt(saleId)
 
-        // Aqui você pode implementar a geração de PDF
-        console.log('Recibo:', receipt)
-        alert('Recibo gerado com sucesso!')
+        if (result.success) {
+            // Aqui você pode implementar a geração de PDF
+            console.log('Recibo:', result.data)
+            alert('Recibo gerado com sucesso!')
+        } else {
+            alert('Erro ao gerar recibo: ' + result.error)
+        }
     } catch (error) {
         console.error('Erro ao gerar recibo:', error)
         alert('Erro ao gerar recibo')

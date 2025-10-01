@@ -44,14 +44,14 @@ const createSale = async (req, res) => {
     // Criar venda
     const sale = await Sale.create(
       {
-        sale_number,
+        saleNumber: sale_number,
         subtotal,
         discount,
         tax,
-        total_amount,
-        payment_method,
-        payment_status: payment_method === "credit" ? "pending" : "paid",
-        due_date: payment_method === "credit" ? due_date : null,
+        totalAmount: total_amount,
+        paymentMethod: payment_method,
+        paymentStatus: payment_method === "credit" ? "pending" : "paid",
+        dueDate: payment_method === "credit" ? due_date : null,
         notes,
         ClientId: clientId,
       },
@@ -65,7 +65,7 @@ const createSale = async (req, res) => {
       await SaleItem.create(
         {
           quantity: item.quantity,
-          unit_price: product.price,
+          unitPrice: product.price,
           SaleId: sale.id,
           ProductId: item.productId,
         },
