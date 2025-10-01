@@ -404,6 +404,7 @@
 import { ref, onMounted, onUnmounted, reactive, computed, nextTick } from 'vue'
 import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifications } from '@/composables/useNotifications'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
@@ -411,6 +412,9 @@ import PaginationComponent from '@/components/Pagination/PaginationComponent.vue
 // Store
 const authStore = useAuthStore()
 const productsStore = useProductsStore()
+
+// Notificações
+const { handleApiError, handleApiSuccess } = useNotifications()
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')
@@ -476,8 +480,7 @@ const formatPrice = (price) => {
 
 const loadProducts = async () => {
     try {
-        console.log('🔄 Carregando produtos...')
-        console.log('🔍 Filtros atuais:', filters)
+        // Carregando produtos com filtros
 
         // Aplicar filtros na store
         productsStore.setFilters(filters)
@@ -496,7 +499,6 @@ const loadProducts = async () => {
 
         // Forçar reatividade
         await nextTick()
-        console.log('🔄 Reatividade forçada')
     } catch (error) {
         console.error('❌ Erro ao carregar produtos:', error)
     }
@@ -604,11 +606,11 @@ const saveProduct = async () => {
             closeModal()
             loadProducts()
         } else {
-            alert('Erro ao salvar produto: ' + result.error)
+            handleApiError('Erro ao salvar produto: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao salvar produto:', error)
-        alert('Erro ao salvar produto')
+        handleApiError('Erro ao salvar produto')
     }
 }
 
@@ -621,11 +623,11 @@ const deleteProduct = async (id) => {
         if (result.success) {
             loadProducts()
         } else {
-            alert('Erro ao excluir produto: ' + result.error)
+            handleApiError('Erro ao excluir produto: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao excluir produto:', error)
-        alert('Erro ao excluir produto')
+        handleApiError('Erro ao excluir produto')
     }
 }
 
@@ -657,17 +659,17 @@ const updateStock = async () => {
             closeStockModal()
             loadProducts()
         } else {
-            alert('Erro ao atualizar Stock: ' + result.error)
+            handleApiError('Erro ao atualizar Stock: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao atualizar Stock:', error)
-        alert('Erro ao atualizar Stock')
+        handleApiError('Erro ao atualizar Stock')
     }
 }
 
 // Funções para eventos
 const handleSaleCreated = async () => {
-    console.log('🔄 Evento sale-created recebido, recarregando produtos...')
+    // Recarregar produtos após venda criada
 
     // Aguardar um pouco para garantir que o backend processou a venda
     setTimeout(async () => {
@@ -675,7 +677,7 @@ const handleSaleCreated = async () => {
             // Forçar recarregamento direto da API
             const response = await fetch('http://localhost:3000/products')
             const data = await response.json()
-            console.log('🔄 Dados atualizados da API:', data)
+            // Dados atualizados da API
 
             // Atualizar a store diretamente
             productsStore.$patch({ products: data })
@@ -687,7 +689,7 @@ const handleSaleCreated = async () => {
 }
 
 const handleSaleDeleted = async () => {
-    console.log('🔄 Evento sale-deleted recebido, recarregando produtos...')
+    // Recarregar produtos após venda deletada
 
     // Aguardar um pouco para garantir que o backend processou o cancelamento
     setTimeout(async () => {
@@ -695,7 +697,7 @@ const handleSaleDeleted = async () => {
             // Forçar recarregamento direto da API
             const response = await fetch('http://localhost:3000/products')
             const data = await response.json()
-            console.log('🔄 Dados atualizados da API:', data)
+            // Dados atualizados da API
 
             // Atualizar a store diretamente
             productsStore.$patch({ products: data })

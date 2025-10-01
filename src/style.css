@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 /* Melhorar legibilidade dos inputs */
 input,

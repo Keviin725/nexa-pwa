@@ -34,45 +34,103 @@
         <div class="p-4 space-y-4 -mt-2">
             <!-- 1. ALERTAS CRÍTICOS - Máxima prioridade -->
             <div v-if="dashboardStore.data.lowStockProducts > 0"
-                class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl shadow-xl border border-red-200/50 p-6 relative overflow-hidden">
+                class="bg-gradient-to-r from-red-50 via-red-100/50 to-orange-50 rounded-2xl shadow-xl border border-red-200/50 p-6 relative overflow-hidden transform transition-all duration-500 hover:scale-[1.01] hover:shadow-2xl animate-pulse-border">
+                <!-- Background animado -->
                 <div class="absolute inset-0 bg-gradient-to-br from-red-50/30 to-orange-50/20 pointer-events-none">
                 </div>
+                <!-- Padrão de fundo sutil -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-red-100/20 rounded-full -translate-y-16 translate-x-16">
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 w-24 h-24 bg-orange-100/20 rounded-full translate-y-12 -translate-x-12">
+                </div>
+
                 <div class="relative z-10">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-red-800"> ALERTA CRÍTICO: Stock Baixo</h3>
-                            <p class="text-sm text-red-600">{{ dashboardStore.data.lowStockProducts }} produtos precisam
-                                de
-                                reposição URGENTE</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div v-for="product in productsStore.lowStockProducts" :key="product.id"
-                            class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                            <div>
-                                <span class="font-medium text-slate-800">{{ product.name }}</span>
-                                <span class="text-sm text-slate-600 ml-2">Stock: {{ product.stock }}</span>
+                    <!-- Header com animação -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center animate-bounce">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                    </path>
+                                </svg>
                             </div>
-                            <span
-                                class="px-2 py-1 bg-red-200 text-red-800 text-xs font-medium rounded-full">CRÍTICO</span>
+                            <div>
+                                <h3 class="font-bold text-red-800 text-lg">⚠️ ALERTA CRÍTICO</h3>
+                                <p class="text-sm text-red-600 font-medium">{{ dashboardStore.data.lowStockProducts }}
+                                    produtos precisam de reposição URGENTE</p>
+                            </div>
+                        </div>
+                        <!-- Indicador de urgência -->
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                            <span class="text-xs text-red-600 font-semibold">URGENTE</span>
                         </div>
                     </div>
-                    <div class="mt-4">
+
+                    <!-- Lista de produtos com melhor design -->
+                    <div class="space-y-3"
+                        :class="{ 'max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-red-300 scrollbar-track-red-100': productsStore.lowStockProducts.length > 5 }">
+                        <div v-for="(product, index) in productsStore.lowStockProducts" :key="product.id"
+                            class="flex justify-between items-center p-4 bg-red-50/80 rounded-xl border border-red-200/50 hover:bg-red-100/80 transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
+                            :style="{ animationDelay: `${index * 100}ms` }">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-red-200 rounded-full flex items-center justify-center">
+                                    <span class="text-xs font-bold text-red-800">{{ index + 1 }}</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-slate-800">{{ product.name }}</div>
+                                    <div class="text-sm text-slate-600">
+                                        Stock: <span class="font-bold text-red-600">{{ product.stock }}</span>
+                                        <span v-if="product.minStock" class="ml-2 text-xs text-slate-500">
+                                            (Mín: {{ product.minStock }})
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="px-3 py-1 bg-red-200 text-red-800 text-xs font-bold rounded-full animate-pulse">
+                                    CRÍTICO
+                                </span>
+                                <div class="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ações melhoradas -->
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
                         <router-link to="/app/products"
-                            class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
                             Repor Stock Agora
                         </router-link>
+                        <button @click="refreshData"
+                            class="inline-flex items-center justify-center px-4 py-3 bg-white text-red-600 text-sm font-medium rounded-xl border border-red-200 hover:bg-red-50 transition-all duration-300 hover:scale-105">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                            Atualizar
+                        </button>
+                    </div>
+
+                    <!-- Informação adicional -->
+                    <div class="mt-4 p-3 bg-red-100/50 rounded-lg border border-red-200/50">
+                        <div class="flex items-center gap-2 text-xs text-red-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="font-medium">Dica:</span> Configure alertas automáticos para receber
+                            notificações quando o stock estiver baixo.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -361,7 +419,8 @@
                                 secondary-action-text="Ver Relatórios"
                                 :secondary-action-handler="() => router.push('/app/reports')" />
                         </div>
-                        <div v-else class="space-y-4">
+                        <div v-else class="space-y-4"
+                            :class="{ 'max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100': dashboardStore.chartData.salesByDay.length > 5 }">
                             <div v-for="period in dashboardStore.chartData.salesByDay" :key="period.date"
                                 class="space-y-2">
                                 <div class="flex justify-between items-center">
@@ -586,74 +645,52 @@
         <form @submit.prevent="saveSale" class="space-y-6">
             <!-- Informações da Venda -->
             <div class="bg-gradient-to-r from-slate-50 to-green-50 rounded-xl p-4">
-                <h4 class="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                        </path>
-                    </svg>
-                    Informações da Venda
+                <h4 class="text-sm font-semibold text-slate-700 mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Informações da Venda
+                    </div>
+                    <div v-if="saving" class="flex items-center gap-2 text-xs text-blue-600">
+                        <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                        Salvando...
+                    </div>
                 </h4>
 
                 <div class="grid grid-cols-1 gap-4">
                     <!-- Cliente a Fiado - Apenas para vendas a crédito -->
-                    <div v-if="saleForm.paymentMethod === 'credit'">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Cliente a Fiado *</label>
-                        <select v-model="saleForm.clientId"
-                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                            required>
-                            <option value="">Selecione um cliente</option>
-                            <option v-for="client in clients" :key="client.id" :value="client.id">
-                                {{ client.name }}
-                            </option>
-                        </select>
-                        <p class="text-xs text-slate-500 mt-1">Selecione um cliente para controle de dívidas</p>
-                    </div>
+                    <FormField v-if="saleForm.paymentMethod === 'credit'" v-model="saleForm.clientId" type="select"
+                        label="Cliente a Fiado" placeholder="Selecione um cliente" :options="clientOptions" required
+                        help="Selecione um cliente para controle de dívidas"
+                        :error="formValidation.getError('clientId')" @blur="formValidation.touchField('clientId')" />
 
                     <!-- Método de Pagamento -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Método de Pagamento</label>
-                        <select v-model="saleForm.paymentMethod"
-                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors">
-                            <option value="cash">Dinheiro (À vista)</option>
-                            <option value="card">Cartão (À vista)</option>
-                            <option value="transfer">Transferência (À vista)</option>
-                            <option value="credit">A Fiado (Crédito)</option>
-                        </select>
-                        <p class="text-xs text-slate-500 mt-1">Escolha "A Fiado" para vendas a crédito</p>
-                    </div>
+                    <FormField v-model="saleForm.paymentMethod" type="select" label="Método de Pagamento"
+                        :options="paymentMethodOptions" help="Escolha 'A Fiado' para vendas a crédito" />
 
                     <!-- Data de Vencimento (se fiado) -->
-                    <div v-if="saleForm.paymentMethod === 'credit'">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Data de Vencimento</label>
-                        <input v-model="saleForm.dueDate" type="date"
-                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors" />
-                        <p class="text-xs text-slate-500 mt-1">Data limite para pagamento</p>
-                    </div>
+                    <FormField v-if="saleForm.paymentMethod === 'credit'" v-model="saleForm.dueDate" type="date"
+                        label="Data de Vencimento" help="Data limite para pagamento" required
+                        :error="formValidation.getError('dueDate')" @blur="formValidation.touchField('dueDate')" />
 
                     <!-- Desconto e Imposto -->
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Desconto (MZN)</label>
-                            <input v-model.number="saleForm.discount" type="number" step="0.01" placeholder="0.00"
-                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                                @input="updateTotal" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Imposto (MZN)</label>
-                            <input v-model.number="saleForm.tax" type="number" step="0.01" placeholder="0.00"
-                                class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                                @input="updateTotal" />
-                        </div>
+                        <FormField v-model="saleForm.discount" type="number" label="Desconto (MZN)" placeholder="0.00"
+                            step="0.01" @input="updateTotal" />
+                        <FormField v-model="saleForm.tax" type="number" label="Imposto (MZN)" placeholder="0.00"
+                            step="0.01" @input="updateTotal" />
                     </div>
 
                     <!-- Observações -->
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Observações</label>
-                        <textarea v-model="saleForm.notes" placeholder="Observações adicionais (opcional)"
-                            class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                            rows="3"></textarea>
-                    </div>
+                    <FormField v-model="saleForm.notes" type="textarea" label="Observações"
+                        placeholder="Observações adicionais (opcional)" :rows="3" />
                 </div>
             </div>
 
@@ -682,7 +719,8 @@
                     </div>
 
                     <!-- Lista de produtos adicionados -->
-                    <div v-if="saleForm.products.length > 0" class="space-y-3">
+                    <div v-if="saleForm.products.length > 0" class="space-y-3"
+                        :class="{ 'max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100': saleForm.products.length > 5 }">
                         <div v-for="(product, index) in saleForm.products" :key="index"
                             class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                             <div class="flex-1">
@@ -752,28 +790,34 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Botão de teste visível -->
+            <div class="mt-6 p-4 bg-yellow-100 border-2 border-yellow-400 rounded-xl">
+                <div class="text-center">
+                    <p class="text-sm text-yellow-800 mb-3">🔧 Botão de Teste - Deve estar visível</p>
+                    <button type="button" @click="saveSale"
+                        class="w-full px-6 py-4 bg-yellow-500 text-white font-bold rounded-xl hover:bg-yellow-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        :disabled="saleForm.products.length === 0 || (saleForm.paymentMethod === 'credit' && !saleForm.clientId) || saving">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7">
+                                </path>
+                            </svg>
+                            🚀 TESTE: Finalizar Venda
+                        </div>
+                    </button>
+                </div>
+            </div>
         </form>
 
         <template #footer>
-            <div class="flex gap-3">
-                <button type="button" @click="closeSaleSheet"
-                    class="flex-1 px-4 py-3 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
-                    Cancelar
-                </button>
-                <button type="submit" @click="saveSale"
-                    class="flex-1 px-4 py-3 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg"
-                    :class="saleForm.paymentMethod === 'credit'
-                        ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'"
-                    :disabled="saleForm.products.length === 0 || (saleForm.paymentMethod === 'credit' && !saleForm.clientId)">
-                    <div class="flex items-center justify-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        {{ saleForm.paymentMethod === 'credit' ? 'Finalizar Venda a Fiado' : 'Finalizar Venda' }}
-                    </div>
-                </button>
+            <div class="p-6 bg-white border-t-2 border-slate-300 shadow-lg">
+                <FormButtons :loading="saving"
+                    :disabled="saleForm.products.length === 0 || (saleForm.paymentMethod === 'credit' && !saleForm.clientId)"
+                    :submit-text="saleForm.paymentMethod === 'credit' ? 'Finalizar Venda a Fiado' : 'Finalizar Venda'"
+                    :variant="saleForm.paymentMethod === 'credit' ? 'warning' : 'success'" size="lg"
+                    @cancel="closeSaleSheet" @submit="saveSale" />
             </div>
         </template>
     </CustomBottomSheet>
@@ -795,6 +839,12 @@ import AnimatedProgressBar from '@/components/Progress/AnimatedProgressBar.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import { useAnimations, useStaggeredAnimation } from '@/composables/useAnimations'
+import { useFormStandard } from '@/composables/useFormStandard'
+import { useNotifications } from '@/composables/useNotifications'
+import { formatPrice, formatDate } from '@/utils/formatters'
+import FormField from '@/components/Form/FormField.vue'
+import FormSection from '@/components/Form/FormSection.vue'
+import FormButtons from '@/components/Form/FormButtons.vue'
 
 const router = useRouter()
 
@@ -828,6 +878,28 @@ const showSaleSheet = ref(false)
 const clients = ref([])
 const availableProducts = ref([])
 const selectedProduct = ref('')
+const saving = ref(false)
+
+// Validação de formulário
+const formValidation = useFormStandard()
+
+// Notificações
+const { handleApiError, handleApiSuccess } = useNotifications()
+
+// Opções para selects
+const clientOptions = computed(() =>
+    clients.value.map(client => ({
+        value: client.id,
+        label: client.name
+    }))
+)
+
+const paymentMethodOptions = [
+    { value: 'cash', label: 'Dinheiro (À vista)' },
+    { value: 'card', label: 'Cartão (À vista)' },
+    { value: 'transfer', label: 'Transferência (À vista)' },
+    { value: 'credit', label: 'A Fiado (Crédito)' }
+]
 const saleForm = reactive({
     clientId: '',
     paymentMethod: 'cash',
@@ -881,17 +953,6 @@ const clientStats = reactive({
 })
 
 // Métodos
-const formatPrice = (price) => {
-    return `MZN ${parseFloat(price).toFixed(2).replace('.', ',')}`
-}
-
-const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('pt-PT', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })
-}
 
 // Funções para bottom sheet de venda
 const openSaleSheet = async () => {
@@ -986,16 +1047,24 @@ const loadProducts = async () => {
 }
 
 const saveSale = async () => {
+    // Validações básicas
     if (saleForm.products.length === 0) {
-        alert('Adicione pelo menos um produto à venda')
+        handleApiError('Adicione pelo menos um produto à venda')
         return
     }
 
-    // Validação para vendas a crédito
-    if (saleForm.paymentMethod === 'credit' && !saleForm.clientId) {
-        alert('Seleção de cliente é obrigatória para vendas a crédito')
+    // Validação usando o sistema padronizado
+    const validationSchema = {
+        clientId: saleForm.paymentMethod === 'credit' ? { required: true } : {},
+        dueDate: saleForm.paymentMethod === 'credit' ? { required: true } : {}
+    }
+
+    if (!formValidation.validateForm(saleForm, validationSchema)) {
         return
     }
+
+    saving.value = true
+    formValidation.setLoading(true)
 
     try {
         // Criar venda usando a estrutura correta do backend
@@ -1014,6 +1083,8 @@ const saveSale = async () => {
             notes: saleForm.notes
         }
 
+        console.log('💾 Salvando venda:', saleData)
+
         const result = await salesStore.createSale(saleData)
 
         if (result.success) {
@@ -1021,14 +1092,23 @@ const saveSale = async () => {
             await loadDashboard()
 
             closeSaleSheet()
-            alert('Venda registrada com sucesso!')
+
+            // Feedback visual melhorado
+            const message = saleForm.paymentMethod === 'credit'
+                ? `Venda a fiado registrada com sucesso! Cliente: ${getClientName(saleForm.clientId)} - Total: ${formatPrice(saleForm.totalAmount)}`
+                : `Venda registrada com sucesso! Total: ${formatPrice(saleForm.totalAmount)}`
+
+            handleApiSuccess(message)
         } else {
-            console.error('Erro ao salvar venda:', result.error)
-            alert('Erro ao salvar venda: ' + result.error)
+            console.error('❌ Erro ao salvar venda:', result.error)
+            handleApiError(`Erro ao salvar venda: ${result.error}`)
         }
     } catch (error) {
-        console.error('Erro ao salvar venda:', error)
-        alert('Erro ao salvar venda')
+        console.error('❌ Erro ao salvar venda:', error)
+        handleApiError(`Erro ao salvar venda: ${error.message || 'Erro desconhecido'}`)
+    } finally {
+        saving.value = false
+        formValidation.setLoading(false)
     }
 }
 
@@ -1126,3 +1206,84 @@ defineExpose({
     hapticFeedback
 })
 </script>
+
+<style scoped>
+/* Scrollbar personalizada */
+.scrollbar-thin {
+    scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Animações suaves para scroll */
+.overflow-y-auto {
+    scroll-behavior: smooth;
+}
+
+/* Hover effects para listas com scroll */
+.space-y-3:hover .scrollbar-thumb {
+    background: #94a3b8;
+}
+
+/* Animação de borda pulsante para alertas críticos */
+@keyframes pulse-border {
+
+    0%,
+    100% {
+        border-color: rgba(239, 68, 68, 0.3);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        border-color: rgba(239, 68, 68, 0.6);
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.1);
+    }
+}
+
+.animate-pulse-border {
+    animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* Animação de entrada escalonada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Scrollbar personalizada para alertas */
+.scrollbar-thumb-red-300::-webkit-scrollbar-thumb {
+    background: #fca5a5;
+}
+
+.scrollbar-track-red-100::-webkit-scrollbar-track {
+    background: #fee2e2;
+}
+</style>

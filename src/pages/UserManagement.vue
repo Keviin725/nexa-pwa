@@ -555,12 +555,16 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { PERMISSIONS, ROLE_PERMISSIONS, permissionManager } from '@/utils/permissions'
 import { useUsersStore } from '@/stores/users'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifications } from '@/composables/useNotifications'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
+
+// Notificações
+const { handleApiError, handleApiSuccess } = useNotifications()
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')
@@ -697,35 +701,35 @@ const saveUser = async () => {
 
         // Validação de formulário
         if (!form.name.trim()) {
-            alert('Nome é obrigatório')
+            handleApiError('Nome é obrigatório')
             return
         }
 
         if (!form.email.trim()) {
-            alert('Email é obrigatório')
+            handleApiError('Email é obrigatório')
             return
         }
 
         if (!form.role) {
-            alert('Função é obrigatória')
+            handleApiError('Função é obrigatória')
             return
         }
 
         if (modalMode.value === 'create' && !form.password.trim()) {
-            alert('Senha é obrigatória')
+            handleApiError('Senha é obrigatória')
             return
         }
 
         // Validação de email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(form.email)) {
-            alert('Email inválido')
+            handleApiError('Email inválido')
             return
         }
 
         // Validação de senha (mínimo 6 caracteres)
         if (modalMode.value === 'create' && form.password.length < 6) {
-            alert('Senha deve ter pelo menos 6 caracteres')
+            handleApiError('Senha deve ter pelo menos 6 caracteres')
             return
         }
 
@@ -733,7 +737,7 @@ const saveUser = async () => {
         if (form.phone && form.phone.trim()) {
             const phoneRegex = /^[\d\s\-\+\(\)]+$/
             if (!phoneRegex.test(form.phone)) {
-                alert('Telefone inválido')
+                handleApiError('Telefone inválido')
                 return
             }
         }
@@ -759,13 +763,13 @@ const saveUser = async () => {
         if (result.success) {
             closeModal()
             loadUsers()
-            alert('Colaborador salvo com sucesso!')
+            handleApiSuccess('Colaborador salvo com sucesso!')
         } else {
-            alert('Erro ao salvar colaborador: ' + result.error)
+            handleApiError('Erro ao salvar colaborador: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao salvar colaborador:', error)
-        alert('Erro ao salvar colaborador')
+        handleApiError('Erro ao salvar colaborador')
     } finally {
         formLoading.value = false
     }
@@ -783,13 +787,13 @@ const toggleUserStatus = async (user) => {
 
         if (result.success) {
             loadUsers()
-            alert(`Colaborador ${user.isActive ? 'desativado' : 'ativado'} com sucesso!`)
+            handleApiSuccess(`Colaborador ${user.isActive ? 'desativado' : 'ativado'} com sucesso!`)
         } else {
-            alert('Erro ao alterar status: ' + result.error)
+            handleApiError('Erro ao alterar status: ' + result.error)
         }
     } catch (error) {
         console.error('Erro ao alterar status:', error)
-        alert('Erro ao alterar status do colaborador')
+        handleApiError('Erro ao alterar status do colaborador')
     } finally {
         loading.value = false
     }
