@@ -1,5 +1,9 @@
 <template>
     <div class="min-h-screen bg-slate-50">
+        <!-- Upgrade Prompt para Plano Teste -->
+        <UpgradePrompt v-if="isTestPlan" required-plan="pro" feature="Gestão de Colaboradores" @upgrade="handleUpgrade"
+            @dismiss="dismissUpgrade" />
+
         <!-- Header Mobile -->
         <div class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 shadow-xl">
             <div class="px-4 py-4">
@@ -556,15 +560,30 @@ import { PERMISSIONS, ROLE_PERMISSIONS, permissionManager } from '@/utils/permis
 import { useUsersStore } from '@/stores/users'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifications } from '@/composables/useNotifications'
+import { useSubscription } from '@/composables/useSubscription'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
+import UpgradePrompt from '@/components/UpgradePrompt.vue'
 
 // Store
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 
+// Subscription
+const { isTestPlan } = useSubscription()
+
 // Notificações
 const { handleApiError, handleApiSuccess } = useNotifications()
+
+// Upgrade handlers
+const handleUpgrade = (plan) => {
+    // Redirecionar para settings para fazer upgrade
+    window.location.href = '/app/settings'
+}
+
+const dismissUpgrade = () => {
+    // Lógica para dismissar o prompt (opcional)
+}
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')

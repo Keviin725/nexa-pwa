@@ -25,7 +25,96 @@
             <!-- 1. META DE RECEITA MENSAL - Nova seção -->
             <GoalsManagement />
 
-            <!-- 2. FUNCIONALIDADES DE IA - Nova seção -->
+            <!-- 2. PLANO ATUAL - Nova seção -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-gradient-to-r from-green-100 to-blue-100 rounded-lg">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-800">Plano Atual</h2>
+                        <p class="text-sm text-slate-600">Gerencie sua subscription</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <!-- Plano Teste -->
+                    <div :class="[
+                        'p-4 rounded-lg border-2 transition-all duration-200',
+                        isTestPlan ? 'border-gray-300 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'
+                    ]">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+                            <h3 class="font-semibold text-gray-800">Teste</h3>
+                            <span v-if="isTestPlan"
+                                class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">Atual</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">Funcionalidades básicas</p>
+                        <button v-if="!isTestPlan" @click="setPlan('teste')"
+                            class="w-full px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                            Selecionar
+                        </button>
+                    </div>
+
+                    <!-- Plano Starter -->
+                    <div :class="[
+                        'p-4 rounded-lg border-2 transition-all duration-200',
+                        isStarterPlan ? 'border-green-300 bg-green-50' : 'border-green-200 bg-white hover:border-green-300'
+                    ]">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <h3 class="font-semibold text-green-800">Starter</h3>
+                            <span v-if="isStarterPlan"
+                                class="text-xs bg-green-200 text-green-700 px-2 py-1 rounded-full">Atual</span>
+                        </div>
+                        <p class="text-xs text-green-600 mb-3">Perfeito para começar</p>
+                        <button v-if="!isStarterPlan" @click="setPlan('starter')"
+                            class="w-full px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors">
+                            Selecionar
+                        </button>
+                    </div>
+
+                    <!-- Plano Pro -->
+                    <div :class="[
+                        'p-4 rounded-lg border-2 transition-all duration-200',
+                        isProPlan ? 'border-blue-300 bg-blue-50' : 'border-blue-200 bg-white hover:border-blue-300'
+                    ]">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <h3 class="font-semibold text-blue-800">Pro</h3>
+                            <span v-if="isProPlan"
+                                class="text-xs bg-blue-200 text-blue-700 px-2 py-1 rounded-full">Atual</span>
+                        </div>
+                        <p class="text-xs text-blue-600 mb-3">IA + Funcionalidades avançadas</p>
+                        <button v-if="!isProPlan" @click="setPlan('pro')"
+                            class="w-full px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors">
+                            Selecionar
+                        </button>
+                    </div>
+
+                    <!-- Plano Enterprise -->
+                    <div :class="[
+                        'p-4 rounded-lg border-2 transition-all duration-200',
+                        isEnterprisePlan ? 'border-purple-300 bg-purple-50' : 'border-purple-200 bg-white hover:border-purple-300'
+                    ]">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                            <h3 class="font-semibold text-purple-800">Enterprise</h3>
+                            <span v-if="isEnterprisePlan"
+                                class="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full">Atual</span>
+                        </div>
+                        <p class="text-xs text-purple-600 mb-3">Todas as funcionalidades de IA</p>
+                        <button v-if="!isEnterprisePlan" @click="setPlan('enterprise')"
+                            class="w-full px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors">
+                            Selecionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. FUNCIONALIDADES DE IA - Nova seção -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="p-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg">
@@ -40,12 +129,14 @@
                 </div>
 
                 <!-- Features Pro -->
-                <div class="mb-8">
+                <div v-if="isProPlan || isEnterprisePlan" class="mb-8">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                             PRO
                         </div>
                         <h3 class="text-md font-semibold text-slate-700">Funcionalidades Avançadas</h3>
+                        <span v-if="isProPlan"
+                            class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Ativo</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -104,12 +195,13 @@
                 </div>
 
                 <!-- Features Enterprise -->
-                <div class="mb-6">
+                <div v-if="isEnterprisePlan" class="mb-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                             ENTERPRISE
                         </div>
                         <h3 class="text-md font-semibold text-slate-700">Funcionalidades Empresariais</h3>
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Ativo</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -164,6 +256,60 @@
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Security & Permissions</h4>
                             </div>
                             <p class="text-xs text-slate-600">Sistema inteligente de segurança com IA</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funcionalidades Bloqueadas -->
+                <div v-if="isTestPlan" class="mb-6">
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div
+                                class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-yellow-800">Funcionalidades de IA Bloqueadas</h4>
+                                <p class="text-xs text-yellow-700">Upgrade para Pro ou Enterprise para acessar IA</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="flex items-center gap-2 text-sm text-yellow-700">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                AI Stock Predictor
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-yellow-700">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                AI Sales Optimizer
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-yellow-700">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                AI Customer Insights
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-yellow-700">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                AI Analytics Dashboard
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -527,8 +673,26 @@ const refreshSystem = () => {
     }
 }
 
+// Subscription Management
+import { useSubscription } from '@/composables/useSubscription'
+import { useSubscriptionStore } from '@/stores/subscription'
+
+const subscriptionStore = useSubscriptionStore()
+const {
+    isTestPlan,
+    isStarterPlan,
+    isProPlan,
+    isEnterprisePlan,
+    currentPlanInfo
+} = useSubscription()
+
+const setPlan = (plan) => {
+    subscriptionStore.setPlan(plan)
+}
+
 // Lifecycle
 onMounted(() => {
     loadSystemConfig()
+    subscriptionStore.init()
 })
 </script>

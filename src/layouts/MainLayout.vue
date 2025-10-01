@@ -20,6 +20,7 @@
 
                     <!-- Centro de Notificações e Perfil -->
                     <div class="flex items-center gap-3">
+                        <SubscriptionBadge />
                         <NotificationCenter />
                         <UserProfile />
                     </div>
@@ -158,6 +159,7 @@
 import { onMounted, computed } from 'vue'
 import NotificationCenter from '../components/NotificationCenter.vue'
 import UserProfile from '../components/UserProfile.vue'
+import SubscriptionBadge from '../components/SubscriptionBadge.vue'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 
@@ -165,7 +167,8 @@ export default {
     name: 'MainLayout',
     components: {
         NotificationCenter,
-        UserProfile
+        UserProfile,
+        SubscriptionBadge
     },
     setup() {
         const authStore = useAuthStore()

@@ -1,5 +1,9 @@
 <template>
     <div class="min-h-screen bg-slate-50">
+        <!-- Upgrade Prompt para Plano Teste -->
+        <UpgradePrompt v-if="isTestPlan" required-plan="pro" feature="Relatórios Avançados" @upgrade="handleUpgrade"
+            @dismiss="dismissUpgrade" />
+
         <!-- Header Mobile -->
         <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl">
             <div class="px-4 py-4">
@@ -100,7 +104,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                             <div class="text-2xl font-bold text-green-600 mb-1">{{ formatPrice(metrics.totalRevenue)
-                                }}MT
+                            }}MT
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                         </div>
@@ -366,14 +370,29 @@ import { computed, onMounted } from 'vue'
 import { useReportsStore } from '@/stores/reports'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
+import { useSubscription } from '@/composables/useSubscription'
 import ModernLineChart from '../components/Charts/ModernLineChart.vue'
 import ModernBarChart from '../components/Charts/ModernBarChart.vue'
 import ModernPieChart from '../components/Charts/ModernPieChart.vue'
 import ModernKPICard from '../components/Metrics/ModernKPICard.vue'
+import UpgradePrompt from '@/components/UpgradePrompt.vue'
 
 // Store
 const authStore = useAuthStore()
 const reportsStore = useReportsStore()
+
+// Subscription
+const { isTestPlan } = useSubscription()
+
+// Upgrade handlers
+const handleUpgrade = (plan) => {
+    // Redirecionar para settings para fazer upgrade
+    window.location.href = '/app/settings'
+}
+
+const dismissUpgrade = () => {
+    // Lógica para dismissar o prompt (opcional)
+}
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')

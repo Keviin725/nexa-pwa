@@ -471,7 +471,7 @@
                             <div class="mb-8">
                                 <div class="flex items-baseline justify-center">
                                     <span class="text-5xl font-bold text-gray-900">{{ isYearly ? 'MT 480' : 'MT 600'
-                                    }}</span>
+                                        }}</span>
                                     <span class="text-gray-600 ml-2">/mês</span>
                                 </div>
                                 <p v-if="isYearly" class="text-sm text-green-600 font-semibold mt-2">Economize MT 1.440
