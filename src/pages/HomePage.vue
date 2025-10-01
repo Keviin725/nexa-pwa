@@ -79,7 +79,7 @@
 
             <!-- 2. MÉTRICAS FINANCEIRAS - Segunda prioridade -->
             <div
-                class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 relative overflow-hidden">
+                class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 relative overflow-hidden transform transition-all duration-500 hover:scale-[1.01] hover:shadow-2xl">
                 <div class="absolute inset-0 bg-gradient-to-br from-green-50/50 to-emerald-50/30 pointer-events-none">
                 </div>
                 <div class="relative z-10">
@@ -93,21 +93,36 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- Receita Total - MAIS IMPORTANTE -->
                         <div
-                            class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 min-h-[120px] flex flex-col justify-center">
-                            <div class="text-2xl font-bold text-green-600 mb-1 break-words">
-                                {{ formatPrice(dashboardStore.formattedMetrics.totalRevenue) }}
+                            class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 min-h-[120px] flex flex-col justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <div v-if="dashboardStore.loading" class="animate-pulse">
+                                <div class="h-8 bg-green-200 rounded w-24 mx-auto mb-2"></div>
+                                <div class="h-4 bg-green-200 rounded w-20 mx-auto mb-1"></div>
+                                <div class="h-3 bg-green-200 rounded w-16 mx-auto"></div>
                             </div>
-                            <div class="text-sm font-medium text-slate-700">Receita Total</div>
-                            <div class="text-xs text-green-600 mt-1">{{ dashboardStore.data.totalSales }} vendas</div>
+                            <div v-else>
+                                <div class="text-2xl font-bold text-green-600 mb-1 break-words">
+                                    {{ formatPrice(dashboardStore.formattedMetrics.totalRevenue) }}
+                                </div>
+                                <div class="text-sm font-medium text-slate-700">Receita Total</div>
+                                <div class="text-xs text-green-600 mt-1">{{ dashboardStore.data.totalSales }} vendas
+                                </div>
+                            </div>
                         </div>
                         <!-- Vendas Pendentes - CRÍTICO -->
                         <div
-                            class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 min-h-[120px] flex flex-col justify-center">
-                            <div class="text-2xl font-bold text-yellow-600 mb-1 break-words">
-                                {{ formatPrice(salesStore.stats.pendingRevenue) }}
+                            class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 min-h-[120px] flex flex-col justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <div v-if="salesStore.loading" class="animate-pulse">
+                                <div class="h-8 bg-yellow-200 rounded w-20 mx-auto mb-2"></div>
+                                <div class="h-4 bg-yellow-200 rounded w-16 mx-auto mb-1"></div>
+                                <div class="h-3 bg-yellow-200 rounded w-20 mx-auto"></div>
                             </div>
-                            <div class="text-sm font-medium text-slate-700">Pendente</div>
-                            <div class="text-xs text-yellow-600 mt-1">{{ dashboardStore.data.pendingSales }} vendas
+                            <div v-else>
+                                <div class="text-2xl font-bold text-yellow-600 mb-1 break-words">
+                                    {{ formatPrice(salesStore.stats.pendingRevenue) }}
+                                </div>
+                                <div class="text-sm font-medium text-slate-700">Pendente</div>
+                                <div class="text-xs text-yellow-600 mt-1">{{ dashboardStore.data.pendingSales }} vendas
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +183,7 @@
                         class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
                         <div class="text-2xl font-bold text-green-600 mb-1 break-words">MZN {{
                             dashboardStore.data.totalRevenue || 0
-                        }}</div>
+                            }}</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
                     <div
@@ -297,14 +312,21 @@
                         <router-link to="/app/sales" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Ver
                             todas</router-link>
                     </div>
-                    <div class="space-y-3">
+                    <div v-if="salesStore.loading" class="space-y-3">
+                        <SkeletonLoader type="list" :count="3" />
+                    </div>
+                    <div v-else-if="salesStore.recentSales.length === 0" class="py-8">
+                        <EmptyState icon="shopping" title="Nenhuma venda recente"
+                            description="Ainda não há vendas registradas hoje. Comece criando sua primeira venda!"
+                            action-text="Nova Venda" :action-handler="openSaleSheet" />
+                    </div>
+                    <div v-else class="space-y-3">
                         <div v-for="sale in salesStore.recentSales" :key="sale.id"
-                            class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            class="flex justify-between items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                             <div>
-                                <span class="font-medium text-slate-800">Venda #{{ sale.saleNumber }}</span>
+                                <span class="font-medium text-slate-800">#{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                    }}</span>
-
+                                }}</span>
                             </div>
                             <div class="text-right">
                                 <div class="font-semibold text-green-600">{{ formatPrice(sale.totalAmount) }}</div>
@@ -329,8 +351,18 @@
                         </div>
 
                         <!-- Gráfico Simples de Barras -->
-                        <div class="space-y-4">
-                            <div v-for="period in (dashboardStore.chartData.salesByDay || [])" :key="period.date"
+                        <div v-if="dashboardStore.loading" class="space-y-4">
+                            <SkeletonLoader type="chart" />
+                        </div>
+                        <div v-else-if="!dashboardStore.chartData.salesByDay || dashboardStore.chartData.salesByDay.length === 0"
+                            class="py-8">
+                            <EmptyState icon="chart" title="Nenhum dado de vendas"
+                                description="Ainda não há dados suficientes para mostrar o gráfico de vendas por período."
+                                secondary-action-text="Ver Relatórios"
+                                :secondary-action-handler="() => router.push('/app/reports')" />
+                        </div>
+                        <div v-else class="space-y-4">
+                            <div v-for="period in dashboardStore.chartData.salesByDay" :key="period.date"
                                 class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-slate-600">{{ period.date }}</span>
@@ -341,7 +373,7 @@
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
-                                        :style="{ width: `${(period.total / Math.max(...(dashboardStore.chartData.salesByDay || []).map(p => p.total))) * 100}%` }">
+                                        :style="{ width: `${(period.total / Math.max(...dashboardStore.chartData.salesByDay.map(p => p.total))) * 100}%` }">
                                     </div>
                                 </div>
                             </div>
@@ -361,9 +393,19 @@
                                 todos</router-link>
                         </div>
 
-                        <div class="space-y-4">
-                            <div v-for="(product, index) in (dashboardStore.chartData.topProducts || [])"
-                                :key="product.name" class="space-y-2">
+                        <div v-if="dashboardStore.loading" class="space-y-4">
+                            <SkeletonLoader type="list" :count="3" />
+                        </div>
+                        <div v-else-if="!dashboardStore.chartData.topProducts || dashboardStore.chartData.topProducts.length === 0"
+                            class="py-8">
+                            <EmptyState icon="box" title="Nenhum produto vendido"
+                                description="Ainda não há dados de vendas de produtos para mostrar o ranking."
+                                secondary-action-text="Ver Produtos"
+                                :secondary-action-handler="() => router.push('/app/products')" />
+                        </div>
+                        <div v-else class="space-y-4">
+                            <div v-for="(product, index) in dashboardStore.chartData.topProducts" :key="product.name"
+                                class="space-y-2">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
                                         <div
@@ -379,7 +421,7 @@
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                                        :style="{ width: `${(product.quantity / Math.max(...(dashboardStore.chartData.topProducts || []).map(p => p.quantity))) * 100}%` }">
+                                        :style="{ width: `${(product.quantity / Math.max(...dashboardStore.chartData.topProducts.map(p => p.quantity))) * 100}%` }">
                                     </div>
                                 </div>
                             </div>
@@ -750,6 +792,9 @@ import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import { apiService } from '@/services/api'
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 import AnimatedProgressBar from '@/components/Progress/AnimatedProgressBar.vue'
+import EmptyState from '@/components/EmptyState.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
+import { useAnimations, useStaggeredAnimation } from '@/composables/useAnimations'
 
 const router = useRouter()
 
