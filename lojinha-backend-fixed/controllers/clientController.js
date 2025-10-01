@@ -17,7 +17,7 @@ const getClients = async (req, res) => {
 
     const clients = await Client.findAll({
       where: whereClause,
-      order: [["name", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     // Calcular dívidas reais baseadas nas vendas a crédito
@@ -267,7 +267,7 @@ const getClientsWithDebts = async (req, res) => {
           [Op.gt]: 0,
         },
       },
-      order: [["credit_balance", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(clients);

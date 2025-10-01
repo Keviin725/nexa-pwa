@@ -1,101 +1,87 @@
 <template>
     <div class="relative">
-        <!-- Botão de Notificações Ultra-Moderno -->
+        <!-- Botão de Notificações Melhorado -->
         <button @click="toggleNotifications"
-            class="relative p-3 text-slate-600 hover:text-slate-800 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-2xl transition-all duration-300 hover:scale-105 group backdrop-blur-sm">
+            class="relative p-2.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-200 group"
+            :class="{ 'bg-blue-50 text-blue-600': showNotifications }">
 
-            <!-- Ícone de sino moderno com animação -->
-            <svg class="w-6 h-6 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Ícone de sino com animação suave -->
+            <svg class="w-5 h-5 transition-all duration-200 group-hover:scale-110" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M15 17h5l-5 5v-5zM4.5 19.5a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5h15A1.5 1.5 0 0119.5 6v12a1.5 1.5 0 01-1.5 1.5h-15z">
                 </path>
             </svg>
 
-            <!-- Efeito de pulso ultra-moderno -->
-            <div v-if="unreadCount > 0"
-                class="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/30 via-pink-500/20 to-red-500/30 animate-pulse">
-            </div>
-
-            <!-- Efeito de shimmer -->
-            <div v-if="unreadCount > 0"
-                class="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer">
-            </div>
-
-            <!-- Badge ultra-moderno -->
+            <!-- Badge de notificações não lidas -->
             <span v-if="unreadCount > 0"
-                class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-lg border-2 border-white animate-bounce">
-                {{ unreadCount > 99 ? '99+' : unreadCount }}
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium shadow-sm border border-white">
+                {{ unreadCount > 9 ? '9+' : unreadCount }}
             </span>
         </button>
 
-        <!-- Painel de Notificações Ultra-Moderno -->
-        <Transition enter-active-class="transition-all duration-300 ease-out"
-            enter-from-class="opacity-0 scale-95 translate-y-2" enter-to-class="opacity-100 scale-100 translate-y-0"
-            leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="opacity-100 scale-100 translate-y-0" leave-to-class="opacity-0 scale-95 translate-y-2">
+        <!-- Painel de Notificações Melhorado -->
+        <Transition enter-active-class="transition-all duration-200 ease-out"
+            enter-from-class="opacity-0 scale-95 translate-y-1" enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition-all duration-150 ease-in"
+            leave-from-class="opacity-100 scale-100 translate-y-0" leave-to-class="opacity-0 scale-95 translate-y-1">
             <div v-if="showNotifications"
-                class="fixed right-4 top-16 w-96 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 z-[9999] overflow-hidden">
+                class="fixed right-4 top-16 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-lg border border-slate-200 z-[9999] overflow-hidden">
 
-                <!-- Header Ultra-Moderno -->
-                <div
-                    class="p-6 bg-gradient-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm border-b border-white/30">
+                <!-- Header Melhorado -->
+                <div class="p-4 bg-slate-50 border-b border-slate-200">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 17h5l-5 5v-5zM4.5 19.5a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5h15A1.5 1.5 0 0119.5 6v12a1.5 1.5 0 01-1.5 1.5h-15z">
                                     </path>
                                 </svg>
                             </div>
                             <div>
-                                <h3
-                                    class="text-lg font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                    Notificações</h3>
+                                <h3 class="text-sm font-semibold text-slate-800">Notificações</h3>
                                 <p class="text-xs text-slate-500">{{ unreadCount }} não lidas</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1">
                             <button v-if="unreadCount > 0" @click="markAllAsRead"
-                                class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 font-medium shadow-lg">
-                                ✓ Marcar todas
+                                class="px-2 py-1 bg-green-500 text-white text-xs rounded-md hover:bg-green-600 transition-colors">
+                                ✓ Todas
                             </button>
                             <button @click="clearAll"
-                                class="px-3 py-1.5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-200 font-medium shadow-lg">
-                                🗑️ Limpar
+                                class="px-2 py-1 bg-red-500 text-white text-xs rounded-md hover:bg-red-600 transition-colors">
+                                🗑️
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Lista de Notificações Ultra-Moderna -->
-                <div class="max-h-96 overflow-y-auto custom-scrollbar">
-                    <div v-if="notifications.length === 0" class="p-8 text-center">
-                        <div
-                            class="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Lista de Notificações Melhorada -->
+                <div class="max-h-80 overflow-y-auto">
+                    <div v-if="notifications.length === 0" class="p-6 text-center">
+                        <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 17h5l-5 5v-5zM4.5 19.5a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5h15A1.5 1.5 0 0119.5 6v12a1.5 1.5 0 01-1.5 1.5h-15z">
                                 </path>
                             </svg>
                         </div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-2">Tudo em dia!</h4>
-                        <p class="text-slate-500">Nenhuma notificação pendente</p>
+                        <h4 class="text-sm font-medium text-slate-700 mb-1">Tudo em dia!</h4>
+                        <p class="text-xs text-slate-500">Nenhuma notificação pendente</p>
                     </div>
 
-                    <div v-else class="divide-y divide-slate-200/50">
+                    <div v-else class="divide-y divide-slate-200">
                         <div v-for="notification in notifications" :key="notification.id"
-                            class="p-4 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 transition-all duration-300 group"
-                            :class="{ 'bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-l-4 border-blue-500': !notification.read }">
+                            class="p-3 hover:bg-slate-50 transition-colors group"
+                            :class="{ 'bg-blue-50 border-l-2 border-blue-500': !notification.read }">
 
-                            <div class="flex items-start gap-4">
-                                <!-- Ícone do tipo ultra-moderno -->
-                                <div class="flex-shrink-0 mt-1">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110"
+                            <div class="flex items-start gap-3">
+                                <!-- Ícone do tipo -->
+                                <div class="flex-shrink-0 mt-0.5">
+                                    <div class="w-6 h-6 rounded-lg flex items-center justify-center"
                                         :class="getIconClass(notification.type)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path v-if="notification.type === 'success'" stroke-linecap="round"
                                                 stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                             <path v-else-if="notification.type === 'warning'" stroke-linecap="round"
@@ -111,46 +97,44 @@
                                     </div>
                                 </div>
 
-                                <!-- Conteúdo ultra-moderno -->
+                                <!-- Conteúdo -->
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between">
                                         <div class="flex-1">
                                             <div class="flex items-center gap-2 mb-1">
-                                                <h4 class="text-sm font-bold text-slate-800">{{
+                                                <h4 class="text-sm font-medium text-slate-800">{{
                                                     notification.title }}</h4>
                                                 <span v-if="!notification.read"
-                                                    class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                                                    class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
                                             </div>
-                                            <p class="text-sm text-slate-600 mb-2 leading-relaxed">
-                                                {{
-                                                    notification.message }}</p>
+                                            <p class="text-xs text-slate-600 mb-2 leading-relaxed">
+                                                {{ notification.message }}</p>
                                             <div class="flex items-center gap-2">
-                                                <span
-                                                    class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">{{
-                                                        formatTime(notification.timestamp) }}</span>
-                                                <span class="text-xs px-2 py-1 rounded-full font-medium"
+                                                <span class="text-xs text-slate-500">{{
+                                                    formatTime(notification.timestamp) }}</span>
+                                                <span class="text-xs px-1.5 py-0.5 rounded-md font-medium"
                                                     :class="getTypeBadgeClass(notification.type)">
                                                     {{ getTypeLabel(notification.type) }}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <!-- Ações ultra-modernas -->
-                                        <div class="flex items-center gap-1 ml-3">
+                                        <!-- Ações -->
+                                        <div class="flex items-center gap-1 ml-2">
                                             <button v-if="!notification.read" @click="markAsRead(notification.id)"
-                                                class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200 group"
+                                                class="p-1 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
                                                 title="Marcar como lida">
-                                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform"
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
                                             </button>
                                             <button @click="removeNotification(notification.id)"
-                                                class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group"
+                                                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                                                 title="Remover">
-                                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform"
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
@@ -158,11 +142,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Ação específica ultra-moderna -->
-                                    <div v-if="notification.action" class="mt-3">
+                                    <!-- Ação específica -->
+                                    <div v-if="notification.action" class="mt-2">
                                         <button @click="handleAction(notification)"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            class="inline-flex items-center gap-1 px-2 py-1 bg-blue-500 text-white text-xs rounded-md hover:bg-blue-600 transition-colors">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M9 5l7 7-7 7"></path>
                                             </svg>
@@ -175,28 +159,25 @@
                     </div>
                 </div>
 
-                <!-- Footer Ultra-Moderno -->
-                <div v-if="notifications.length > 0"
-                    class="p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/80 backdrop-blur-sm border-t border-white/30">
+                <!-- Footer Melhorado -->
+                <div v-if="notifications.length > 0" class="p-3 bg-slate-50 border-t border-slate-200">
                     <button @click="viewAllNotifications"
-                        class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 font-medium shadow-lg hover:shadow-xl group">
-                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600 transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
                             </path>
                         </svg>
-                        Ver todas as notificações
+                        Ver todas
                     </button>
                 </div>
             </div>
         </Transition>
 
         <!-- Overlay para fechar -->
-        <Transition enter-active-class="transition-opacity duration-200" enter-from-class="opacity-0"
-            enter-to-class="opacity-100" leave-active-class="transition-opacity duration-200"
+        <Transition enter-active-class="transition-opacity duration-150" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="transition-opacity duration-150"
             leave-from-class="opacity-100" leave-to-class="opacity-0">
-            <div v-if="showNotifications" @click="closeNotifications"
-                class="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm"></div>
+            <div v-if="showNotifications" @click="closeNotifications" class="fixed inset-0 z-[9998] bg-black/10"></div>
         </Transition>
     </div>
 </template>
@@ -349,26 +330,26 @@ const getActionText = (type) => {
 const getIconClass = (type) => {
     switch (type) {
         case 'success':
-            return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-600'
+            return 'bg-green-100 text-green-600'
         case 'warning':
-            return 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-600'
+            return 'bg-yellow-100 text-yellow-600'
         case 'error':
-            return 'bg-gradient-to-r from-red-100 to-pink-100 text-red-600'
+            return 'bg-red-100 text-red-600'
         default:
-            return 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-600'
+            return 'bg-blue-100 text-blue-600'
     }
 }
 
 const getTypeBadgeClass = (type) => {
     switch (type) {
         case 'success':
-            return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+            return 'bg-green-500 text-white'
         case 'warning':
-            return 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white'
+            return 'bg-yellow-500 text-white'
         case 'error':
-            return 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
+            return 'bg-red-500 text-white'
         default:
-            return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+            return 'bg-blue-500 text-white'
     }
 }
 
@@ -426,103 +407,36 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Scrollbar customizada ultra-moderna */
-.custom-scrollbar {
+/* Scrollbar customizada */
+.overflow-y-auto {
     scrollbar-width: thin;
-    scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+    scrollbar-color: #cbd5e1 transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
+.overflow-y-auto::-webkit-scrollbar-track {
     background: transparent;
-    border-radius: 10px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
-    border-radius: 10px;
-    transition: all 0.3s ease;
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
-}
-
-/* Animação shimmer */
-@keyframes shimmer {
-    0% {
-        transform: translateX(-100%);
-    }
-
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-.animate-shimmer {
-    animation: shimmer 2s infinite;
-}
-
-/* Animações de entrada */
-.notification-enter-active {
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.notification-enter-from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
-}
-
-.notification-enter-to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-/* Efeitos de hover melhorados */
-.group:hover .group-hover\:scale-110 {
-    transform: scale(1.1);
-}
-
-.group:hover .group-hover\:translate-x-1 {
-    transform: translateX(0.25rem);
-}
-
-/* Glassmorphism melhorado */
-.backdrop-blur-xl {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-/* Sombras ultra-modernas */
-.shadow-2xl {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Transições suaves */
-* {
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 /* Responsividade */
 @media (max-width: 640px) {
-    .w-96 {
+    .w-80 {
         width: calc(100vw - 2rem);
         right: 1rem;
         top: 1rem;
         max-height: calc(100vh - 2rem);
-    }
-}
-
-/* Garantir que o painel apareça completamente */
-@media (max-width: 768px) {
-    .fixed.right-4.top-16 {
-        right: 1rem;
-        top: 1rem;
-        width: calc(100vw - 2rem);
-        max-width: calc(100vw - 2rem);
     }
 }
 </style>

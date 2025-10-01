@@ -28,7 +28,7 @@ const getProducts = async (req, res) => {
 
     const products = await Product.findAll({
       where: whereClause,
-      order: [["name", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(products);
@@ -160,7 +160,7 @@ const getLowStockProducts = async (req, res) => {
           [Op.lte]: 5,
         },
       },
-      order: [["stock", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(products);

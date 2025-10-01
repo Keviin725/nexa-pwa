@@ -37,7 +37,7 @@ const getUsers = async (req, res) => {
           required: false,
         },
       ],
-      order: [["name", "ASC"]],
+      order: [["createdAt", "DESC"]],
       limit: parseInt(limit),
       offset: parseInt(offset),
     });

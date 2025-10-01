@@ -421,8 +421,7 @@
                         </div>
                         <div v-else class="space-y-4"
                             :class="{ 'max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100': dashboardStore.chartData.salesByDay.length > 5 }">
-                            <div v-for="period in dashboardStore.chartData.salesByDay" :key="period.date"
-                                class="space-y-2">
+                            <div v-for="period in sortedSalesByDay" :key="period.date" class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-slate-600">{{ period.date }}</span>
                                     <div class="text-right">
@@ -514,6 +513,21 @@
                             <AnimatedProgressBar :current-value="dashboardStore.data.totalRevenue || 0"
                                 :max-value="monthlyTarget" label="Progresso da Meta" current-label="Atual"
                                 target-label="Meta" color="blue" size="lg" :show-details="true" :show-shine="true" />
+
+                            <!-- Botão para definir metas -->
+                            <div class="flex justify-end">
+                                <router-link to="/app/settings"
+                                    class="inline-flex items-center gap-2 px-3 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                        </path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Definir Metas
+                                </router-link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -804,7 +818,7 @@
                                     d="M5 13l4 4L19 7">
                                 </path>
                             </svg>
-                            🚀 TESTE: Finalizar Venda
+                            Finalizar Venda
                         </div>
                     </button>
                 </div>
@@ -1125,14 +1139,22 @@ const hapticFeedback = () => {
     }
 }
 
-// Progress bars dinâmicos usando metas do store
-const monthlyProgress = computed(() => {
-    const current = dashboardStore.data.totalRevenue || 0
-    const target = dashboardStore.targets.monthlyRevenue
-    return Math.min((current / target) * 100, 100)
-})
+// Progresso da meta de receita
+const monthlyProgress = computed(() => dashboardStore.revenueProgress)
+const monthlyTarget = computed(() => dashboardStore.targets.monthlyRevenue || 25000)
 
-const monthlyTarget = computed(() => dashboardStore.targets.monthlyRevenue)
+// Vendas por período ordenadas por valor (maiores primeiro)
+const sortedSalesByDay = computed(() => {
+    if (!dashboardStore.chartData.salesByDay || dashboardStore.chartData.salesByDay.length === 0) {
+        return []
+    }
+
+    return [...dashboardStore.chartData.salesByDay].sort((a, b) => {
+        const totalA = parseFloat(a.total) || 0
+        const totalB = parseFloat(b.total) || 0
+        return totalB - totalA // Ordem decrescente (maiores primeiro)
+    })
+})
 
 // Calcular dados de crescimento
 const calculateGrowthData = () => {

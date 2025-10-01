@@ -28,15 +28,9 @@ export const useDashboardStore = defineStore("dashboard", {
       previousPeriod: 0,
       growthRate: 0,
     },
-    // Metas dinâmicas
+    // Meta de receita mensal
     targets: {
       monthlyRevenue: 25000,
-      monthlySales: 100,
-      monthlyProducts: 500,
-      monthlyClients: 20,
-      averageTicket: 150,
-      profitMargin: 25,
-      salesPerDay: 5,
     },
     loading: false,
     error: null,
@@ -70,45 +64,19 @@ export const useDashboardStore = defineStore("dashboard", {
       };
     },
 
-    // Progressos dinâmicos baseados nas metas
-    progressMetrics: (state) => ({
-      revenue: Math.min(
-        (state.data.totalRevenue / state.targets.monthlyRevenue) * 100,
-        100
-      ),
-      sales: Math.min(
-        (state.data.totalSales / state.targets.monthlySales) * 100,
-        100
-      ),
-      products: Math.min(
-        (state.data.totalProducts / state.targets.monthlyProducts) * 100,
-        100
-      ),
-      clients: Math.min(
-        (state.data.totalClients / state.targets.monthlyClients) * 100,
-        100
-      ),
-    }),
+    // Progresso da meta de receita
+    revenueProgress: (state) => {
+      const current = state.data.totalRevenue || 0;
+      const target = state.targets.monthlyRevenue || 25000;
+      return Math.min((current / target) * 100, 100);
+    },
 
-    // Status das metas
-    targetStatus: (state) => ({
-      revenue:
-        state.data.totalRevenue >= state.targets.monthlyRevenue
-          ? "achieved"
-          : "pending",
-      sales:
-        state.data.totalSales >= state.targets.monthlySales
-          ? "achieved"
-          : "pending",
-      products:
-        state.data.totalProducts >= state.targets.monthlyProducts
-          ? "achieved"
-          : "pending",
-      clients:
-        state.data.totalClients >= state.targets.monthlyClients
-          ? "achieved"
-          : "pending",
-    }),
+    // Status da meta de receita
+    revenueTargetStatus: (state) => {
+      const current = state.data.totalRevenue || 0;
+      const target = state.targets.monthlyRevenue || 25000;
+      return current >= target ? "achieved" : "pending";
+    },
 
     // Dados para gráficos
     chartData: (state) => ({
@@ -237,29 +205,16 @@ export const useDashboardStore = defineStore("dashboard", {
       this.error = null;
     },
 
-    // Atualizar metas
-    updateTargets(newTargets) {
-      this.targets = { ...this.targets, ...newTargets };
-    },
-
-    // Definir meta específica
+    // Definir meta de receita
     setTarget(targetName, value) {
-      if (this.targets.hasOwnProperty(targetName)) {
-        this.targets[targetName] = value;
+      if (targetName === "monthlyRevenue") {
+        this.targets.monthlyRevenue = value;
       }
     },
 
-    // Resetar metas para valores padrão
-    resetTargets() {
-      this.targets = {
-        monthlyRevenue: 25000,
-        monthlySales: 100,
-        monthlyProducts: 500,
-        monthlyClients: 20,
-        averageTicket: 150,
-        profitMargin: 25,
-        salesPerDay: 5,
-      };
+    // Resetar meta para valor padrão
+    resetTarget() {
+      this.targets.monthlyRevenue = 25000;
     },
   },
 });

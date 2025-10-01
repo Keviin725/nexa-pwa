@@ -260,6 +260,7 @@ router.get("/dashboard", async (req, res) => {
           [Op.between]: [startOfDay, endOfDay],
         },
       },
+      order: [["createdAt", "DESC"]],
     });
 
     // Vendas pendentes
@@ -268,6 +269,7 @@ router.get("/dashboard", async (req, res) => {
         is_active: true,
         payment_status: { [Op.in]: ["pending", "partial"] },
       },
+      order: [["createdAt", "DESC"]],
     });
 
     // Produtos com Stock baixo
@@ -278,6 +280,7 @@ router.get("/dashboard", async (req, res) => {
           [Op.lte]: 5,
         },
       },
+      order: [["createdAt", "DESC"]],
     });
 
     const totalTodayRevenue = todaySales.reduce(
@@ -332,6 +335,7 @@ router.get("/top-products", async (req, res) => {
           include: [{ model: Product, attributes: ["name", "price"] }],
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
 
     // Agrupar produtos por vendas
@@ -382,6 +386,7 @@ router.get("/sales-distribution", async (req, res) => {
           include: [{ model: Product, attributes: ["name", "category"] }],
         },
       ],
+      order: [["createdAt", "DESC"]],
     });
 
     // Agrupar por categoria
