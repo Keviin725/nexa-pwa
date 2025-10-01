@@ -26,20 +26,20 @@ const getClients = async (req, res) => {
         const pendingSales = await Sale.findAll({
           where: {
             ClientId: client.id,
-            payment_method: "credit",
-            payment_status: "pending",
+            paymentMethod: "credit",
+            paymentStatus: "pending",
           },
-          attributes: ["id", "total_amount"],
+          attributes: ["id", "totalAmount"],
         });
 
         // Buscar vendas a crédito parciais do cliente
         const partialSales = await Sale.findAll({
           where: {
             ClientId: client.id,
-            payment_method: "credit",
-            payment_status: "partial",
+            paymentMethod: "credit",
+            paymentStatus: "partial",
           },
-          attributes: ["id", "total_amount"],
+          attributes: ["id", "totalAmount"],
         });
 
         // Calcular dívidas reais considerando pagamentos já feitos
@@ -57,7 +57,7 @@ const getClients = async (req, res) => {
               },
             })) || 0;
 
-          const remainingAmount = sale.total_amount - payments;
+          const remainingAmount = sale.totalAmount - payments;
           if (remainingAmount > 0) {
             totalDebt += remainingAmount;
           }
@@ -74,7 +74,7 @@ const getClients = async (req, res) => {
               },
             })) || 0;
 
-          const remainingAmount = sale.total_amount - payments;
+          const remainingAmount = sale.totalAmount - payments;
           if (remainingAmount > 0) {
             partialDebt += remainingAmount;
           }
@@ -154,7 +154,7 @@ const deleteClient = async (req, res) => {
     }
 
     // Verificar se tem dívidas pendentes
-    if (client.creditBalance > 0) {
+    if (client.credit_balance > 0) {
       return res.status(400).json({
         error: "Não é possível excluir cliente com dívidas pendentes",
       });
@@ -174,12 +174,12 @@ const getClientDebts = async (req, res) => {
 
     let whereClause = {
       ClientId: clientId,
-      payment_method: "credit",
+      paymentMethod: "credit",
       is_active: true,
     };
 
     if (status) {
-      whereClause.payment_status = status;
+      whereClause.paymentStatus = status;
     }
 
     const sales = await Sale.findAll({
@@ -199,7 +199,7 @@ const getClientDebts = async (req, res) => {
         (sum, payment) => sum + payment.amountPaid,
         0
       );
-      const balance = sale.total_amount - totalPaid;
+      const balance = sale.totalAmount - totalPaid;
 
       return {
         ...sale.toJSON(),

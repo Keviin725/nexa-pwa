@@ -509,12 +509,16 @@ import { useClientsStore } from '@/stores/clients'
 import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import { apiService } from '@/services/api'
+import { useNotifications } from '@/composables/useNotifications'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const clientsStore = useClientsStore()
 const authStore = useAuthStore()
+
+// Notifications
+const { handleApiError, handleApiSuccess } = useNotifications()
 
 // Controle de acesso baseado em roles
 const userRole = computed(() => authStore.user?.role || 'seller')
@@ -637,7 +641,7 @@ const saveClient = async () => {
 
         // Validação de formulário
         if (!form.name.trim()) {
-            alert('Nome é obrigatório')
+            handleApiError(new Error('Nome é obrigatório'), 'Validação')
             return
         }
 
@@ -653,13 +657,13 @@ const saveClient = async () => {
         if (result.success) {
             closeModal()
             loadClients()
-            alert('Cliente a fiado salvo com sucesso!')
+            handleApiSuccess('Cliente a fiado salvo com sucesso!', 'Salvar Cliente')
         } else {
-            alert('Erro ao salvar cliente: ' + result.error)
+            handleApiError(new Error(result.error), 'Salvar Cliente')
         }
     } catch (error) {
         console.error('Erro ao salvar cliente:', error)
-        alert('Erro ao salvar cliente')
+        handleApiError(error, 'Salvar Cliente')
     } finally {
         formLoading.value = false
     }
@@ -675,13 +679,13 @@ const deleteClient = async (clientId) => {
 
         if (result.success) {
             loadClients()
-            alert('Cliente a fiado excluído com sucesso!')
+            handleApiSuccess('Cliente a fiado excluído com sucesso!', 'Excluir Cliente')
         } else {
-            alert('Erro ao excluir cliente: ' + result.error)
+            handleApiError(new Error(result.error), 'Excluir Cliente')
         }
     } catch (error) {
         console.error('Erro ao excluir cliente:', error)
-        alert('Erro ao excluir cliente')
+        handleApiError(error, 'Excluir Cliente')
     }
 }
 
@@ -693,7 +697,7 @@ const viewClientHistory = async (client) => {
         showHistoryModal.value = true
     } catch (error) {
         console.error('Erro ao carregar histórico:', error)
-        alert('Erro ao carregar histórico do cliente')
+        handleApiError(error, 'Carregar Histórico')
     }
 }
 
@@ -711,7 +715,7 @@ const viewClientDebts = async (client) => {
         showDebtsModal.value = true
     } catch (error) {
         console.error('Erro ao carregar dívidas:', error)
-        alert('Erro ao carregar dívidas do cliente')
+        handleApiError(error, 'Carregar Dívidas')
     }
 }
 
@@ -761,10 +765,10 @@ const bulkMarkAsPaid = async () => {
         await new Promise(resolve => setTimeout(resolve, 1000))
 
         clearSelection()
-        alert(`${selectedClients.value.length} clientes marcados como pagos!`)
+        handleApiSuccess(`${selectedClients.value.length} clientes marcados como pagos!`, 'Ação em Lote')
     } catch (error) {
         console.error('Erro ao marcar como pago:', error)
-        alert('Erro ao marcar como pago')
+        handleApiError(error, 'Ação em Lote')
     } finally {
         loading.value = false
     }
@@ -776,10 +780,10 @@ const bulkSendReminder = async () => {
         await new Promise(resolve => setTimeout(resolve, 1000))
 
         clearSelection()
-        alert(`Lembretes enviados para ${selectedClients.value.length} clientes!`)
+        handleApiSuccess(`Lembretes enviados para ${selectedClients.value.length} clientes!`, 'Ação em Lote')
     } catch (error) {
         console.error('Erro ao enviar lembretes:', error)
-        alert('Erro ao enviar lembretes')
+        handleApiError(error, 'Ação em Lote')
     } finally {
         loading.value = false
     }
@@ -796,10 +800,10 @@ const bulkDeleteClients = async () => {
 
         clients.value = clients.value.filter(client => !selectedClients.value.includes(client.id))
         clearSelection()
-        alert(`${selectedClients.value.length} clientes excluídos com sucesso!`)
+        handleApiSuccess(`${selectedClients.value.length} clientes excluídos com sucesso!`, 'Ação em Lote')
     } catch (error) {
         console.error('Erro ao excluir clientes:', error)
-        alert('Erro ao excluir clientes')
+        handleApiError(error, 'Ação em Lote')
     } finally {
         loading.value = false
     }
