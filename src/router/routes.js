@@ -94,6 +94,7 @@ const routes = [
       },
     ],
   },
+  // Rotas de pagamento (sem layout)
   // Rotas com AuthLayout (autenticação)
   {
     path: "/auth",

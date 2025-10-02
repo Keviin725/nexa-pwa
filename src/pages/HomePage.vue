@@ -241,7 +241,7 @@
                         class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
                         <div class="text-2xl font-bold text-green-600 mb-1 break-words">MZN {{
                             dashboardStore.data.totalRevenue || 0
-                            }}</div>
+                        }}</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
                     <div
@@ -384,7 +384,7 @@
                             <div>
                                 <span class="font-medium text-slate-800">#{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="text-right">
                                 <div class="font-semibold text-green-600">{{ formatPrice(sale.totalAmount) }}</div>
