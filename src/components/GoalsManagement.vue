@@ -25,15 +25,12 @@
             <!-- Meta de Receita -->
             <div class="p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
                 <div class="flex items-center justify-between mb-4">
+
                     <div>
-                        <h4 class="text-lg font-semibold text-slate-800">Meta de Receita Mensal</h4>
-                        <p class="text-sm text-slate-600">Acompanhe o progresso da sua meta</p>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-3xl font-bold text-green-600">
-                            MZN {{ formatNumber(dashboardStore.targets.monthlyRevenue) }}
+                        <div class="text-2xl font-bold text-green-600">
+                            <p class="text-sm text-slate-500">Meta definida</p>
+                            {{ formatNumber(dashboardStore.targets.monthlyRevenue) }}MZN
                         </div>
-                        <div class="text-sm text-slate-500">Meta definida</div>
                     </div>
                 </div>
 
@@ -49,11 +46,11 @@
                             <span class="font-medium text-green-600">MZN {{
                                 formatNumber(dashboardStore.data.totalRevenue) }}</span>
                             <span class="text-slate-500"> / MZN {{ formatNumber(dashboardStore.targets.monthlyRevenue)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="text-green-600 font-semibold">
                             {{ Math.round((dashboardStore.data.totalRevenue / dashboardStore.targets.monthlyRevenue) *
-                            100) }}%
+                                100) }}%
                         </div>
                     </div>
                 </div>

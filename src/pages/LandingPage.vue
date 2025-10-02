@@ -454,7 +454,78 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Oferta Pro -->
+                    <div
+                        class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative">
+                        <!-- Badge de Oferta -->
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span
+                                class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                                🎁 OFERTA ESPECIAL
+                            </span>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Oferta Pro</h3>
+                            <p class="text-gray-600 mb-6">30 dias de acesso completo</p>
+                            <div class="mb-8">
+                                <div class="flex items-baseline justify-center">
+                                    <span class="text-5xl font-bold text-blue-600">Gratuito</span>
+                                </div>
+                                <p class="text-sm text-blue-600 font-semibold mt-2">Acesso completo ao Pro</p>
+                            </div>
+                            <ul class="space-y-4 mb-8 text-left">
+                                <li class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Todas as funcionalidades Pro</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700">IA Stock Predictor</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700">AI Sales Optimizer</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700">AI Customer Insights</span>
+                                </li>
+                            </ul>
+                            <router-link to="/auth/register"
+                                class="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold text-center block hover:shadow-lg shadow-lg">
+                                🎁 Aproveitar Oferta
+                            </router-link>
+                        </div>
+                    </div>
+
                     <!-- Plano Starter -->
                     <div
                         class="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
@@ -470,11 +541,11 @@
                             <p class="text-gray-600 mb-6">Perfeito para começar</p>
                             <div class="mb-8">
                                 <div class="flex items-baseline justify-center">
-                                    <span class="text-5xl font-bold text-gray-900">{{ isYearly ? 'MT 480' : 'MT 600'
-                                        }}</span>
+                                    <span class="text-5xl font-bold text-gray-900">{{ isYearly ? 'MT 399' : 'MT 499'
+                                    }}</span>
                                     <span class="text-gray-600 ml-2">/mês</span>
                                 </div>
-                                <p v-if="isYearly" class="text-sm text-green-600 font-semibold mt-2">Economize MT 1.440
+                                <p v-if="isYearly" class="text-sm text-green-600 font-semibold mt-2">Economize MT 1.200
                                     por ano</p>
                             </div>
                             <ul class="space-y-4 mb-8 text-left">
@@ -552,10 +623,10 @@
                             <p class="text-blue-100 mb-6">Para empresas em crescimento</p>
                             <div class="mb-8">
                                 <div class="flex items-baseline justify-center">
-                                    <span class="text-5xl font-bold">{{ isYearly ? 'MT 960' : 'MT 1.200' }}</span>
+                                    <span class="text-5xl font-bold">{{ isYearly ? 'MT 799' : 'MT 999' }}</span>
                                     <span class="text-blue-100 ml-2">/mês</span>
                                 </div>
-                                <p v-if="isYearly" class="text-sm text-green-300 font-semibold mt-2">Economize MT 2.880
+                                <p v-if="isYearly" class="text-sm text-green-300 font-semibold mt-2">Economize MT 2.400
                                     por ano</p>
                             </div>
                             <ul class="space-y-4 mb-8 text-left">
@@ -637,11 +708,11 @@
                             <p class="text-gray-600 mb-6">Para grandes empresas</p>
                             <div class="mb-8">
                                 <div class="flex items-baseline justify-center">
-                                    <span class="text-5xl font-bold text-gray-900">{{ isYearly ? 'MT 2.000' : 'MT 2.500'
-                                    }}</span>
+                                    <span class="text-5xl font-bold text-gray-900">{{ isYearly ? 'MT 1.599' : 'MT 1.999'
+                                        }}</span>
                                     <span class="text-gray-600 ml-2">/mês</span>
                                 </div>
-                                <p v-if="isYearly" class="text-sm text-green-600 font-semibold mt-2">Economize MT 6.000
+                                <p v-if="isYearly" class="text-sm text-green-600 font-semibold mt-2">Economize MT 4.800
                                     por ano</p>
                             </div>
                             <ul class="space-y-4 mb-8 text-left">
@@ -715,8 +786,11 @@
                         </div>
 
                         <div class="bg-white rounded-2xl p-6 shadow-lg">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-3">Há período de teste gratuito?</h4>
-                            <p class="text-gray-600">Oferecemos 14 dias de teste gratuito para todos os planos. Sem
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3">Há oferta especial para novos usuários?
+                            </h4>
+                            <p class="text-gray-600">Sim! Oferecemos uma oferta especial: 30 dias de acesso completo ao
+                                plano Pro gratuitamente.
+                                Sem
                                 compromisso, sem cartão de crédito.</p>
                         </div>
 

@@ -104,7 +104,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                             <div class="text-2xl font-bold text-green-600 mb-1">{{ formatPrice(metrics.totalRevenue)
-                            }}MT
+                                }}MT
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                         </div>
@@ -409,7 +409,6 @@ const loading = computed(() => reportsStore.loading)
 const error = computed(() => reportsStore.error)
 const filters = computed(() => reportsStore.filters)
 const metrics = computed(() => {
-    console.log("📊 Metrics na interface:", reportsStore.metrics)
     return reportsStore.metrics
 })
 const salesData = computed(() => reportsStore.salesData)

@@ -487,14 +487,8 @@ const loadProducts = async () => {
 
         // Carregar produtos usando a store
         const result = await productsStore.loadProducts()
-        console.log('✅ Produtos carregados:', result)
-        console.log('📦 Produtos na store:', productsStore.products)
-        console.log('📦 Produtos computados:', products.value)
-
         // Verificar se os produtos foram atualizados
         if (products.value && products.value.length > 0) {
-            console.log('📊 Primeiro produto:', products.value[0])
-            console.log('📊 Stock do primeiro produto:', products.value[0].stock)
         }
 
         // Forçar reatividade
@@ -681,7 +675,6 @@ const handleSaleCreated = async () => {
 
             // Atualizar a store diretamente
             productsStore.$patch({ products: data })
-            console.log('✅ Store atualizada diretamente')
         } catch (error) {
             console.error('❌ Erro ao recarregar produtos:', error)
         }
@@ -701,7 +694,6 @@ const handleSaleDeleted = async () => {
 
             // Atualizar a store diretamente
             productsStore.$patch({ products: data })
-            console.log('✅ Store atualizada diretamente')
         } catch (error) {
             console.error('❌ Erro ao recarregar produtos:', error)
         }

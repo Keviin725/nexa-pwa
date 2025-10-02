@@ -168,9 +168,7 @@ export const useSalesStore = defineStore("sales", {
       const { handleApiError, handleApiSuccess } = useNotifications();
 
       try {
-        console.log("🔄 Enviando dados para API:", saleData);
         const response = await apiService.sales.create(saleData);
-        console.log("✅ Resposta da API:", response.data);
 
         this.sales.unshift(response.data);
 

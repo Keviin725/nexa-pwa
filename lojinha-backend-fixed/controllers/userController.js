@@ -2,6 +2,9 @@ const { User, Sale } = require("../models/associations");
 const bcrypt = require("bcryptjs");
 const codeGenerator = require("../utils/codeGenerator");
 const { Op } = require("sequelize");
+const {
+  validateSubscriptionLimits,
+} = require("../middleware/subscriptionValidation");
 
 // GET /users - Listar todos os usuários
 const getUsers = async (req, res) => {
@@ -98,6 +101,19 @@ const createUser = async (req, res) => {
       return res.status(400).json({
         error: "Já existe um usuário com este email",
       });
+    }
+
+    // Verificar limites de subscription (já validado pelo middleware)
+    const planLimits = req.planLimits;
+    if (planLimits.maxUsers !== -1) {
+      const userCount = await User.count({ where: { is_active: true } });
+      if (userCount >= planLimits.maxUsers) {
+        return res.status(403).json({
+          error: "Limite de usuários atingido",
+          message: `Seu plano ${req.subscriptionPlan} permite apenas ${planLimits.maxUsers} usuário(s)`,
+          upgradeRequired: true,
+        });
+      }
     }
 
     // Hash da senha

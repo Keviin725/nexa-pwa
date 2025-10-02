@@ -1,6 +1,9 @@
 const { Product } = require("../models/associations");
 const { Op } = require("sequelize");
 const codeGenerator = require("../utils/codeGenerator");
+const {
+  validateSubscriptionLimits,
+} = require("../middleware/subscriptionValidation");
 
 // GET /products - Listar todos os produtos
 const getProducts = async (req, res) => {
@@ -53,6 +56,19 @@ const getProductById = async (req, res) => {
 // POST /products - Criar novo produto
 const createProduct = async (req, res) => {
   try {
+    // Verificar limites de subscription (já validado pelo middleware)
+    const planLimits = req.planLimits;
+    if (planLimits.maxProducts !== -1) {
+      const productCount = await Product.count({ where: { is_active: true } });
+      if (productCount >= planLimits.maxProducts) {
+        return res.status(403).json({
+          error: "Limite de produtos atingido",
+          message: `Seu plano ${req.subscriptionPlan} permite apenas ${planLimits.maxProducts} produtos`,
+          upgradeRequired: true,
+        });
+      }
+    }
+
     // Gerar código único para o produto
     const productCode = await codeGenerator.generateProductCode(Product);
 

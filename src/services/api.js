@@ -72,6 +72,13 @@ export const apiService = {
       api.get("/reports/sales-distribution", { params }),
   },
 
+  // Subscription
+  subscription: {
+    getInfo: () => api.get("/subscription/info"),
+    updatePlan: (data) => api.put("/subscription/plan", data),
+    checkLimits: () => api.get("/subscription/limits"),
+  },
+
   // Produtos
   products: {
     getAll: (params = {}) => api.get("/products", { params }),

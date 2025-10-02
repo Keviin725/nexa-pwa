@@ -49,6 +49,12 @@ const User = sequelize.define(
       allowNull: true,
       comment: "Código único do usuário",
     },
+    subscription_plan: {
+      type: DataTypes.ENUM("teste", "starter", "pro", "enterprise"),
+      defaultValue: "teste",
+      allowNull: false,
+      comment: "Plano de subscription do usuário",
+    },
   },
   {
     tableName: "users",

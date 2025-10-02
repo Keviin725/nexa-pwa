@@ -25,94 +25,6 @@
             <!-- 1. META DE RECEITA MENSAL - Nova seção -->
             <GoalsManagement />
 
-            <!-- 2. PLANO ATUAL - Nova seção -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-gradient-to-r from-green-100 to-blue-100 rounded-lg">
-                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-800">Plano Atual</h2>
-                        <p class="text-sm text-slate-600">Gerencie sua subscription</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <!-- Plano Teste -->
-                    <div :class="[
-                        'p-4 rounded-lg border-2 transition-all duration-200',
-                        isTestPlan ? 'border-gray-300 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                    ]">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
-                            <h3 class="font-semibold text-gray-800">Teste</h3>
-                            <span v-if="isTestPlan"
-                                class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">Atual</span>
-                        </div>
-                        <p class="text-xs text-gray-600 mb-3">Funcionalidades básicas</p>
-                        <button v-if="!isTestPlan" @click="setPlan('teste')"
-                            class="w-full px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors">
-                            Selecionar
-                        </button>
-                    </div>
-
-                    <!-- Plano Starter -->
-                    <div :class="[
-                        'p-4 rounded-lg border-2 transition-all duration-200',
-                        isStarterPlan ? 'border-green-300 bg-green-50' : 'border-green-200 bg-white hover:border-green-300'
-                    ]">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <h3 class="font-semibold text-green-800">Starter</h3>
-                            <span v-if="isStarterPlan"
-                                class="text-xs bg-green-200 text-green-700 px-2 py-1 rounded-full">Atual</span>
-                        </div>
-                        <p class="text-xs text-green-600 mb-3">Perfeito para começar</p>
-                        <button v-if="!isStarterPlan" @click="setPlan('starter')"
-                            class="w-full px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors">
-                            Selecionar
-                        </button>
-                    </div>
-
-                    <!-- Plano Pro -->
-                    <div :class="[
-                        'p-4 rounded-lg border-2 transition-all duration-200',
-                        isProPlan ? 'border-blue-300 bg-blue-50' : 'border-blue-200 bg-white hover:border-blue-300'
-                    ]">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <h3 class="font-semibold text-blue-800">Pro</h3>
-                            <span v-if="isProPlan"
-                                class="text-xs bg-blue-200 text-blue-700 px-2 py-1 rounded-full">Atual</span>
-                        </div>
-                        <p class="text-xs text-blue-600 mb-3">IA + Funcionalidades avançadas</p>
-                        <button v-if="!isProPlan" @click="setPlan('pro')"
-                            class="w-full px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors">
-                            Selecionar
-                        </button>
-                    </div>
-
-                    <!-- Plano Enterprise -->
-                    <div :class="[
-                        'p-4 rounded-lg border-2 transition-all duration-200',
-                        isEnterprisePlan ? 'border-purple-300 bg-purple-50' : 'border-purple-200 bg-white hover:border-purple-300'
-                    ]">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-                            <h3 class="font-semibold text-purple-800">Enterprise</h3>
-                            <span v-if="isEnterprisePlan"
-                                class="text-xs bg-purple-200 text-purple-700 px-2 py-1 rounded-full">Atual</span>
-                        </div>
-                        <p class="text-xs text-purple-600 mb-3">Todas as funcionalidades de IA</p>
-                        <button v-if="!isEnterprisePlan" @click="setPlan('enterprise')"
-                            class="w-full px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors">
-                            Selecionar
-                        </button>
-                    </div>
-                </div>
-            </div>
 
             <!-- 3. FUNCIONALIDADES DE IA - Nova seção -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -673,26 +585,10 @@ const refreshSystem = () => {
     }
 }
 
-// Subscription Management
-import { useSubscription } from '@/composables/useSubscription'
-import { useSubscriptionStore } from '@/stores/subscription'
 
-const subscriptionStore = useSubscriptionStore()
-const {
-    isTestPlan,
-    isStarterPlan,
-    isProPlan,
-    isEnterprisePlan,
-    currentPlanInfo
-} = useSubscription()
-
-const setPlan = (plan) => {
-    subscriptionStore.setPlan(plan)
-}
 
 // Lifecycle
 onMounted(() => {
     loadSystemConfig()
-    subscriptionStore.init()
 })
 </script>

@@ -1,18 +1,36 @@
 <template>
     <div class="flex items-center gap-2">
+        <!-- Loading State -->
+        <div v-if="loading" class="text-xs text-gray-500">
+            Carregando...
+        </div>
+
         <!-- Badge do Plano -->
-        <div :class="[
+        <div v-else :class="[
             'px-3 py-1 rounded-full text-xs font-bold',
             planColorClasses
         ]">
-            {{ planName }}
+            {{ planName || 'Teste' }}
         </div>
 
         <!-- Indicador de Status -->
-        <div :class="[
+        <div v-if="!loading" :class="[
             'w-2 h-2 rounded-full',
             statusColorClasses
         ]"></div>
+
+        <!-- Informações de Uso (se disponível) -->
+        <div v-if="!loading && usage && limits" class="flex items-center gap-1 text-xs text-slate-500">
+            <span v-if="limits.maxUsers !== -1" class="px-1">
+                👥 {{ usage.users }}/{{ limits.maxUsers }}
+            </span>
+            <span v-if="limits.maxProducts !== -1" class="px-1">
+                📦 {{ usage.products }}/{{ limits.maxProducts }}
+            </span>
+            <span v-if="limits.maxSales !== -1" class="px-1">
+                🛒 {{ usage.sales }}/{{ limits.maxSales }}
+            </span>
+        </div>
     </div>
 </template>
 
@@ -20,7 +38,20 @@
 import { computed } from 'vue';
 import { useSubscription } from '@/composables/useSubscription';
 
-const { planName, planColor, isTestPlan, isStarterPlan, isProPlan, isEnterprisePlan } = useSubscription();
+const {
+    planName,
+    planColor,
+    isTestPlan,
+    isStarterPlan,
+    isProPlan,
+    isEnterprisePlan,
+    usage,
+    limits,
+    usagePercentage,
+    loading
+} = useSubscription();
+
+// Componente funcionando com dados do store
 
 const planColorClasses = computed(() => {
     switch (planColor.value) {

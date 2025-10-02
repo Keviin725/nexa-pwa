@@ -11,6 +11,11 @@ const {
   getLowStockProducts,
 } = require("../controllers/productController");
 
+// Middleware de validação de subscription
+const {
+  validateSubscriptionLimits,
+} = require("../middleware/subscriptionValidation");
+
 // Rotas específicas (devem vir antes das rotas com parâmetros)
 router.get("/categories", getCategories);
 router.get("/low-stock", getLowStockProducts);
@@ -18,7 +23,7 @@ router.get("/low-stock", getLowStockProducts);
 // Rotas principais
 router.get("/", getProducts);
 router.get("/:id", getProductById);
-router.post("/", createProduct);
+router.post("/", validateSubscriptionLimits("products"), createProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 

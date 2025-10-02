@@ -81,7 +81,6 @@ export const useReportsStore = defineStore("reports", {
           if (dashboardResponse.data) {
             // Usar dados diretos do backend
             const data = dashboardResponse.data;
-            console.log("📊 Dashboard data recebido:", data);
 
             // Calcular métricas baseadas nos dados reais
             const totalSales = data.totalSales || 0;

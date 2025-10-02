@@ -161,6 +161,7 @@ import NotificationCenter from '../components/NotificationCenter.vue'
 import UserProfile from '../components/UserProfile.vue'
 import SubscriptionBadge from '../components/SubscriptionBadge.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useSubscriptionStore } from '@/stores/subscription'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 
 export default {
@@ -187,11 +188,15 @@ export default {
         const canManageUsers = computed(() => permissionManager.hasPermission(PERMISSIONS.USERS_MANAGE))
         const canViewSettings = computed(() => permissionManager.hasPermission(PERMISSIONS.SETTINGS_VIEW))
 
-        onMounted(() => {
+        onMounted(async () => {
             // Inicializar o gerenciador de permissões com o usuário atual
             if (authStore.user) {
                 permissionManager.setCurrentUser(authStore.user)
             }
+
+            // Inicializar subscription store
+            const subscriptionStore = useSubscriptionStore()
+            await subscriptionStore.init()
         })
 
         return {

@@ -20,6 +20,11 @@ const {
   canManageUser,
 } = require("../middleware/auth");
 
+// Middleware de validação de subscription
+const {
+  validateSubscriptionLimits,
+} = require("../middleware/subscriptionValidation");
+
 // GET /users/stats - Estatísticas dos usuários
 router.get(
   "/stats",
@@ -53,6 +58,7 @@ router.post(
   authenticateToken,
   requireActiveUser,
   requireRole(["admin", "manager"]),
+  validateSubscriptionLimits("users"),
   createUser
 );
 

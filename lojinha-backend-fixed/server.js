@@ -13,6 +13,7 @@ const systemConfigRoutes = require("./routes/systemConfig");
 const reportsRoutes = require("./routes/reports");
 const dashboardRoutes = require("./routes/dashboard");
 const categoriesRoutes = require("./routes/categories");
+const subscriptionRoutes = require("./routes/subscription");
 
 // Importar modelos
 const sequelize = require("./config/database");
@@ -100,6 +101,7 @@ sequelize
     app.use("/reports", reportsRoutes);
     app.use("/dashboard", dashboardRoutes);
     app.use("/categories", categoriesRoutes);
+    app.use("/subscription", subscriptionRoutes);
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {

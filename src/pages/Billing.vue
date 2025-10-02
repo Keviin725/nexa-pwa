@@ -45,10 +45,12 @@
                             <p class="text-sm text-slate-600 mt-1">Sua assinatura atual</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <div
-                                class="w-3 h-3 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse">
+                            <div class="w-3 h-3 rounded-full animate-pulse" :class="isTestPlan ? 'bg-gray-500' :
+                                isStarterPlan ? 'bg-green-500' :
+                                    isProPlan ? 'bg-blue-500' :
+                                        isEnterprisePlan ? 'bg-purple-500' : 'bg-gray-500'">
                             </div>
-                            <span class="text-sm text-slate-600">{{ currentPlan.name }}</span>
+                            <span class="text-sm text-slate-600">{{ currentPlanInfo?.name || 'Teste' }}</span>
                         </div>
                     </div>
 
@@ -65,10 +67,15 @@
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-medium text-slate-700">Plano</h4>
-                                    <p class="text-xs text-slate-500">{{ currentPlan.name }}</p>
+                                    <p class="text-xs text-slate-500">
+                                        <span v-if="subscriptionLoading">Carregando...</span>
+                                        <span v-else>{{ currentPlanInfo?.name || 'Teste' }}</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-2xl font-bold text-purple-600">MT {{ formatPrice(currentPlan.price) }}
+                            <div class="text-2xl font-bold text-purple-600">
+                                <span v-if="subscriptionLoading">-</span>
+                                <span v-else>MT {{ formatPrice(currentPlanInfo?.price || 0) }}</span>
                             </div>
                             <div class="text-xs text-slate-500">por mês</div>
                         </div>
@@ -84,12 +91,20 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-medium text-slate-700">Próximo Pagamento</h4>
-                                    <p class="text-xs text-slate-500">{{ formatDate(nextPayment) }}</p>
+                                    <h4 class="text-sm font-medium text-slate-700">
+                                        {{ isTestPlan ? 'Período de Teste' : 'Próximo Pagamento' }}
+                                    </h4>
+                                    <p class="text-xs text-slate-500">
+                                        {{ isTestPlan ? '30 dias gratuitos' : formatDate(nextPayment) }}
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-2xl font-bold text-green-600">{{ daysUntilPayment }}</div>
-                            <div class="text-xs text-slate-500">dias restantes</div>
+                            <div class="text-2xl font-bold text-green-600">
+                                {{ isTestPlan ? '30' : daysUntilPayment }}
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                {{ isTestPlan ? 'dias de teste' : 'dias restantes' }}
+                            </div>
                         </div>
 
                         <div class="bg-white rounded-xl p-4 border border-slate-200">
@@ -132,23 +147,92 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Plano Básico -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Oferta Pro -->
+                    <div class="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-2 rounded-xl p-6"
+                        :class="isTestPlan ? 'border-blue-500 bg-blue-100' : 'border-blue-200'">
+                        <div v-if="isTestPlan" class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span
+                                class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-lg">
+                                🎁 Oferta Ativa
+                            </span>
+                        </div>
+                        <div v-else class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span
+                                class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-lg">
+                                🎁 OFERTA ESPECIAL
+                            </span>
+                        </div>
+
+                        <div class="text-center mb-6">
+                            <h3 class="text-lg font-semibold text-slate-800">Oferta Pro</h3>
+                            <div class="mt-2">
+                                <span class="text-3xl font-bold text-blue-600">Gratuito</span>
+                                <span class="text-slate-600">por 30 dias</span>
+                            </div>
+                            <p class="text-sm text-blue-600 mt-2">Acesso completo ao Pro</p>
+                        </div>
+
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm text-slate-700">Todas as funcionalidades Pro</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm text-slate-700">AI Stock Predictor</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm text-slate-700">AI Sales Optimizer</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm text-slate-700">AI Customer Insights</span>
+                            </li>
+                        </ul>
+
+                        <button v-if="!isTestPlan" @click="changePlan('teste')"
+                            class="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium shadow-lg">
+                            🎁 Aproveitar Oferta
+                        </button>
+                        <div v-else
+                            class="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-center font-medium shadow-lg">
+                            🎁 Oferta Ativa
+                        </div>
+                    </div>
+
+                    <!-- Plano Starter -->
                     <div class="relative bg-white border-2 rounded-xl p-6"
-                        :class="currentPlan.id === 'basic' ? 'border-purple-500 bg-purple-50' : 'border-slate-200'">
-                        <div v-if="currentPlan.id === 'basic'"
-                            class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                            <span class="bg-purple-500 text-white text-xs font-medium px-3 py-1 rounded-full">Plano
+                        :class="isStarterPlan ? 'border-green-500 bg-green-50' : 'border-slate-200'">
+                        <div v-if="isStarterPlan" class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span class="bg-green-500 text-white text-xs font-medium px-3 py-1 rounded-full">Plano
                                 Atual</span>
                         </div>
 
                         <div class="text-center mb-6">
-                            <h3 class="text-lg font-semibold text-slate-800">Básico</h3>
+                            <h3 class="text-lg font-semibold text-slate-800">Starter</h3>
                             <div class="mt-2">
-                                <span class="text-3xl font-bold text-slate-800">MT 99</span>
+                                <span class="text-3xl font-bold text-slate-800">MT 499</span>
                                 <span class="text-slate-600">/mês</span>
                             </div>
-                            <p class="text-sm text-slate-600 mt-2">Ideal para pequenas lojas</p>
+                            <p class="text-sm text-slate-600 mt-2">Perfeito para começar</p>
                         </div>
 
                         <ul class="space-y-3 mb-6">
@@ -178,32 +262,31 @@
                             </li>
                         </ul>
 
-                        <button v-if="currentPlan.id !== 'basic'" @click="changePlan('basic')"
-                            class="w-full py-2 px-4 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium">
+                        <button v-if="!isStarterPlan" @click="changePlan('starter')"
+                            class="w-full py-2 px-4 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors font-medium">
                             Escolher Plano
                         </button>
                         <div v-else
-                            class="w-full py-2 px-4 bg-purple-100 text-purple-700 rounded-lg text-center font-medium">
+                            class="w-full py-2 px-4 bg-green-100 text-green-700 rounded-lg text-center font-medium">
                             Plano Atual
                         </div>
                     </div>
 
-                    <!-- Plano Profissional -->
+                    <!-- Plano Pro -->
                     <div class="relative bg-white border-2 rounded-xl p-6"
-                        :class="currentPlan.id === 'professional' ? 'border-purple-500 bg-purple-50' : 'border-slate-200'">
-                        <div v-if="currentPlan.id === 'professional'"
-                            class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                            <span class="bg-purple-500 text-white text-xs font-medium px-3 py-1 rounded-full">Plano
+                        :class="isProPlan ? 'border-blue-500 bg-blue-50' : 'border-slate-200'">
+                        <div v-if="isProPlan" class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span class="bg-blue-500 text-white text-xs font-medium px-3 py-1 rounded-full">Plano
                                 Atual</span>
                         </div>
 
                         <div class="text-center mb-6">
-                            <h3 class="text-lg font-semibold text-slate-800">Profissional</h3>
+                            <h3 class="text-lg font-semibold text-slate-800">Pro</h3>
                             <div class="mt-2">
-                                <span class="text-3xl font-bold text-slate-800">MT 199</span>
+                                <span class="text-3xl font-bold text-slate-800">MT 999</span>
                                 <span class="text-slate-600">/mês</span>
                             </div>
-                            <p class="text-sm text-slate-600 mt-2">Para lojas em crescimento</p>
+                            <p class="text-sm text-slate-600 mt-2">IA + Funcionalidades avançadas</p>
                         </div>
 
                         <ul class="space-y-3 mb-6">
@@ -221,7 +304,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Relatórios avançados</span>
+                                <span class="text-sm text-slate-700">IA Stock Predictor</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
@@ -229,7 +312,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Suporte prioritário</span>
+                                <span class="text-sm text-slate-700">AI Sales Optimizer</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
@@ -237,36 +320,35 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Integração com pagamentos</span>
+                                <span class="text-sm text-slate-700">AI Customer Insights</span>
                             </li>
                         </ul>
 
-                        <button v-if="currentPlan.id !== 'professional'" @click="changePlan('professional')"
-                            class="w-full py-2 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                        <button v-if="!isProPlan" @click="changePlan('pro')"
+                            class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-medium">
                             Escolher Plano
                         </button>
                         <div v-else
-                            class="w-full py-2 px-4 bg-purple-100 text-purple-700 rounded-lg text-center font-medium">
+                            class="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-lg text-center font-medium">
                             Plano Atual
                         </div>
                     </div>
 
-                    <!-- Plano Empresarial -->
+                    <!-- Plano Enterprise -->
                     <div class="relative bg-white border-2 rounded-xl p-6"
-                        :class="currentPlan.id === 'enterprise' ? 'border-purple-500 bg-purple-50' : 'border-slate-200'">
-                        <div v-if="currentPlan.id === 'enterprise'"
-                            class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        :class="isEnterprisePlan ? 'border-purple-500 bg-purple-50' : 'border-slate-200'">
+                        <div v-if="isEnterprisePlan" class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                             <span class="bg-purple-500 text-white text-xs font-medium px-3 py-1 rounded-full">Plano
                                 Atual</span>
                         </div>
 
                         <div class="text-center mb-6">
-                            <h3 class="text-lg font-semibold text-slate-800">Empresarial</h3>
+                            <h3 class="text-lg font-semibold text-slate-800">Enterprise</h3>
                             <div class="mt-2">
-                                <span class="text-3xl font-bold text-slate-800">MT 399</span>
+                                <span class="text-3xl font-bold text-slate-800">MT 1.999</span>
                                 <span class="text-slate-600">/mês</span>
                             </div>
-                            <p class="text-sm text-slate-600 mt-2">Para grandes empresas</p>
+                            <p class="text-sm text-slate-600 mt-2">Todas as funcionalidades de IA</p>
                         </div>
 
                         <ul class="space-y-3 mb-6">
@@ -284,7 +366,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Relatórios personalizados</span>
+                                <span class="text-sm text-slate-700">AI Analytics Dashboard</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
@@ -292,7 +374,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Suporte 24/7</span>
+                                <span class="text-sm text-slate-700">AI Mobile Assistant</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
@@ -300,18 +382,85 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span class="text-sm text-slate-700">Múltiplas lojas</span>
+                                <span class="text-sm text-slate-700">AI Security & Permissions</span>
                             </li>
                         </ul>
 
-                        <button v-if="currentPlan.id !== 'enterprise'" @click="changePlan('enterprise')"
-                            class="w-full py-2 px-4 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium">
+                        <button v-if="!isEnterprisePlan" @click="changePlan('enterprise')"
+                            class="w-full py-2 px-4 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors font-medium">
                             Escolher Plano
                         </button>
                         <div v-else
                             class="w-full py-2 px-4 bg-purple-100 text-purple-700 rounded-lg text-center font-medium">
                             Plano Atual
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uso Atual -->
+            <div v-if="usage && limits" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-800">Uso Atual</h2>
+                        <p class="text-sm text-slate-600">Monitorize o uso dos seus recursos</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Usuários -->
+                    <div v-if="limits.maxUsers !== -1" class="bg-slate-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-medium text-slate-700">Usuários</h3>
+                            <span class="text-sm text-slate-500">{{ usage.users }}/{{ limits.maxUsers }}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div :class="[
+                                'h-2 rounded-full transition-all duration-300',
+                                usagePercentage('users') >= 80 ? 'bg-red-500' :
+                                    usagePercentage('users') >= 60 ? 'bg-yellow-500' : 'bg-green-500'
+                            ]" :style="{ width: `${usagePercentage('users')}%` }"></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">{{ usagePercentage('users') }}% utilizado</p>
+                    </div>
+
+                    <!-- Produtos -->
+                    <div v-if="limits.maxProducts !== -1" class="bg-slate-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-medium text-slate-700">Produtos</h3>
+                            <span class="text-sm text-slate-500">{{ usage.products }}/{{ limits.maxProducts }}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div :class="[
+                                'h-2 rounded-full transition-all duration-300',
+                                usagePercentage('products') >= 80 ? 'bg-red-500' :
+                                    usagePercentage('products') >= 60 ? 'bg-yellow-500' : 'bg-green-500'
+                            ]" :style="{ width: `${usagePercentage('products')}%` }"></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">{{ usagePercentage('products') }}% utilizado</p>
+                    </div>
+
+                    <!-- Vendas -->
+                    <div v-if="limits.maxSales !== -1" class="bg-slate-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-medium text-slate-700">Vendas</h3>
+                            <span class="text-sm text-slate-500">{{ usage.sales }}/{{ limits.maxSales }}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div :class="[
+                                'h-2 rounded-full transition-all duration-300',
+                                usagePercentage('sales') >= 80 ? 'bg-red-500' :
+                                    usagePercentage('sales') >= 60 ? 'bg-yellow-500' : 'bg-green-500'
+                            ]" :style="{ width: `${usagePercentage('sales')}%` }"></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">{{ usagePercentage('sales') }}% utilizado</p>
                     </div>
                 </div>
             </div>
@@ -485,15 +634,28 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useSubscription } from '@/composables/useSubscription'
+import { useNotifications } from '@/composables/useNotifications'
+
+// Subscription system
+const {
+    isTestPlan,
+    isStarterPlan,
+    isProPlan,
+    isEnterprisePlan,
+    currentPlanInfo,
+    usage,
+    limits,
+    usagePercentage,
+    loading: subscriptionLoading,
+    updatePlan,
+    loadSubscriptionInfo
+} = useSubscription()
+
+const { handleApiSuccess, handleApiError } = useNotifications()
 
 // Estado reativo
 const subscriptionStatus = ref('active')
-const currentPlan = ref({
-    id: 'professional',
-    name: 'Profissional',
-    price: 199
-})
-
 const nextPayment = ref(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) // 30 dias
 const showPaymentModal = ref(false)
 const selectedPaymentMethod = ref('')
@@ -551,15 +713,31 @@ const formatDate = (date) => {
     return new Date(date).toLocaleDateString('pt-PT')
 }
 
-const changePlan = (planId) => {
+const changePlan = async (planId) => {
     const plans = {
-        'basic': { id: 'basic', name: 'Básico', price: 99 },
-        'professional': { id: 'professional', name: 'Profissional', price: 199 },
-        'enterprise': { id: 'enterprise', name: 'Empresarial', price: 399 }
+        'teste': { id: 'teste', name: 'Teste', price: 0, isFree: true, trialDays: 30 },
+        'starter': { id: 'starter', name: 'Starter', price: 99, isFree: false },
+        'pro': { id: 'pro', name: 'Pro', price: 199, isFree: false },
+        'enterprise': { id: 'enterprise', name: 'Enterprise', price: 399, isFree: false }
     }
 
     selectedPlan.value = plans[planId]
-    showPaymentModal.value = true
+
+    // Se for plano pago, mostrar modal de pagamento
+    if (!plans[planId].isFree) {
+        showPaymentModal.value = true
+    } else {
+        // Se for plano gratuito, atualizar diretamente
+        try {
+            await updatePlan(planId)
+            const message = planId === 'teste'
+                ? 'Plano de teste ativado! Você tem 30 dias gratuitos.'
+                : 'Plano atualizado com sucesso!'
+            handleApiSuccess(message)
+        } catch (error) {
+            handleApiError(error)
+        }
+    }
 }
 
 const closePaymentModal = () => {
@@ -577,8 +755,8 @@ const processPayment = async () => {
         // Simular processamento de pagamento
         await new Promise(resolve => setTimeout(resolve, 2000))
 
-        // Atualizar plano atual
-        currentPlan.value = selectedPlan.value
+        // Atualizar plano no sistema de subscription
+        await updatePlan(selectedPlan.value.id)
 
         // Adicionar ao histórico
         paymentHistory.value.unshift({
@@ -589,19 +767,23 @@ const processPayment = async () => {
             status: 'paid'
         })
 
-        alert('Pagamento processado com sucesso!')
+        handleApiSuccess('Pagamento processado com sucesso!')
         closePaymentModal()
     } catch (error) {
         console.error('Erro ao processar pagamento:', error)
-        alert('Erro ao processar pagamento')
+        handleApiError(error)
     } finally {
         processing.value = false
     }
 }
 
 // Lifecycle
-onMounted(() => {
-    console.log('Página de assinaturas carregada')
+onMounted(async () => {
+    try {
+        await loadSubscriptionInfo()
+    } catch (error) {
+        console.error('Erro ao carregar informações de subscription:', error)
+    }
 })
 </script>
 
