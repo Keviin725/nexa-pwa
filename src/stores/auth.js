@@ -2,6 +2,10 @@ import { defineStore } from "pinia";
 import { apiService } from "@/services/api";
 import { permissionManager } from "@/utils/permissions";
 
+/**
+ * Store de autenticação do NEXA
+ * Gerencia o estado de autenticação do utilizador
+ */
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
@@ -22,12 +26,18 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    // Inicializar store
+    /**
+     * Inicializa o store carregando dados do localStorage
+     */
     init() {
       this.loadFromStorage();
     },
 
-    // Login
+    /**
+     * Realiza login do utilizador
+     * @param {Object} credentials - Credenciais de login
+     * @returns {Object} - Resultado do login
+     */
     async login(credentials) {
       this.loading = true;
       this.error = null;
@@ -36,16 +46,7 @@ export const useAuthStore = defineStore("auth", {
         const response = await apiService.auth.login(credentials);
         const { user, token } = response.data;
 
-        // Salvar dados no localStorage
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem("user_data", JSON.stringify(user));
-
-        // Atualizar estado
-        this.user = user;
-        this.token = token;
-        this.isAuthenticated = true;
-
-        // Configurar permissões
+        this.saveAuthData(user, token);
         permissionManager.setCurrentUser(user);
 
         return { success: true, user };
@@ -57,26 +58,46 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    // Logout
+    /**
+     * Realiza logout do utilizador
+     */
     async logout() {
-      // Limpar dados locais
+      this.clearAuthData();
+      permissionManager.clearCurrentUser();
+      window.location.href = "/auth/login";
+    },
+
+    /**
+     * Salva dados de autenticação
+     * @param {Object} user - Dados do utilizador
+     * @param {string} token - Token de autenticação
+     */
+    saveAuthData(user, token) {
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("user_data", JSON.stringify(user));
+
+      this.user = user;
+      this.token = token;
+      this.isAuthenticated = true;
+    },
+
+    /**
+     * Limpa dados de autenticação
+     */
+    clearAuthData() {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
 
-      // Resetar estado
       this.user = null;
       this.token = null;
       this.isAuthenticated = false;
       this.error = null;
-
-      // Limpar permissões
-      permissionManager.clearCurrentUser();
-
-      // Redirecionar para login
-      window.location.href = "/auth/login";
     },
 
-    // Carregar dados do usuário do localStorage
+    /**
+     * Carrega dados do utilizador do localStorage
+     * @returns {boolean} - True se carregou com sucesso
+     */
     loadFromStorage() {
       try {
         const token = localStorage.getItem("auth_token");
@@ -87,20 +108,22 @@ export const useAuthStore = defineStore("auth", {
           this.user = user;
           this.token = token;
           this.isAuthenticated = true;
-
-          // Configurar permissionManager
           permissionManager.setCurrentUser(user);
           return true;
         }
         return false;
       } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-        this.clearAuth();
+        console.error("Erro ao carregar dados do utilizador:", error);
+        this.clearAuthData();
         return false;
       }
     },
 
-    // Atualizar perfil do usuário
+    /**
+     * Atualiza perfil do utilizador
+     * @param {Object} userData - Dados do utilizador
+     * @returns {Object} - Resultado da atualização
+     */
     async updateProfile(userData) {
       this.loading = true;
       this.error = null;
@@ -109,7 +132,6 @@ export const useAuthStore = defineStore("auth", {
         const response = await apiService.users.update(this.user.id, userData);
         const updatedUser = response.data;
 
-        // Atualizar dados locais
         this.user = updatedUser;
         localStorage.setItem("user_data", JSON.stringify(updatedUser));
 
@@ -122,47 +144,31 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    // Alterar senha
-    async changePassword(passwordData) {
-      this.loading = true;
-      this.error = null;
-
-      try {
-        await apiService.users.update(this.user.id, passwordData);
-        return { success: true };
-      } catch (error) {
-        this.error = error.response?.data?.error || "Erro ao alterar senha";
-        return { success: false, error: this.error };
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    // Verificar se tem permissão
+    /**
+     * Verifica se tem permissão
+     * @param {string} permission - Permissão a verificar
+     * @returns {boolean} - True se tem permissão
+     */
     hasPermission(permission) {
       if (!this.user) return false;
       return permissionManager.hasPermission(permission);
     },
 
-    // Verificar se pode acessar rota
+    /**
+     * Verifica se pode aceder a uma rota
+     * @param {string} route - Rota a verificar
+     * @returns {boolean} - True se pode aceder
+     */
     canAccess(route) {
       if (!this.user) return false;
-      return permissionManager.canAccess(route);
+      return permissionManager.canAccessRoute(route);
     },
 
-    // Limpar erro
+    /**
+     * Limpa erro do store
+     */
     clearError() {
       this.error = null;
-    },
-
-    // Limpar autenticação
-    clearAuth() {
-      this.user = null;
-      this.token = null;
-      this.isAuthenticated = false;
-      this.error = null;
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user_data");
     },
   },
 });

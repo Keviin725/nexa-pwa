@@ -1,50 +1,64 @@
 import axios from "axios";
 
-// Configuração base da API
-const API_BASE_URL = "http://localhost:3000";
+/**
+ * Configuração da API do NEXA
+ * Centraliza todas as chamadas HTTP para o backend
+ */
 
-// Criar instância do Axios
+// Constantes
+const API_BASE_URL = "http://localhost:3000";
+const REQUEST_TIMEOUT = 10000;
+const AUTH_TOKEN_KEY = "auth_token";
+const USER_DATA_KEY = "user_data";
+
+/**
+ * Instância do Axios configurada
+ */
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: REQUEST_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Interceptor para adicionar token de autenticação
+/**
+ * Interceptor de requisição para adicionar token de autenticação
+ */
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor para tratar respostas e erros
+/**
+ * Interceptor de resposta para tratar erros de autenticação
+ */
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado ou inválido
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user_data");
+      // Token expirado ou inválido - limpar dados e redirecionar
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(USER_DATA_KEY);
       window.location.href = "/auth/login";
     }
     return Promise.reject(error);
   }
 );
 
-// Serviços da API
+/**
+ * Serviços da API organizados por funcionalidade
+ */
 export const apiService = {
-  // Autenticação
+  /**
+   * Serviços de autenticação
+   */
   auth: {
     login: (credentials) => api.post("/auth/login", credentials),
     register: (userData) => api.post("/auth/register", userData),
@@ -52,7 +66,9 @@ export const apiService = {
     refresh: () => api.post("/auth/refresh"),
   },
 
-  // Dashboard
+  /**
+   * Serviços do dashboard
+   */
   dashboard: {
     getData: (params = {}) => api.get("/dashboard", { params }),
     getSalesSummary: (params = {}) =>
@@ -60,7 +76,9 @@ export const apiService = {
     getAnalytics: (params = {}) => api.get("/dashboard/analytics", { params }),
   },
 
-  // Relatórios
+  /**
+   * Serviços de relatórios
+   */
   reports: {
     getSales: (params = {}) => api.get("/reports/sales", { params }),
     getProfit: (params = {}) => api.get("/reports/profit", { params }),
@@ -72,14 +90,18 @@ export const apiService = {
       api.get("/reports/sales-distribution", { params }),
   },
 
-  // Subscription
+  /**
+   * Serviços de subscrição
+   */
   subscription: {
     getInfo: () => api.get("/subscription/info"),
     updatePlan: (data) => api.put("/subscription/plan", data),
     checkLimits: () => api.get("/subscription/limits"),
   },
 
-  // Produtos
+  /**
+   * Serviços de produtos
+   */
   products: {
     getAll: (params = {}) => api.get("/products", { params }),
     getById: (id) => api.get(`/products/${id}`),
@@ -91,7 +113,9 @@ export const apiService = {
     getLowStock: () => api.get("/products/low-stock"),
   },
 
-  // Clientes a Fiado
+  /**
+   * Serviços de clientes a fiado
+   */
   clients: {
     getAll: (params = {}) => api.get("/clients", { params }),
     getById: (id) => api.get(`/clients/${id}`),
@@ -104,7 +128,9 @@ export const apiService = {
     getWithDebts: () => api.get("/clients/with-debts"),
   },
 
-  // Vendas
+  /**
+   * Serviços de vendas
+   */
   sales: {
     getAll: (params = {}) => api.get("/sales", { params }),
     getById: (id) => api.get(`/sales/${id}`),
@@ -116,7 +142,9 @@ export const apiService = {
       api.get(`/sales/client/${clientId}`, { params }),
   },
 
-  // Usuários
+  /**
+   * Serviços de utilizadores
+   */
   users: {
     getAll: (params = {}) => api.get("/users", { params }),
     getById: (id) => api.get(`/users/${id}`),
@@ -129,7 +157,9 @@ export const apiService = {
     bulkAction: (data) => api.post("/users/bulk-action", data),
   },
 
-  // Categorias
+  /**
+   * Serviços de categorias
+   */
   categories: {
     getAll: (params = {}) => api.get("/categories", { params }),
     getById: (id) => api.get(`/categories/${id}`),
@@ -141,7 +171,9 @@ export const apiService = {
     getStats: () => api.get("/categories/stats"),
   },
 
-  // Pagamentos a Crédito
+  /**
+   * Serviços de pagamentos a crédito
+   */
   creditPayments: {
     create: (data) => api.post("/credit-payments", data),
     getAll: (params = {}) => api.get("/credit-payments", { params }),
@@ -151,14 +183,6 @@ export const apiService = {
     getBySale: (saleId) => api.get(`/credit-payments/sale/${saleId}`),
     getByClient: (clientId, params = {}) =>
       api.get(`/credit-payments/client/${clientId}`, { params }),
-  },
-
-  // Relatórios
-  reports: {
-    getSales: (params = {}) => api.get("/reports/sales", { params }),
-    getProducts: (params = {}) => api.get("/reports/products", { params }),
-    getClients: (params = {}) => api.get("/reports/clients", { params }),
-    getFinancial: (params = {}) => api.get("/reports/financial", { params }),
   },
 };
 

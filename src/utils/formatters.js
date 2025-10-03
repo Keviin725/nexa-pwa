@@ -1,32 +1,44 @@
 /**
- * Utilitários de formatação centralizados
+ * Formatters utilitários para o sistema NEXA
+ * Centraliza todas as funções de formatação de dados
  */
 
+// Constantes
+const DEFAULT_LOCALE = "pt-PT";
+const DEFAULT_CURRENCY = "MZN";
+const DEFAULT_DECIMALS = 2;
+
 /**
- * Formata um preço para exibição
+ * Formata um preço para exibição com moeda
  * @param {number|string} price - O preço a ser formatado
  * @returns {string} - Preço formatado com MZN
  */
 export const formatPrice = (price) => {
-  if (!price && price !== 0) return "MZN 0,00";
+  if (price === null || price === undefined || price === "") {
+    return `${DEFAULT_CURRENCY} 0,00`;
+  }
 
-  const numericPrice = parseFloat(price);
-  if (isNaN(numericPrice)) return "MZN 0,00";
+  const numericPrice = Number(price);
+  if (Number.isNaN(numericPrice)) {
+    return `${DEFAULT_CURRENCY} 0,00`;
+  }
 
-  return `MZN ${numericPrice.toFixed(2).replace(".", ",")}`;
+  return `${DEFAULT_CURRENCY} ${numericPrice
+    .toFixed(DEFAULT_DECIMALS)
+    .replace(".", ",")}`;
 };
 
 /**
  * Formata uma data para exibição
  * @param {string|Date} date - A data a ser formatada
- * @param {string} locale - Locale para formatação (padrão: 'pt-PT')
+ * @param {string} locale - Locale para formatação
  * @returns {string} - Data formatada
  */
-export const formatDate = (date, locale = "pt-PT") => {
+export const formatDate = (date, locale = DEFAULT_LOCALE) => {
   if (!date) return "";
 
   const dateObj = new Date(date);
-  if (isNaN(dateObj.getTime())) return "";
+  if (Number.isNaN(dateObj.getTime())) return "";
 
   return dateObj.toLocaleDateString(locale);
 };
@@ -34,14 +46,14 @@ export const formatDate = (date, locale = "pt-PT") => {
 /**
  * Formata uma data e hora para exibição
  * @param {string|Date} date - A data a ser formatada
- * @param {string} locale - Locale para formatação (padrão: 'pt-PT')
+ * @param {string} locale - Locale para formatação
  * @returns {string} - Data e hora formatadas
  */
-export const formatDateTime = (date, locale = "pt-PT") => {
+export const formatDateTime = (date, locale = DEFAULT_LOCALE) => {
   if (!date) return "";
 
   const dateObj = new Date(date);
-  if (isNaN(dateObj.getTime())) return "";
+  if (Number.isNaN(dateObj.getTime())) return "";
 
   return dateObj.toLocaleString(locale);
 };
@@ -49,78 +61,21 @@ export const formatDateTime = (date, locale = "pt-PT") => {
 /**
  * Formata um número para exibição com separadores
  * @param {number|string} number - O número a ser formatado
- * @param {number} decimals - Número de casas decimais (padrão: 0)
+ * @param {number} decimals - Número de casas decimais
  * @returns {string} - Número formatado
  */
 export const formatNumber = (number, decimals = 0) => {
-  if (!number && number !== 0) return "0";
+  if (number === null || number === undefined || number === "") {
+    return "0";
+  }
 
-  const numericNumber = parseFloat(number);
-  if (isNaN(numericNumber)) return "0";
+  const numericNumber = Number(number);
+  if (Number.isNaN(numericNumber)) {
+    return "0";
+  }
 
-  return numericNumber.toLocaleString("pt-PT", {
+  return numericNumber.toLocaleString(DEFAULT_LOCALE, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
-};
-
-/**
- * Formata um percentual para exibição
- * @param {number|string} value - O valor a ser formatado
- * @param {number} decimals - Número de casas decimais (padrão: 1)
- * @returns {string} - Percentual formatado
- */
-export const formatPercentage = (value, decimals = 1) => {
-  if (!value && value !== 0) return "0%";
-
-  const numericValue = parseFloat(value);
-  if (isNaN(numericValue)) return "0%";
-
-  return `${numericValue.toFixed(decimals)}%`;
-};
-
-/**
- * Formata um telefone para exibição
- * @param {string} phone - O telefone a ser formatado
- * @returns {string} - Telefone formatado
- */
-export const formatPhone = (phone) => {
-  if (!phone) return "";
-
-  // Remove todos os caracteres não numéricos
-  const cleaned = phone.replace(/\D/g, "");
-
-  // Formata baseado no tamanho
-  if (cleaned.length === 9) {
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
-  } else if (cleaned.length === 12) {
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4");
-  }
-
-  return phone;
-};
-
-/**
- * Formata um texto para capitalização
- * @param {string} text - O texto a ser formatado
- * @returns {string} - Texto capitalizado
- */
-export const formatCapitalize = (text) => {
-  if (!text) return "";
-
-  return text.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
-};
-
-/**
- * Formata um texto para truncar
- * @param {string} text - O texto a ser truncado
- * @param {number} maxLength - Tamanho máximo (padrão: 50)
- * @returns {string} - Texto truncado
- */
-export const formatTruncate = (text, maxLength = 50) => {
-  if (!text) return "";
-
-  if (text.length <= maxLength) return text;
-
-  return text.substring(0, maxLength) + "...";
 };

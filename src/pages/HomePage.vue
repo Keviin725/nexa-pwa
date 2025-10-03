@@ -839,27 +839,41 @@
 </template>
 
 <script setup>
+/**
+ * HomePage - Dashboard principal do NEXA
+ * Página principal com métricas, alertas e ações rápidas
+ */
+
+// Vue imports
 import { ref, onMounted, onUnmounted, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
+
+// Store imports
+import { useAuthStore } from '@/stores/auth'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useSalesStore } from '@/stores/sales'
 import { useProductsStore } from '@/stores/products'
 import { useClientsStore } from '@/stores/clients'
-import { useAuthStore } from '@/stores/auth'
+
+// Utils imports
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
+import { formatPrice, formatDate } from '@/utils/formatters'
 import { apiService } from '@/services/api'
+
+// Component imports
 import CustomBottomSheet from '@/components/CustomBottomSheet.vue'
 import AnimatedProgressBar from '@/components/Progress/AnimatedProgressBar.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
-import { useAnimations, useStaggeredAnimation } from '@/composables/useAnimations'
-import { useFormStandard } from '@/composables/useFormStandard'
-import { useNotifications } from '@/composables/useNotifications'
-import { formatPrice, formatDate } from '@/utils/formatters'
 import FormField from '@/components/Form/FormField.vue'
 import FormSection from '@/components/Form/FormSection.vue'
 import FormButtons from '@/components/Form/FormButtons.vue'
 
+// Composable imports
+import { useFormStandard } from '@/composables/useFormStandard'
+import { useNotifications } from '@/composables/useNotifications'
+
+// Router
 const router = useRouter()
 
 // Stores
@@ -869,13 +883,17 @@ const salesStore = useSalesStore()
 const productsStore = useProductsStore()
 const clientsStore = useClientsStore()
 
-// Controle de acesso baseado em roles
+// Composables
+const formValidation = useFormStandard()
+const { handleApiError, handleApiSuccess } = useNotifications()
+
+// Computed properties - User roles
 const userRole = computed(() => authStore.user?.role || 'seller')
 const isAdmin = computed(() => userRole.value === 'admin')
 const isManager = computed(() => userRole.value === 'manager')
 const isSeller = computed(() => userRole.value === 'seller')
 
-// Permissões específicas
+// Computed properties - Permissions
 const canViewReports = computed(() => permissionManager.hasPermission(PERMISSIONS.REPORTS_VIEW))
 const canManageUsers = computed(() => permissionManager.hasPermission(PERMISSIONS.USERS_MANAGE))
 const canManageSettings = computed(() => permissionManager.hasPermission(PERMISSIONS.SETTINGS_MANAGE))
@@ -883,7 +901,7 @@ const canViewProducts = computed(() => permissionManager.hasPermission(PERMISSIO
 const canViewClients = computed(() => permissionManager.hasPermission(PERMISSIONS.CLIENTS_VIEW))
 const canViewSales = computed(() => permissionManager.hasPermission(PERMISSIONS.SALES_VIEW))
 
-// Computed properties
+// Computed properties - Dashboard data
 const dashboard = computed(() => dashboardStore.data)
 const loading = computed(() => dashboardStore.loading)
 
