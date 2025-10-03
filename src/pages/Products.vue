@@ -25,9 +25,10 @@
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
                         <!-- Novo Produto (apenas se tiver permissão) -->
-                        <button v-if="canCreateProducts" @click="openModal('create')"
-                            class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
-                            Novo Produto
+                        <button v-if="canCreateProducts" @click="handleNewProduct"
+                            :class="getDisabledButtonClass('px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm')"
+                            :disabled="isButtonDisabled()">
+                            {{ getButtonText('Novo Produto', 'criar produtos') }}
                         </button>
                     </div>
                 </div>
@@ -135,13 +136,14 @@
                     </div>
                     <h3 class="text-lg font-semibold text-slate-800 mb-1">Nenhum produto encontrado</h3>
                     <p class="text-sm text-slate-600 mb-4">Comece adicionando seu primeiro produto</p>
-                    <button @click="openModal('create')"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    <button @click="handleNewProduct"
+                        :class="getDisabledButtonClass('inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors')"
+                        :disabled="isButtonDisabled()">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
                         </svg>
-                        Adicionar Produto
+                        {{ getButtonText('Adicionar Produto', 'criar produtos') }}
                     </button>
                 </div>
             </div>
@@ -405,6 +407,7 @@ import { ref, onMounted, onUnmounted, reactive, computed, nextTick } from 'vue'
 import { useProductsStore } from '@/stores/products'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifications } from '@/composables/useNotifications'
+import { useOperationGuard } from '@/composables/useOperationGuard'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
@@ -412,6 +415,9 @@ import PaginationComponent from '@/components/Pagination/PaginationComponent.vue
 // Store
 const authStore = useAuthStore()
 const productsStore = useProductsStore()
+
+// Operation Guard
+const { canPerformOperation, isButtonDisabled, getDisabledButtonClass, getButtonText } = useOperationGuard()
 
 // Notificações
 const { handleApiError, handleApiSuccess } = useNotifications()
@@ -565,6 +571,12 @@ const openModal = (mode, product = null) => {
         })
     }
     showModal.value = true
+}
+
+const handleNewProduct = () => {
+    if (canPerformOperation('criar produtos')) {
+        openModal('create')
+    }
 }
 
 const closeModal = () => {

@@ -24,9 +24,10 @@
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
                         <!-- Novo Cliente -->
-                        <button v-if="canCreateClients" @click="openModal('create')"
-                            class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
-                            Novo Cliente
+                        <button v-if="canCreateClients" @click="handleNewClient"
+                            :class="getDisabledButtonClass('px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm')"
+                            :disabled="isButtonDisabled()">
+                            {{ getButtonText('Novo Cliente', 'criar clientes') }}
                         </button>
                     </div>
                 </div>
@@ -509,12 +510,16 @@ import { useAuthStore } from '@/stores/auth'
 import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import { apiService } from '@/services/api'
 import { useNotifications } from '@/composables/useNotifications'
+import { useOperationGuard } from '@/composables/useOperationGuard'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 
 // Store
 const clientsStore = useClientsStore()
 const authStore = useAuthStore()
+
+// Operation Guard
+const { canPerformOperation, isButtonDisabled, getDisabledButtonClass, getButtonText } = useOperationGuard()
 
 // Notifications
 const { handleApiError, handleApiSuccess } = useNotifications()
@@ -616,6 +621,12 @@ const openModal = (mode, client = null) => {
             creditLimit: client.creditLimit,
             observations: client.observations
         })
+    }
+}
+
+const handleNewClient = () => {
+    if (canPerformOperation('criar clientes')) {
+        openModal('create')
     }
 }
 

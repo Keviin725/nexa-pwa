@@ -25,9 +25,10 @@
                     <!-- Ações Mobile -->
                     <div class="flex items-center gap-3">
                         <!-- Nova Venda (apenas se tiver permissão) -->
-                        <button v-if="canCreateSales" @click="openSaleModal"
-                            class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm">
-                            Nova Venda
+                        <button v-if="canCreateSales" @click="handleNewSale"
+                            :class="getDisabledButtonClass('px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors font-medium text-sm')"
+                            :disabled="isButtonDisabled()">
+                            {{ getButtonText('Nova Venda', 'criar vendas') }}
                         </button>
                     </div>
                 </div>
@@ -154,13 +155,14 @@
                     </div>
                     <h3 class="text-lg font-semibold text-slate-800 mb-1">Nenhuma venda encontrada</h3>
                     <p class="text-sm text-slate-600 mb-4">Comece registrando sua primeira venda</p>
-                    <button @click="openSaleModal"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    <button @click="handleNewSale"
+                        :class="getDisabledButtonClass('inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors')"
+                        :disabled="isButtonDisabled()">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
                         </svg>
-                        Nova Venda
+                        {{ getButtonText('Nova Venda', 'criar vendas') }}
                     </button>
                 </div>
             </div>
@@ -178,7 +180,7 @@
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->
@@ -484,6 +486,7 @@ import { permissionManager, PERMISSIONS } from '@/utils/permissions'
 import { apiService } from '@/services/api'
 import { useNotifications } from '@/composables/useNotifications'
 import { useFormValidation } from '@/composables/useFormValidation'
+import { useOperationGuard } from '@/composables/useOperationGuard'
 import CustomBottomSheet from '../components/CustomBottomSheet.vue'
 import PaginationComponent from '@/components/Pagination/PaginationComponent.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
@@ -497,6 +500,9 @@ const authStore = useAuthStore()
 const salesStore = useSalesStore()
 const clientsStore = useClientsStore()
 const productsStore = useProductsStore()
+
+// Operation Guard
+const { canPerformOperation, isButtonDisabled, getDisabledButtonClass, getButtonText } = useOperationGuard()
 
 // Notifications
 const { handleApiError, handleApiSuccess } = useNotifications()
@@ -654,6 +660,12 @@ const openSaleModal = () => {
         notes: ''
     })
     showSaleModal.value = true
+}
+
+const handleNewSale = () => {
+    if (canPerformOperation('criar vendas')) {
+        openSaleModal()
+    }
 }
 
 const closeSaleModal = () => {

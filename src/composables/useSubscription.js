@@ -44,6 +44,16 @@ export function useSubscription() {
     return subscriptionStore.isProAccess;
   });
 
+  // Verificar se está em modo somente leitura (sem plano)
+  const isReadOnlyMode = computed(() => {
+    return subscriptionStore.hasNoPlan;
+  });
+
+  // Verificar se pode realizar operações (tem plano ou oferta)
+  const canPerformOperations = computed(() => {
+    return !subscriptionStore.hasNoPlan;
+  });
+
   // Verificar se é plano Starter
   const isStarterPlan = computed(() => {
     return subscriptionStore.isStarterPlan;
@@ -143,6 +153,8 @@ export function useSubscription() {
     hasNoPlan,
     isProOffer,
     isProAccess,
+    isReadOnlyMode,
+    canPerformOperations,
     isStarterPlan,
     isProPlan,
     isEnterprisePlan,
