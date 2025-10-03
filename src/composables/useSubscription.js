@@ -29,9 +29,19 @@ export function useSubscription() {
     return subscriptionStore.canCreateSale;
   });
 
-  // Verificar se é plano de teste
-  const isTestPlan = computed(() => {
-    return subscriptionStore.isTestPlan;
+  // Verificar se não tem plano (sem oferta)
+  const hasNoPlan = computed(() => {
+    return subscriptionStore.hasNoPlan;
+  });
+
+  // Verificar se está na oferta Pro (30 dias grátis)
+  const isProOffer = computed(() => {
+    return subscriptionStore.isProOffer;
+  });
+
+  // Verificar se tem acesso Pro (seja por plano pago ou oferta)
+  const isProAccess = computed(() => {
+    return subscriptionStore.isProAccess;
   });
 
   // Verificar se é plano Starter
@@ -39,7 +49,7 @@ export function useSubscription() {
     return subscriptionStore.isStarterPlan;
   });
 
-  // Verificar se é plano Pro
+  // Verificar se é plano Pro (pago)
   const isProPlan = computed(() => {
     return subscriptionStore.isProPlan;
   });
@@ -130,7 +140,9 @@ export function useSubscription() {
     canCreateUser,
     canCreateProduct,
     canCreateSale,
-    isTestPlan,
+    hasNoPlan,
+    isProOffer,
+    isProAccess,
     isStarterPlan,
     isProPlan,
     isEnterprisePlan,

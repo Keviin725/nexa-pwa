@@ -3,39 +3,40 @@ import { apiService } from "@/services/api";
 
 export const useSubscriptionStore = defineStore("subscription", {
   state: () => ({
-    currentPlan: "teste", // teste, starter, pro, enterprise
+    currentPlan: null, // null, starter, pro, enterprise
     planInfo: null,
     limits: null,
     usage: null,
     loading: false,
     error: null,
+    // Oferta Pro para novos usuários
+    proOffer: {
+      name: "Oferta Pro",
+      color: "blue",
+      price: 0,
+      isFree: true,
+      isOffer: true,
+      isTrial: true,
+      trialDays: 30,
+      basePlan: "pro", // Acesso ao plano Pro
+      maxUsers: 5,
+      maxProducts: 500,
+      maxSales: 1000,
+      features: [
+        "30 dias de acesso completo ao Pro",
+        "Todas as funcionalidades Pro",
+        "IA Stock Predictor",
+        "AI Sales Optimizer",
+        "AI Customer Insights",
+        "Suporte prioritário",
+      ],
+      aiFeatures: [
+        "AI Stock Predictor",
+        "AI Sales Optimizer",
+        "AI Customer Insights",
+      ],
+    },
     planFeatures: {
-      teste: {
-        name: "Oferta Pro",
-        color: "blue",
-        price: 0,
-        isFree: true,
-        isOffer: true, // É uma oferta, não um plano
-        isTrial: true,
-        trialDays: 30,
-        basePlan: "pro", // Acesso ao plano Pro
-        maxUsers: 5,
-        maxProducts: 500,
-        maxSales: 1000,
-        features: [
-          "30 dias de acesso completo ao Pro",
-          "Todas as funcionalidades Pro",
-          "IA Stock Predictor",
-          "AI Sales Optimizer",
-          "AI Customer Insights",
-          "Suporte prioritário",
-        ],
-        aiFeatures: [
-          "AI Stock Predictor",
-          "AI Sales Optimizer",
-          "AI Customer Insights",
-        ],
-      },
       starter: {
         name: "Starter",
         color: "green",
@@ -109,9 +110,29 @@ export const useSubscriptionStore = defineStore("subscription", {
 
   getters: {
     // Usar dados do backend se disponíveis, senão fallback para dados locais
-    currentPlanInfo: (state) =>
-      state.planInfo || state.planFeatures[state.currentPlan],
-    isTestPlan: (state) => state.currentPlan === "teste",
+    currentPlanInfo: (state) => {
+      if (state.planInfo) return state.planInfo;
+      if (state.currentPlan && state.planFeatures[state.currentPlan]) {
+        return state.planFeatures[state.currentPlan];
+      }
+      return state.proOffer; // Fallback para oferta Pro
+    },
+
+    // Verificar se está na oferta Pro (30 dias grátis)
+    isProOffer: (state) => {
+      return state.currentPlan === null && state.planInfo?.isOffer;
+    },
+
+    // Verificar se tem acesso Pro (seja por plano pago ou oferta)
+    isProAccess: (state) => {
+      return state.currentPlan === "pro" || state.isProOffer;
+    },
+
+    // Verificar se não tem plano (sem oferta)
+    hasNoPlan: (state) => {
+      return state.currentPlan === null && !state.planInfo?.isOffer;
+    },
+
     isStarterPlan: (state) => state.currentPlan === "starter",
     isProPlan: (state) => state.currentPlan === "pro",
     isEnterprisePlan: (state) => state.currentPlan === "enterprise",
@@ -176,7 +197,7 @@ export const useSubscriptionStore = defineStore("subscription", {
         const response = await apiService.subscription.getInfo();
 
         // Garantir que currentPlan não seja undefined
-        this.currentPlan = response.currentPlan || "teste";
+        this.currentPlan = response.currentPlan || null;
         this.planInfo = response.planInfo;
         this.limits = response.limits;
         this.usage = response.usage;
@@ -244,7 +265,7 @@ export const useSubscriptionStore = defineStore("subscription", {
         this.currentPlan = savedPlan;
       } else {
         // Se não há plano salvo, usar padrão
-        this.currentPlan = "teste";
+        this.currentPlan = null;
       }
     },
 
@@ -252,7 +273,7 @@ export const useSubscriptionStore = defineStore("subscription", {
     async init() {
       // Primeiro, garantir que temos um plano padrão
       if (!this.currentPlan) {
-        this.currentPlan = "teste";
+        this.currentPlan = null;
       }
 
       // Tentar carregar do backend primeiro
@@ -277,9 +298,9 @@ export const useSubscriptionStore = defineStore("subscription", {
       return await this.setPlan("enterprise");
     },
 
-    // Downgrade para teste
-    async downgradeToTest() {
-      return await this.setPlan("teste");
+    // Cancelar plano (volta para sem plano)
+    async cancelPlan() {
+      return await this.setPlan(null);
     },
   },
 });

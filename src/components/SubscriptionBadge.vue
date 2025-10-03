@@ -41,7 +41,8 @@ import { useSubscription } from '@/composables/useSubscription';
 const {
     planName,
     planColor,
-    isTestPlan,
+    hasNoPlan,
+    isProOffer,
     isStarterPlan,
     isProPlan,
     isEnterprisePlan,
@@ -69,7 +70,8 @@ const planColorClasses = computed(() => {
 });
 
 const statusColorClasses = computed(() => {
-    if (isTestPlan.value) return 'bg-yellow-500';
+    if (hasNoPlan.value) return 'bg-red-500';
+    if (isProOffer.value) return 'bg-yellow-500';
     if (isStarterPlan.value) return 'bg-green-500';
     if (isProPlan.value) return 'bg-blue-500';
     if (isEnterprisePlan.value) return 'bg-purple-500';

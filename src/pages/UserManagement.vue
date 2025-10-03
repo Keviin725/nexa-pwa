@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-slate-50">
-        <!-- Upgrade Prompt para Plano Teste -->
-        <UpgradePrompt v-if="isTestPlan" required-plan="pro" feature="Gestão de Colaboradores" @upgrade="handleUpgrade"
+        <!-- Upgrade Prompt para usuários sem plano -->
+        <UpgradePrompt v-if="hasNoPlan" required-plan="pro" feature="Gestão de Colaboradores" @upgrade="handleUpgrade"
             @dismiss="dismissUpgrade" />
 
         <!-- Header Mobile -->
@@ -570,7 +570,7 @@ const authStore = useAuthStore()
 const usersStore = useUsersStore()
 
 // Subscription
-const { isTestPlan } = useSubscription()
+const { hasNoPlan, isProOffer, isProAccess } = useSubscription()
 
 // Notificações
 const { handleApiError, handleApiSuccess } = useNotifications()
@@ -621,7 +621,10 @@ const form = reactive({
 
 // Permissões disponíveis baseadas no sistema de permissões
 const availablePermissions = computed(() => {
-    return permissionManager.getPermissionLabels(Object.values(PERMISSIONS))
+    return Object.values(PERMISSIONS).map(permission => ({
+        value: permission,
+        label: getPermissionText(permission)
+    }))
 })
 
 // Computed
@@ -659,7 +662,30 @@ const getRoleClass = (role) => {
 }
 
 const getPermissionText = (permission) => {
-    return permissionManager.getPermissionLabels([permission])[0]?.label || permission
+    const permissionLabels = {
+        'sales.create': 'Criar Vendas',
+        'sales.edit': 'Editar Vendas',
+        'sales.delete': 'Excluir Vendas',
+        'sales.view': 'Ver Vendas',
+        'products.create': 'Criar Produtos',
+        'products.edit': 'Editar Produtos',
+        'products.delete': 'Excluir Produtos',
+        'products.view': 'Ver Produtos',
+        'clients.create': 'Criar Clientes',
+        'clients.edit': 'Editar Clientes',
+        'clients.delete': 'Excluir Clientes',
+        'clients.view': 'Ver Clientes',
+        'reports.view': 'Ver Relatórios',
+        'reports.export': 'Exportar Relatórios',
+        'users.manage': 'Gerenciar Usuários',
+        'users.view': 'Ver Usuários',
+        'settings.manage': 'Gerenciar Configurações',
+        'settings.view': 'Ver Configurações',
+        'system.backup': 'Backup do Sistema',
+        'system.restore': 'Restaurar Sistema'
+    }
+
+    return permissionLabels[permission] || permission
 }
 
 // Atualizar permissões baseadas no role selecionado

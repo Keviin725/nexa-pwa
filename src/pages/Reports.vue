@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-slate-50">
         <!-- Upgrade Prompt para Plano Teste -->
-        <UpgradePrompt v-if="isTestPlan" required-plan="pro" feature="Relatórios Avançados" @upgrade="handleUpgrade"
+        <UpgradePrompt v-if="hasNoPlan" required-plan="pro" feature="Relatórios Avançados" @upgrade="handleUpgrade"
             @dismiss="dismissUpgrade" />
 
         <!-- Header Mobile -->
@@ -104,7 +104,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
                             <div class="text-2xl font-bold text-green-600 mb-1">{{ formatPrice(metrics.totalRevenue)
-                                }}MT
+                            }}MT
                             </div>
                             <div class="text-sm font-medium text-slate-700">Receita Total</div>
                         </div>
@@ -382,7 +382,7 @@ const authStore = useAuthStore()
 const reportsStore = useReportsStore()
 
 // Subscription
-const { isTestPlan } = useSubscription()
+const { hasNoPlan } = useSubscription()
 
 // Upgrade handlers
 const handleUpgrade = (plan) => {

@@ -255,7 +255,8 @@ import PaymentBottomSheet from '@/components/Payment/PaymentBottomSheet.vue'
 
 // Subscription system
 const {
-    isTestPlan,
+    hasNoPlan,
+    isProOffer,
     isStarterPlan,
     isProPlan,
     isEnterprisePlan,

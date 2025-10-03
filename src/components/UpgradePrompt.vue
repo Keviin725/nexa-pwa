@@ -53,15 +53,18 @@ const props = defineProps({
 
 const emit = defineEmits(['upgrade', 'dismiss']);
 
-const { needsUpgrade, isTestPlan, isProPlan } = useSubscription();
+const { needsUpgrade, hasNoPlan, isProOffer, isProPlan } = useSubscription();
 
 const showPrompt = computed(() => {
     return needsUpgrade(props.requiredPlan);
 });
 
 const title = computed(() => {
-    if (isTestPlan.value) {
+    if (hasNoPlan.value) {
         return 'Upgrade para Pro';
+    }
+    if (isProOffer.value) {
+        return 'Continuar com Pro';
     }
     if (isProPlan.value && props.requiredPlan === 'enterprise') {
         return 'Upgrade para Enterprise';
@@ -70,8 +73,11 @@ const title = computed(() => {
 });
 
 const description = computed(() => {
-    if (isTestPlan.value) {
+    if (hasNoPlan.value) {
         return `Esta funcionalidade está disponível no plano Pro. Upgrade para acessar ${props.feature}.`;
+    }
+    if (isProOffer.value) {
+        return `Você está na oferta Pro! Aproveite ${props.feature} gratuitamente por 30 dias.`;
     }
     if (isProPlan.value && props.requiredPlan === 'enterprise') {
         return `Esta funcionalidade está disponível no plano Enterprise. Upgrade para acessar ${props.feature}.`;
@@ -80,8 +86,11 @@ const description = computed(() => {
 });
 
 const upgradeButtonText = computed(() => {
-    if (isTestPlan.value) {
+    if (hasNoPlan.value) {
         return 'Upgrade para Pro';
+    }
+    if (isProOffer.value) {
+        return 'Continuar Gratuito';
     }
     if (isProPlan.value && props.requiredPlan === 'enterprise') {
         return 'Upgrade para Enterprise';

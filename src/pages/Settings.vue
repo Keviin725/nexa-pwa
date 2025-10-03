@@ -21,6 +21,7 @@
             </div>
         </div>
 
+
         <div class="p-6 space-y-6">
             <!-- 1. META DE RECEITA MENSAL - Nova seção -->
             <GoalsManagement />
@@ -41,14 +42,16 @@
                 </div>
 
                 <!-- Features Pro -->
-                <div v-if="isProPlan || isEnterprisePlan" class="mb-8">
+                <div class="mb-8">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                             PRO
                         </div>
                         <h3 class="text-md font-semibold text-slate-700">Funcionalidades Avançadas</h3>
-                        <span v-if="isProPlan"
+                        <span v-if="isProPlan || isEnterprisePlan"
                             class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Ativo</span>
+                        <span v-else
+                            class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Bloqueado</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -66,7 +69,16 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Stock Predictor</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Preveem demanda e otimizam estoque automaticamente</p>
+                            <p class="text-xs text-slate-600 mb-3">Preveem demanda e otimizam estoque automaticamente
+                            </p>
+                            <button v-if="!isProAccess" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
 
                         <!-- AI Sales Optimizer -->
@@ -83,7 +95,15 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Sales Optimizer</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Analisa padrões e sugere estratégias de venda</p>
+                            <p class="text-xs text-slate-600 mb-3">Analisa padrões e sugere estratégias de venda</p>
+                            <button v-if="!isProAccess" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
 
                         <!-- AI Customer Insights -->
@@ -101,19 +121,30 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Customer Insights</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Analisa comportamento dos clientes</p>
+                            <p class="text-xs text-slate-600 mb-3">Analisa comportamento dos clientes</p>
+                            <button v-if="!isProAccess" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Features Enterprise -->
-                <div v-if="isEnterprisePlan" class="mb-6">
+                <div class="mb-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                             ENTERPRISE
                         </div>
                         <h3 class="text-md font-semibold text-slate-700">Funcionalidades Empresariais</h3>
-                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Ativo</span>
+                        <span v-if="isEnterprisePlan"
+                            class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Ativo</span>
+                        <span v-else
+                            class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Bloqueado</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -132,7 +163,15 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Analytics Dashboard</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Relatórios inteligentes gerados por IA</p>
+                            <p class="text-xs text-slate-600 mb-3">Relatórios inteligentes gerados por IA</p>
+                            <button v-if="!isEnterprisePlan" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
 
                         <!-- AI Mobile Assistant -->
@@ -149,7 +188,15 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Mobile Assistant</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Assistente inteligente para dispositivos móveis</p>
+                            <p class="text-xs text-slate-600 mb-3">Assistente inteligente para dispositivos móveis</p>
+                            <button v-if="!isEnterprisePlan" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
 
                         <!-- AI Security & Permissions -->
@@ -167,64 +214,19 @@
                                 </div>
                                 <h4 class="font-semibold text-slate-800 text-sm">AI Security & Permissions</h4>
                             </div>
-                            <p class="text-xs text-slate-600">Sistema inteligente de segurança com IA</p>
+                            <p class="text-xs text-slate-600 mb-3">Sistema inteligente de segurança com IA</p>
+                            <button v-if="!isEnterprisePlan" @click="handleUpgrade"
+                                class="w-full px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-xs font-medium">
+                                {{ isProOffer ? 'Continuar Gratuito' : 'Upgrade para Acessar' }}
+                            </button>
+                            <button v-else
+                                class="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs font-medium">
+                                Acessar Funcionalidade
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Funcionalidades Bloqueadas -->
-                <div v-if="isTestPlan" class="mb-6">
-                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div
-                                class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-yellow-800">Funcionalidades de IA Bloqueadas</h4>
-                                <p class="text-xs text-yellow-700">Upgrade para Pro ou Enterprise para acessar IA</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div class="flex items-center gap-2 text-sm text-yellow-700">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                AI Stock Predictor
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-yellow-700">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                AI Sales Optimizer
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-yellow-700">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                AI Customer Insights
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-yellow-700">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                AI Analytics Dashboard
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Status das Funcionalidades -->
                 <div class="bg-slate-50 rounded-lg p-4">
@@ -435,11 +437,13 @@
                         </div>
                         <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                             <span class="text-sm text-slate-600">Usuário Atual:</span>
-                            <span class="text-sm font-medium text-slate-800">{{ authStore.user?.name || 'N/A' }}</span>
+                            <span class="text-sm font-medium text-slate-800">{{ authStore.user?.name || 'N/A'
+                            }}</span>
                         </div>
                         <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                             <span class="text-sm text-slate-600">Permissões:</span>
-                            <span class="text-sm font-medium text-slate-800">{{ authStore.user?.role || 'N/A' }}</span>
+                            <span class="text-sm font-medium text-slate-800">{{ authStore.user?.role || 'N/A'
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -464,6 +468,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -472,11 +477,15 @@ import { ref, onMounted, reactive, computed } from 'vue'
 import { permissionManager, PERMISSIONS } from '../utils/permissions.js'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifications } from '@/composables/useNotifications'
+import { useSubscription } from '@/composables/useSubscription'
 import GoalsManagement from '@/components/GoalsManagement.vue'
 
 // Store
 const authStore = useAuthStore()
 const { handleApiSuccess, handleApiError } = useNotifications()
+
+// Subscription
+const { hasNoPlan, isProOffer, isProAccess, isProPlan, isEnterprisePlan } = useSubscription()
 
 // Estado reativo
 const loading = ref(false)
@@ -583,6 +592,12 @@ const refreshSystem = () => {
         console.error('Erro ao atualizar sistema:', error)
         handleApiError(error)
     }
+}
+
+// Funções de upgrade
+const handleUpgrade = () => {
+    // Redirecionar para página de billing
+    window.location.href = '/app/billing'
 }
 
 
