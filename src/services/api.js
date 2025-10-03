@@ -1,4 +1,5 @@
 import axios from "axios";
+import { apiConfig, DEFAULT_HEADERS } from "../config/api";
 
 /**
  * Configuração da API do NEXA
@@ -6,8 +7,6 @@ import axios from "axios";
  */
 
 // Constantes
-const API_BASE_URL = "http://localhost:3000";
-const REQUEST_TIMEOUT = 10000;
 const AUTH_TOKEN_KEY = "auth_token";
 const USER_DATA_KEY = "user_data";
 
@@ -15,11 +14,9 @@ const USER_DATA_KEY = "user_data";
  * Instância do Axios configurada
  */
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: REQUEST_TIMEOUT,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: apiConfig.baseURL,
+  timeout: apiConfig.timeout,
+  headers: DEFAULT_HEADERS,
 });
 
 /**

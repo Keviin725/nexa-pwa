@@ -173,12 +173,12 @@
                         <!-- Header Mobile -->
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-slate-800 mb-1">Venda #{{ sale.saleNumber }}</h3>
+                                <h3 class="text-lg font-semibold text-slate-800 mb-1"> #{{ sale.saleNumber }}</h3>
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="text-sm text-slate-600">{{ formatDate(sale.createdAt) }}</span>
                                     <span class="text-slate-400">•</span>
                                     <span class="text-sm text-slate-600">{{ sale.Client?.name || 'Cliente Avulso'
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <!-- Status Badge -->
@@ -274,7 +274,8 @@
             </div>
 
             <!-- Bottom Sheet de Nova Venda -->
-            <CustomBottomSheet v-model:visible="showSaleModal" title="Nova Venda" height="90vh" @close="closeSaleModal">
+            <CustomBottomSheet :visible="showSaleModal" title="Nova Venda" height="90vh" @close="closeSaleModal"
+                @update:visible="showSaleModal = $event">
 
                 <form @submit.prevent="createSale">
                     <div class="space-y-4 mb-4">
@@ -411,8 +412,8 @@
             </CustomBottomSheet>
 
             <!-- Bottom Sheet de Pagamento -->
-            <CustomBottomSheet v-model:visible="showPaymentModal" title="Registrar Pagamento" height="70vh"
-                @close="closePaymentModal">
+            <CustomBottomSheet :visible="showPaymentModal" title="Registrar Pagamento" height="70vh"
+                @close="closePaymentModal" @update:visible="showPaymentModal = $event">
 
                 <form @submit.prevent="createPayment">
                     <div class="space-y-4">

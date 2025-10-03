@@ -361,9 +361,8 @@
         </div>
 
         <!-- Bottom Sheet de Cliente -->
-        <CustomBottomSheet v-model:visible="showModal"
-            :title="modalMode === 'create' ? 'Novo Cliente a Fiado' : 'Editar Cliente a Fiado'" height="85vh"
-            @close="closeModal">
+        <CustomBottomSheet :visible="showModal" @close="closeModal" @update:visible="showModal = $event"
+            :title="modalMode === 'create' ? 'Novo Cliente a Fiado' : 'Editar Cliente a Fiado'" height="85vh">
 
             <form @submit.prevent="saveClient">
                 <div class="space-y-4">
@@ -423,8 +422,8 @@
         </CustomBottomSheet>
 
         <!-- Bottom Sheet de Histórico -->
-        <CustomBottomSheet v-model:visible="showHistoryModal" title="Histórico de Vendas a Crédito" height="85vh"
-            @close="closeHistoryModal">
+        <CustomBottomSheet :visible="showHistoryModal" title="Histórico de Vendas a Crédito" height="85vh"
+            @close="closeHistoryModal" @update:visible="showHistoryModal = $event">
 
             <div>
                 <div class="space-y-3">
@@ -460,8 +459,8 @@
         </CustomBottomSheet>
 
         <!-- Bottom Sheet de Dívidas -->
-        <CustomBottomSheet v-model:visible="showDebtsModal" title="Dívidas do Cliente" height="85vh"
-            @close="closeDebtsModal">
+        <CustomBottomSheet :visible="showDebtsModal" title="Dívidas do Cliente" height="85vh" @close="closeDebtsModal"
+            @update:visible="showDebtsModal = $event">
 
             <div>
                 <div class="space-y-3">

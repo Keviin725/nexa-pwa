@@ -4,8 +4,20 @@
  */
 
 const express = require("express");
-const cors = require("cors");
 require("dotenv").config();
+
+// Importar middlewares de segurança
+const {
+  cors,
+  helmet,
+  securityHeaders,
+  sanitizeInput,
+  logSecurityEvents,
+  securityErrorHandler,
+  generalRateLimit,
+  authRateLimit,
+  apiRateLimit,
+} = require("./middleware/security");
 
 // Importar configuração da base de dados
 const sequelize = require("./config/database");
@@ -36,9 +48,31 @@ const routes = {
  */
 const app = express();
 
-// Middleware global
-app.use(cors());
-app.use(express.json());
+// ===========================================
+// MIDDLEWARES DE SEGURANÇA (ORDEM IMPORTANTE!)
+// ===========================================
+
+// 1. Helmet - Headers de segurança
+app.use(helmet);
+
+// 2. CORS - Controle de origem
+app.use(cors);
+
+// 3. Rate Limiting - Proteção contra spam
+app.use(generalRateLimit);
+
+// 4. Security Headers - Headers adicionais
+app.use(securityHeaders);
+
+// 5. Logging - Monitoramento de segurança
+app.use(logSecurityEvents);
+
+// 6. Input Sanitization - Limpeza de dados
+app.use(sanitizeInput);
+
+// 7. Body Parser - Parse JSON
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 /**
  * Inicialização do servidor
@@ -127,20 +161,23 @@ async function seedIfNeeded() {
 }
 
 /**
- * Configura as rotas da API
+ * Configura as rotas da API com proteções específicas
  */
 function setupRoutes() {
-  app.use("/auth", routes.auth);
-  app.use("/products", routes.products);
-  app.use("/clients", routes.clients);
-  app.use("/sales", routes.sales);
-  app.use("/credit-payments", routes.creditPayments);
-  app.use("/users", routes.users);
-  app.use("/system-config", routes.systemConfig);
-  app.use("/reports", routes.reports);
-  app.use("/dashboard", routes.dashboard);
-  app.use("/categories", routes.categories);
-  app.use("/subscription", routes.subscription);
+  // Rotas de autenticação com rate limiting específico
+  app.use("/auth", authRateLimit, routes.auth);
+
+  // Rotas da API com rate limiting geral
+  app.use("/products", apiRateLimit, routes.products);
+  app.use("/clients", apiRateLimit, routes.clients);
+  app.use("/sales", apiRateLimit, routes.sales);
+  app.use("/credit-payments", apiRateLimit, routes.creditPayments);
+  app.use("/users", apiRateLimit, routes.users);
+  app.use("/system-config", apiRateLimit, routes.systemConfig);
+  app.use("/reports", apiRateLimit, routes.reports);
+  app.use("/dashboard", apiRateLimit, routes.dashboard);
+  app.use("/categories", apiRateLimit, routes.categories);
+  app.use("/subscription", apiRateLimit, routes.subscription);
 }
 
 /**
@@ -148,8 +185,15 @@ function setupRoutes() {
  */
 function startServer() {
   const PORT = process.env.PORT || 3000;
+
+  // Middleware de tratamento de erros de segurança (DEVE SER O ÚLTIMO!)
+  app.use(securityErrorHandler);
+
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port: ${PORT}`);
+    console.log(`🔒 Security middleware enabled`);
+    console.log(`🛡️ Rate limiting active`);
+    console.log(`🌐 CORS configured`);
   });
 }
 

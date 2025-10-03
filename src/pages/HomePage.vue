@@ -241,7 +241,7 @@
                         class="text-center p-4 bg-green-50 rounded-lg border border-green-200 min-h-[100px] flex flex-col justify-center">
                         <div class="text-2xl font-bold text-green-600 mb-1 break-words">MZN {{
                             dashboardStore.data.totalRevenue || 0
-                        }}</div>
+                            }}</div>
                         <div class="text-sm font-medium text-slate-700">Receita</div>
                     </div>
                     <div
@@ -384,7 +384,7 @@
                             <div>
                                 <span class="font-medium text-slate-800">#{{ sale.saleNumber }}</span>
                                 <span class="text-sm text-slate-600 ml-2">{{ sale.Client?.name || 'nao informado'
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="text-right">
                                 <div class="font-semibold text-green-600">{{ formatPrice(sale.totalAmount) }}</div>
@@ -912,12 +912,6 @@ const availableProducts = ref([])
 const selectedProduct = ref('')
 const saving = ref(false)
 
-// Validação de formulário
-const formValidation = useFormStandard()
-
-// Notificações
-const { handleApiError, handleApiSuccess } = useNotifications()
-
 // Opções para selects
 const clientOptions = computed(() =>
     clients.value.map(client => ({
@@ -1019,7 +1013,7 @@ const addProduct = (product) => {
 const addProductToSale = () => {
     if (!selectedProduct.value) return
 
-    const product = availableProducts.value.find(p => p.id == selectedProduct.value)
+    const product = availableProducts.value.find(p => p.id === selectedProduct.value)
     if (!product) return
 
     // Verificar se produto já existe
@@ -1054,7 +1048,7 @@ const updateTotal = () => {
 
 // Método auxiliar para obter nome do cliente
 const getClientName = (clientId) => {
-    const client = clients.value.find(c => c.id == clientId)
+    const client = clients.value.find(c => c.id === clientId)
     return client ? client.name : null
 }
 
@@ -1064,7 +1058,7 @@ const loadClients = async () => {
         const response = await apiService.clients.getAll()
         clients.value = response.data.clients || response.data
     } catch (error) {
-        console.error('Erro ao carregar clientes:', error)
+        handleApiError('Erro ao carregar clientes')
     }
 }
 
@@ -1074,7 +1068,7 @@ const loadProducts = async () => {
         const response = await apiService.products.getAll({ limit: 100 })
         availableProducts.value = response.data.products || response.data
     } catch (error) {
-        console.error('Erro ao carregar produtos:', error)
+        handleApiError('Erro ao carregar produtos')
     }
 }
 
@@ -1115,7 +1109,7 @@ const saveSale = async () => {
             notes: saleForm.notes
         }
 
-        console.log('💾 Salvando venda:', saleData)
+        // Debug log removido para produção
 
         const result = await salesStore.createSale(saleData)
 
@@ -1132,11 +1126,9 @@ const saveSale = async () => {
 
             handleApiSuccess(message)
         } else {
-            console.error('❌ Erro ao salvar venda:', result.error)
             handleApiError(`Erro ao salvar venda: ${result.error}`)
         }
     } catch (error) {
-        console.error('❌ Erro ao salvar venda:', error)
         handleApiError(`Erro ao salvar venda: ${error.message || 'Erro desconhecido'}`)
     } finally {
         saving.value = false
@@ -1174,18 +1166,16 @@ const sortedSalesByDay = computed(() => {
     })
 })
 
-// Calcular dados de crescimento
+// Calcular dados de crescimento (memoizado)
 const calculateGrowthData = () => {
     // Usar dados reais do backend
     if (dashboardStore.data.growth) {
         growthData.salesGrowth = dashboardStore.data.growth.salesGrowth || 0
         growthData.revenueGrowth = dashboardStore.data.growth.revenueGrowth || 0
     } else {
-        // Fallback para dados simulados se não houver dados do backend
-        const currentMonth = new Date().getMonth()
-        const monthMultiplier = (currentMonth + 1) * 0.1
-        growthData.salesGrowth = Math.round((Math.random() * 30 + 5) * monthMultiplier)
-        growthData.revenueGrowth = Math.round((Math.random() * 25 + 8) * monthMultiplier)
+        // Fallback para dados estáticos em produção
+        growthData.salesGrowth = 0
+        growthData.revenueGrowth = 0
     }
 }
 
@@ -1216,7 +1206,7 @@ const loadDashboard = async () => {
         calculateGrowthData()
         calculateClientStats()
     } catch (error) {
-        console.error('Erro ao carregar dashboard:', error)
+        handleApiError('Erro ao carregar dashboard')
     }
 }
 

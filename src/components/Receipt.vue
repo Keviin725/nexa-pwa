@@ -104,6 +104,33 @@
                     <p>Sistema {{ companyName }} v1.0</p>
                 </div>
             </div>
+
+            <!-- Ações do Recibo -->
+            <div class="receipt-actions">
+                <button @click="printReceipt" class="btn btn-primary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                        </path>
+                    </svg>
+                    Imprimir
+                </button>
+                <button @click="downloadReceipt" class="btn btn-secondary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Baixar PDF
+                </button>
+                <button @click="closeReceipt" class="btn btn-danger">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                    Fechar
+                </button>
+            </div>
         </div>
 
     </div>
@@ -345,26 +372,16 @@ const getPrintStyles = () => {
 
 // Lifecycle
 onMounted(() => {
-    // Configurar estilos de impressão
-    const style = document.createElement('style')
-    style.textContent = getPrintStyles()
-    document.head.appendChild(style)
+    // Estilos de impressão são aplicados apenas na janela de impressão
+    // Não injetamos estilos globais para não afetar o layout do projeto
 })
 </script>
 
 <style scoped>
 .receipt-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    padding: 20px;
+    /* Removido overlay global - o ReceiptModal.vue já cuida do overlay */
+    width: 100%;
+    height: 100%;
 }
 
 .receipt {
@@ -645,6 +662,59 @@ onMounted(() => {
 .footer-info {
     font-size: 10px;
     color: #666;
+}
+
+/* Ações do Recibo */
+.receipt-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
 }
 
 

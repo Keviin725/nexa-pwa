@@ -10,17 +10,13 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ message: "Token de acesso requerido" });
   }
 
-  jwt.verify(
-    token,
-    process.env.JWT_SECRET || "lojinha-secret",
-    (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ message: "Token inválido" });
-      }
-      req.user = decoded;
-      next();
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Token inválido" });
     }
-  );
+    req.user = decoded;
+    next();
+  });
 };
 
 // Middleware para verificar se usuário está ativo

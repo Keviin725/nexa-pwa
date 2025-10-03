@@ -57,7 +57,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET || "lojinha-secret",
+      process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
@@ -89,11 +89,9 @@ router.post("/register", async (req, res) => {
     const { name, email, phone, role, password } = req.body;
 
     if (!name || !email || !password || !role) {
-      return res
-        .status(400)
-        .json({
-          message: "Todos os campos obrigatórios devem ser preenchidos",
-        });
+      return res.status(400).json({
+        message: "Todos os campos obrigatórios devem ser preenchidos",
+      });
     }
 
     // Verificar se email já existe

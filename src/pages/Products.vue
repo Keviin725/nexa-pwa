@@ -236,8 +236,8 @@
             </div>
 
             <!-- Bottom Sheet de Produto -->
-            <CustomBottomSheet v-model:visible="showModal"
-                :title="modalMode === 'create' ? 'Novo Produto' : 'Editar Produto'" height="90vh" @close="closeModal">
+            <CustomBottomSheet :visible="showModal" @close="closeModal" @update:visible="showModal = $event"
+                :title="modalMode === 'create' ? 'Novo Produto' : 'Editar Produto'" height="90vh">
 
                 <form @submit.prevent="saveProduct">
                     <div class="space-y-6">
@@ -340,8 +340,8 @@
             </CustomBottomSheet>
 
             <!-- Bottom Sheet de Stock -->
-            <CustomBottomSheet v-model:visible="showStockModal" title="Atualizar Stock" height="70vh"
-                @close="closeStockModal">
+            <CustomBottomSheet :visible="showStockModal" title="Atualizar Stock" height="70vh" @close="closeStockModal"
+                @update:visible="showStockModal = $event">
 
                 <div class="bg-slate-50 rounded-lg p-3 mb-4">
                     <div class="flex justify-between items-center mb-1">
